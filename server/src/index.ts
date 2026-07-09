@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
 	res.send('Server is running')
-})
+});
 
 app.listen(config.server.port, () => {
 	console.log(`Server is running at http://localhost:${config.server.port}`);
