@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-	res.send('Server is running')
+	res.send('Server is running');
 });
 
 app.listen(config.server.port, () => {
