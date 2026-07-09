@@ -8,3 +8,5 @@ interface ServiceResponse {
 	statusCode: Number,
 	payload: ServiceResponsePayload
 }
+
+export default ServiceResponse

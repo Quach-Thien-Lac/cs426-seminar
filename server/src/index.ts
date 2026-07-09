@@ -1,9 +1,22 @@
+// libs
 import express from 'express';
+
+// types
+import type ServiceResponse from './types/ServiceResponse.ts';
 
 const app = express();
 
 app.get('/', (req, res) => {
-	res.send('Server is running');
+	const rootResponse: ServiceResponse = {
+		success: true,
+		statusCode: 200,
+		payload: {
+			message: 'Sanguosha Baike API root endpoint',
+			data: null
+		}
+	}
+
+	res.send(rootResponse);
 });
 
 app.get('/health', (req, res) => {
