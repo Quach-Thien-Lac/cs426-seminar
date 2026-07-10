@@ -67,3 +67,13 @@ CREATE TABLE HeroSkill (
 	CONSTRAINT PK_HeroSkill_skill_id
 		PRIMARY KEY (skill_id)
 );
+
+CREATE TABLE RevisionText (
+	text_id BINARY(28),
+	text_content TEXT,
+
+	CONSTRAINT PK_Text_text_id
+		PRIMARY KEY (text_id),
+	CONSTRAINT CHK_Text_check_SHA2
+		CHECK (SHA2(text_content, 224) = text_id)
+);
