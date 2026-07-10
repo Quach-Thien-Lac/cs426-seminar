@@ -1,6 +1,9 @@
 CREATE DATABASE Sanguosuo;
 USE Sanguosuo;
 
+/******************************************
+************** FUCKASS ENTITY *************
+******************************************/
 CREATE TABLE UserStatus (
 	user_status_id TINYINT AUTO_INCREMENT,
 	user_status_code VARCHAR(20),
@@ -51,4 +54,16 @@ CREATE TABLE HeroFaction (
 		UNIQUE (hero_faction_code),
     CONSTRAINT CHK_HeroFaction_hero_faction_code_uppercase
         CHECK (CAST(hero_faction_code AS BINARY) = UPPER(hero_faction_code))
+);
+
+/******************************************
+*************** BASED ENTITY **************
+******************************************/
+CREATE TABLE HeroSkill (
+	skill_id VARCHAR(10),
+	skill_name VARCHAR(20) CHARACTER SET UTF8MB4,
+	skill_description VARCHAR(500) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_HeroSkill_skill_id
+		PRIMARY KEY (skill_id)
 );
