@@ -9,4 +9,4 @@ interface ServiceResponse {
 	payload: ServiceResponsePayload
 }
 
-export default ServiceResponse
+export default ServiceResponse;
