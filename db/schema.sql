@@ -39,3 +39,16 @@ CREATE TABLE SkillTag (
     CONSTRAINT CHK_SkillTag_skill_tag_code_uppercase
         CHECK (CAST(skill_tag_code AS BINARY) = UPPER(skill_tag_code))
 );
+
+CREATE TABLE HeroFaction (
+	hero_faction_id TINYINT AUTO_INCREMENT,
+	hero_faction_code VARCHAR(20),
+	hero_faction_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_HeroFaction_hero_faction_id
+		PRIMARY KEY (hero_faction_id),
+	CONSTRAINT UK_HeroFaction_hero_faction_code
+		UNIQUE (hero_faction_code),
+    CONSTRAINT CHK_HeroFaction_hero_faction_code_uppercase
+        CHECK (CAST(hero_faction_code AS BINARY) = UPPER(hero_faction_code))
+);
