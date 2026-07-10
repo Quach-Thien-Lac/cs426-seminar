@@ -23,6 +23,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${LOCAL_DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./db:/sql:ro
 
 volumes:
   mysql_data:
