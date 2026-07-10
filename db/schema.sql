@@ -110,3 +110,17 @@ CREATE TABLE `User` (
 	CONSTRAINT CHK_User_user_email_correct_format
 		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
+
+CREATE TABLE Revision (
+	revision_id BINARY(18),
+	revision_text_id BINARY(28),
+	revision_author_id BINARY(8),
+
+	CONSTRAINT PK_Revision_revision_id
+		PRIMARY KEY (revision_id),
+	
+	CONSTRAINT FK_Revision_revision_text_id
+		FOREIGN KEY (revision_text_id) REFERENCES RevisionText (text_id),
+	CONSTRAINT FK_Revision_revision_author_id
+		FOREIGN KEY (revision_author_id) REFERENCES `User` (user_id)
+);
