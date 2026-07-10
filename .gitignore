@@ -1,6 +1,9 @@
+.env
+server/.env
+client/.env
+
 server/package-lock.json
 server/node_modules
-server/.env
 
 db/test.sql
 

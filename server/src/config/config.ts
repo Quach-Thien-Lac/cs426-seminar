@@ -3,15 +3,15 @@ import 'dotenv/config';
 const config: any = {
 	client: {},
 	server: {
-		port: process.env.PORT
+		port: process.env.BACKEND_PORT
 	},
 	thirdparty: {},
 	db: {
-		dbHost: process.env.DB_HOST,
-		dbUser: process.env.DB_USER,
-		dbPassword: process.env.DB_PASSWORD,
-		dbName: process.env.DB_NAME,
-		dbPort: process.env.DB_PORT
+		dbHost: process.env.LOCAL_DB_HOST,
+		dbUser: process.env.LOCAL_DB_USER,
+		dbPassword: process.env.LOCAL_DB_PASSWORD,
+		dbName: process.env.LOCAL_DB_NAME,
+		dbPort: process.env.LOCAL_DB_PORT
 	}
 };
 
