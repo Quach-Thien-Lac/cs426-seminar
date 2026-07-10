@@ -74,6 +74,39 @@ CREATE TABLE RevisionText (
 
 	CONSTRAINT PK_Text_text_id
 		PRIMARY KEY (text_id),
+
 	CONSTRAINT CHK_Text_check_SHA2
 		CHECK (SHA2(text_content, 224) = text_id)
+);
+
+CREATE TABLE `User` (
+	user_id BINARY(8),
+	user_name VARCHAR(50) CHARACTER SET UTF8MB4,
+	user_email VARCHAR(255) CHARACTER SET UTF8MB4 NOT NULL,
+	user_phone BINARY(10) NOT NULL,
+	user_status_id TINYINT NOT NULL,
+	user_role_id TINYINT NOT NULL,
+
+	CONSTRAINT PK_User_user_id
+		PRIMARY KEY (user_id),
+
+	CONSTRAINT UK_User_user_email
+		UNIQUE (user_email),
+	CONSTRAINT UK_User_user_phone
+		UNIQUE (user_phone),
+
+	CONSTRAINT FK_User_user_phone
+		FOREIGN KEY (user_status_id) REFERENCES UserStatus (user_status_id),
+	CONSTRAINT FK_User_user_email
+		FOREIGN KEY (user_role_id) REFERENCES UserRole (user_role_id),
+	
+	-- user_id must be exactly 8 digits long and does not start with 0
+	CONSTRAINT CHK_User_user_id_correct_format
+		CHECK (LENGTH(user_id) = 8 AND user_id REGEXP '^[1-9][0-9]*$'),
+	-- user_phone must be exactly 10 digits long and start with 0
+	CONSTRAINT CHK_User_user_phone_correct_format
+		CHECK (LENGTH(user_phone) = 10 AND user_phone REGEXP '^0[0-9]*$'),
+	-- you know i am not gonna bother with understanding email regex
+	CONSTRAINT CHK_User_user_email_correct_format
+		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
