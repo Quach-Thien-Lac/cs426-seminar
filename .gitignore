@@ -3,3 +3,20 @@ server/node_modules
 server/.env
 
 db/test.sql
+
+report/*.pdf
+report/*.synctex.gz
+report/.aux
+
+# idiot proofing
+*.pdf
+*.synctex.gz
+.aux
+*.log
+report/*.log
+report/*.fdb_latexmk
+report/*.fls
+report/*.out
+*.fdb_latexmk
+*.fls
+*.out
