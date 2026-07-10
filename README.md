@@ -15,32 +15,23 @@ The database visual schema is given [here](https://docs.google.com/spreadsheets/
 Lorem ipsum dolor sit amet
 
 # Build
-## Backend
-Fuck Docker Desktop. Use CLI instead.
-### First time build:
-1. <code>cd server</code> - Enters server directory (duh)
-2. <code>docker build -t sanguosuo-server .</code> - Builds Docker image
-3. <code>docker run -p 8080:8080 --name sanguosuo sanguosuo-server</code> - Builds Docker container from image and runs it
+<code>docker compose up</code>. Fuck yeah easy as that, but this will create a persistent process in the current terminal. In order to use your terminal for other work (e.g., stopping compose, git, or whatever bullshit you are doing), you need to spawn a new terminal. If you don't like this, do <code>docker compose up -d</code>.
 
-This will create a persistent process in the current terminal. In order to use your terminal for other work (e.g., stopping the container, git, or whatever bullshit you are doing), you need to spawn a new terminal.
-
-### Future runs:
-1. <code>docker start sanguosuo</code> - Runs the container
-
-### Stopping the container:
-1. <code>docker stop sanguosuo</code> - Stops the container
-
-## Frontend
-i will figure this out later
-
-## Database
 Within the <code>db/</code> folder are two SQL files&mdash;the schema definition and sample data. These files are used to seed your local database. **DO NOT USE THEM FOR PROD**.
 
-The local database is run using the MySQL container installed from the official website. On first run, configure them as you wish, and on the MySQL CLI:
-1. <code>SOURCE \<absolute_path_to_db/schema.sql\></code> - builds schema
-2. <code>SOURCE \<absolute_path_to_db/seed.sql\></code> - seeds the database with sample data
+To set up the database schema and sample data, compose up the container, then:
+1. <code>docker compose exec db sh</code> - Enters database container terminal
+2. <code>mysql -h 127.0.0.1 -u root -p</code> - Attempts to login the database
+3. Enters the password. The real Minh Kỳ would know.
+4. <code>SOURCE /sql/schema.sql</code> - builds schema
+5. <code>SOURCE /sql/seed.sql</code> - seeds the database with sample data
 
 The production database is cloud hosted on a certain website only the real Minh Kỳ would know. Ask him for connection host, username, and password.
 
-## Report
-i will also figure this out later
+# Report
+You know I could Dockerize the report now, but god damn is it easier for everyone to just let Latex Workshop autocompile rot and actually learn how to use latexmk. You need to install [MikTeX](https://miktex.org/download) and [Perl](https://strawberryperl.com/) first, install the package <code>latexmk</code> within MikTeX, and you are good to go.
+
+Within the report folder already has a <code>.latexmkrc</code>, which is a latexmk config file. To compile, just <code>cd report</code> and do <code>latexmk -pvc -pdf main.tex</code>. Yes, the output is PDF; yes, it will update itself when you edit the .tex file. Fuck slow ahh mf Latex Workshop and whatever bloats it wraps <code>latexmk</code> with.
+
+# License
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
