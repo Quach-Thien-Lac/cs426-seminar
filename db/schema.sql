@@ -26,3 +26,16 @@ CREATE TABLE UserRole (
     CONSTRAINT CHK_UserRole_user_role_code_uppercase
         CHECK (CAST(user_role_code AS BINARY) = UPPER(user_role_code))
 );
+
+CREATE TABLE SkillTag (
+	skill_tag_id TINYINT AUTO_INCREMENT,
+	skill_tag_code VARCHAR(20),
+	skill_tag_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_SkillTag_skill_tag_id
+		PRIMARY KEY (skill_tag_id),
+	CONSTRAINT UK_SkillTag_skill_tag_code
+		UNIQUE (skill_tag_code),
+    CONSTRAINT CHK_SkillTag_skill_tag_code_uppercase
+        CHECK (CAST(skill_tag_code AS BINARY) = UPPER(skill_tag_code))
+);
