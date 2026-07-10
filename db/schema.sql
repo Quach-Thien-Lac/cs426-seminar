@@ -171,3 +171,19 @@ CREATE TABLE Hero (
 	CONSTRAINT FK_HeroSkill_hero_skill_3_id
 		FOREIGN KEY (hero_skill_3_id) REFERENCES HeroSkill (skill_id)
 );
+
+/******************************************
+************** BRIDGE ENTITIES ************
+******************************************/
+CREATE TABLE HeroSkillTag (
+	skill_id VARCHAR(10),
+	skill_tag_id TINYINT,
+
+	CONSTRAINT PK_HeroSkillTag_sid_stid
+		PRIMARY KEY (skill_id, skill_tag_id),
+	
+	CONSTRAINT FK_HeroSkillTag_skill_id
+		FOREIGN KEY (skill_id) REFERENCES HeroSkill (skill_id),
+	CONSTRAINT FK_HeroSkillTag_skill_tag_id
+		FOREIGN KEY (skill_tag_id) REFERENCES SkillTag (skill_tag_id)
+);
