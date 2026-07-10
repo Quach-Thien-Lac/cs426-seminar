@@ -135,3 +135,11 @@ CREATE TABLE Article (
 	CONSTRAINT FK_Article_article_rev_id
 		FOREIGN KEY (article_rev_id) REFERENCES Revision (revision_id)
 );
+
+CREATE TABLE Image (
+	image_id VARCHAR(10),
+	image_blob BLOB,
+
+	CONSTRAINT PK_Image_image_id
+		PRIMARY KEY (image_id)
+);
