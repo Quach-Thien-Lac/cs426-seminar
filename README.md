@@ -27,3 +27,11 @@ To set up the database schema and sample data, compose up the container, then:
 5. <code>SOURCE /sql/seed.sql</code> - seeds the database with sample data
 
 The production database is cloud hosted on a certain website only the real Minh Kỳ would know. Ask him for connection host, username, and password.
+
+# Report
+You know I could Dockerize the report now, but god damn is it easier for everyone to just let Latex Workshop autocompile rot and actually learn how to use latexmk. You need to install [MikTeX](https://miktex.org/download) and [Perl](https://strawberryperl.com/) first, install the package <code>latexmk</code> within MikTeX, and you are good to go.
+
+Within the report folder already has a <code>.latexmkrc</code>, which is a latexmk config file. To compile, just <code>cd report</code> and do <code>latexmk -pvc -pdf main.tex</code>. Yes, the output is PDF; yes, it will update itself when you edit the .tex file. Fuck slow ahh mf Latex Workshop and whatever bloats it wraps <code>latexmk</code> with.
+
+# License
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
