@@ -112,6 +112,7 @@ CREATE TABLE `User` (
 );
 CREATE TABLE Revision (
 	revision_id BINARY(18),
+	revision_time DATETIME NOT NULL,
 	revision_text_id BINARY(28) NOT NULL,
 	revision_author_id BINARY(8) NOT NULL,
 
