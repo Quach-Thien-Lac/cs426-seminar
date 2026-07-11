@@ -65,7 +65,11 @@ CREATE TABLE HeroSkill (
 	skill_description VARCHAR(500) CHARACTER SET UTF8MB4,
 
 	CONSTRAINT PK_HeroSkill_skill_id
-		PRIMARY KEY (skill_id)
+		PRIMARY KEY (skill_id),
+
+	-- example: SHU009_1
+	CONSTRAINT CHK_HeroSkill_skill_id_correct_format
+		CHECK (skill_id REGEXP '^[A-Z0-9_]+$')
 );
 
 CREATE TABLE RevisionText (
