@@ -147,6 +147,9 @@ CREATE TABLE Image (
 
 	CONSTRAINT PK_Image_image_id
 		PRIMARY KEY (image_id)
+
+	CONSTRAINT CHK_Image_image_id_correct_format
+		CHECK (image_id REGEXP '^[A-Z0-9_]+$');
 );
 
 CREATE TABLE Hero (
