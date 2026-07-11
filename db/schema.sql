@@ -146,7 +146,7 @@ CREATE TABLE Image (
 	image_blob BLOB,
 
 	CONSTRAINT PK_Image_image_id
-		PRIMARY KEY (image_id)
+		PRIMARY KEY (image_id),
 
 	CONSTRAINT CHK_Image_image_id_correct_format
 		CHECK (image_id REGEXP '^[A-Z0-9_]+$');
@@ -177,7 +177,10 @@ CREATE TABLE Hero (
 	CONSTRAINT FK_HeroSkill_hero_skill_2_id
 		FOREIGN KEY (hero_skill_2_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_3_id
-		FOREIGN KEY (hero_skill_3_id) REFERENCES HeroSkill (skill_id)
+		FOREIGN KEY (hero_skill_3_id) REFERENCES HeroSkill (skill_id),
+
+	CONSTRAINT CHK_Hero_hero_id_correct_format
+		CHECK (hero_id REGEXP '^[A-Z0-9]+$');
 );
 
 /******************************************
