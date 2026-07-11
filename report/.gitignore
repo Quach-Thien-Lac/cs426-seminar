@@ -1,9 +1,7 @@
-.env
-
-# idiot proofing
 *.pdf
 *.synctex.gz
 .aux
+
 *.log
 *.fdb_latexmk
 *.fls
