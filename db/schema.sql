@@ -188,3 +188,16 @@ CREATE TABLE HeroSkillTag (
 	CONSTRAINT FK_HeroSkillTag_skill_tag_id
 		FOREIGN KEY (skill_tag_id) REFERENCES SkillTag (skill_tag_id)
 );
+
+CREATE TABLE HeroCombo (
+	hero_1_id VARCHAR(10),
+	hero_2_id VARCHAR(10),
+
+	CONSTRAINT PK_HeroCombo_h1id_h2id
+		PRIMARY KEY (hero_1_id, hero_2_id),
+
+	CONSTRAINT FK_HeroCombo_hero_1_id
+		FOREIGN KEY (hero_1_id) REFERENCES Hero (hero_id),
+	CONSTRAINT FK_HeroCombo_hero_2_id
+		FOREIGN KEY (hero_2_id) REFERENCES Hero (hero_id)
+);
