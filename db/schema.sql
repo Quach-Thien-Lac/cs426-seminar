@@ -62,7 +62,7 @@ CREATE TABLE HeroFaction (
 CREATE TABLE HeroSkill (
 	skill_id VARCHAR(10),
 	skill_name VARCHAR(20) CHARACTER SET UTF8MB4,
-	skill_description VARCHAR(500) CHARACTER SET UTF8MB4,
+	skill_description VARCHAR(1000) CHARACTER SET UTF8MB4,
 
 	CONSTRAINT PK_HeroSkill_skill_id
 		PRIMARY KEY (skill_id),
@@ -114,6 +114,7 @@ CREATE TABLE `User` (
 	CONSTRAINT CHK_User_user_email_correct_format
 		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
+
 CREATE TABLE Revision (
 	revision_id BINARY(18),
 	revision_time DATETIME NOT NULL,
