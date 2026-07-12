@@ -17,3 +17,9 @@ INSERT INTO SkillTag (skill_tag_code, skill_tag_name) VALUES
 	('HDK', 'Hạn Định Kỹ'),
 	('TPK', 'Trận Pháp Kỹ'),
 	('GM', 'Giảm 0.5 Máu');
+
+INSERT INTO HeroFaction (hero_faction_code, hero_faction_name) VALUES
+	('WEI', 'Nguỵ'),
+	('SHU', 'Thục'),
+	('WU', 'Ngô'),
+	('QUN', 'Quần');
