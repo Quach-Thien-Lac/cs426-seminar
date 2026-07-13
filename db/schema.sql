@@ -62,10 +62,14 @@ CREATE TABLE HeroFaction (
 CREATE TABLE HeroSkill (
 	skill_id VARCHAR(10),
 	skill_name VARCHAR(20) CHARACTER SET UTF8MB4,
-	skill_description VARCHAR(500) CHARACTER SET UTF8MB4,
+	skill_description VARCHAR(1000) CHARACTER SET UTF8MB4,
 
 	CONSTRAINT PK_HeroSkill_skill_id
-		PRIMARY KEY (skill_id)
+		PRIMARY KEY (skill_id),
+
+	-- example: SHU009_1
+	CONSTRAINT CHK_HeroSkill_skill_id_correct_format
+		CHECK (skill_id REGEXP '^[A-Z0-9_]+$')
 );
 
 CREATE TABLE RevisionText (
@@ -110,8 +114,10 @@ CREATE TABLE `User` (
 	CONSTRAINT CHK_User_user_email_correct_format
 		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
+
 CREATE TABLE Revision (
 	revision_id BINARY(18),
+	revision_time DATETIME NOT NULL,
 	revision_text_id BINARY(28) NOT NULL,
 	revision_author_id BINARY(8) NOT NULL,
 
@@ -141,17 +147,20 @@ CREATE TABLE Image (
 	image_blob BLOB,
 
 	CONSTRAINT PK_Image_image_id
-		PRIMARY KEY (image_id)
+		PRIMARY KEY (image_id),
+
+	CONSTRAINT CHK_Image_image_id_correct_format
+		CHECK (image_id REGEXP '^[A-Z0-9_]+$');
 );
 
 CREATE TABLE Hero (
 	hero_id VARCHAR(10),
-	hero_name VARCHAR(50) CHARACTER SET UTF8MB4,
+	hero_name VARCHAR(80) CHARACTER SET UTF8MB4,
 	hero_image_id VARCHAR(10),
 	hero_faction_id TINYINT NOT NULL,
 	hero_hp FLOAT(1) NOT NULL,
-	hero_legend VARCHAR(50) CHARACTER SET UTF8MB4,
-	hero_quote VARCHAR(100) CHARACTER SET UTF8MB4,
+	hero_epithet VARCHAR(100) CHARACTER SET UTF8MB4,
+	hero_quote VARCHAR(200) CHARACTER SET UTF8MB4,
 	hero_has_tradeoff BIT NOT NULL,
 	hero_skill_1_id VARCHAR(10),
 	hero_skill_2_id VARCHAR(10),
@@ -169,7 +178,10 @@ CREATE TABLE Hero (
 	CONSTRAINT FK_HeroSkill_hero_skill_2_id
 		FOREIGN KEY (hero_skill_2_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_3_id
-		FOREIGN KEY (hero_skill_3_id) REFERENCES HeroSkill (skill_id)
+		FOREIGN KEY (hero_skill_3_id) REFERENCES HeroSkill (skill_id),
+
+	CONSTRAINT CHK_Hero_hero_id_correct_format
+		CHECK (hero_id REGEXP '^[A-Z0-9]+$');
 );
 
 /******************************************
@@ -186,4 +198,17 @@ CREATE TABLE HeroSkillTag (
 		FOREIGN KEY (skill_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkillTag_skill_tag_id
 		FOREIGN KEY (skill_tag_id) REFERENCES SkillTag (skill_tag_id)
+);
+
+CREATE TABLE HeroCombo (
+	hero_1_id VARCHAR(10),
+	hero_2_id VARCHAR(10),
+
+	CONSTRAINT PK_HeroCombo_h1id_h2id
+		PRIMARY KEY (hero_1_id, hero_2_id),
+
+	CONSTRAINT FK_HeroCombo_hero_1_id
+		FOREIGN KEY (hero_1_id) REFERENCES Hero (hero_id),
+	CONSTRAINT FK_HeroCombo_hero_2_id
+		FOREIGN KEY (hero_2_id) REFERENCES Hero (hero_id)
 );
