@@ -3,13 +3,14 @@ import express from 'express';
 
 // types
 import type ServiceResponse from './types/ServiceResponse.ts';
+import type { Request, Response } from 'express';
 
 // config
 import config from './config/config.ts';
 
 const app = express();
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
 	const rootResponse: ServiceResponse = {
 		success: true,
 		statusCode: 200,
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
 	res.send(rootResponse);
 });
 
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
 	res.send('Server is running');
 });
 
