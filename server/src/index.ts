@@ -7,9 +7,10 @@ import type { Request, Response, NextFunction } from 'express';
 
 // configs and db pool
 import mysql from 'mysql2/promise';
+import type { Pool } from 'mysql2/promise'
 import config from './config/config.ts';
 
-const pool = mysql.createPool({
+const pool: Pool = mysql.createPool({
 	connectionLimit: 5,
 	host: 'db', // i don't know how the FUCK this resolves to the correct host
 	user: config.db.dbUser,
@@ -19,7 +20,6 @@ const pool = mysql.createPool({
 	port: config.db.dbPort,
 	enableKeepAlive: true
 });
-
 
 // express app
 const app = express();
@@ -40,7 +40,19 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 });
 
 // health endpoint
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', async (req: Request, res: Response) => {
+	let dbPing;
+	let connection;
+	try {
+		connection = await pool.getConnection();
+		await connection.ping();
+		dbPing = true;
+	} catch (err) {
+		dbPing = false;
+	} finally {
+		connection?.release();
+	}
+
 	const healthResponse: ServiceResponse = {
 		success: true,
 		statusCode: 200,
@@ -48,6 +60,7 @@ app.get('/health', (req: Request, res: Response) => {
 			message: 'OK',
 			data: {
 				uptime: prettyMilliseconds(process.uptime() * 1000),
+				dbActive: dbPing
 			}
 		}
 	};
