@@ -61,12 +61,27 @@ app.get('/health', (req: Request, res: Response) => {
 	res.send(healthResponse);
 });
 
-process.on('SIGTERM', async () => {
-	console.log('hi');
-	await pool.end();
+// port magic
+const server = app.listen(config.server.port, () => {
+	console.log(`Server is running at http://localhost:${config.server.port}`);
 });
 
-// port magic
-app.listen(config.server.port, () => {
-	console.log(`Server is running at http://localhost:${config.server.port}`);
+// graceful shutdown
+async function shutdown() {
+	server.close(async (err) => {
+		if (err) {
+			console.log(`Graceful shutdown failed. The server is fucked`);
+		}
+
+		await pool.end();
+	});
+}
+
+process.on('SIGTERM', async () => {
+	console.log('Server ending now. Good night');
+	await shutdown();
+});
+process.on('SIGINT', async () => {
+	console.log('Server ending now. Good night');
+	await shutdown();
 });
