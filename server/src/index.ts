@@ -11,7 +11,7 @@ import config from './config/config.ts';
 
 const pool = mysql.createPool({
 	connectionLimit: 5,
-	host: 'db',
+	host: 'db', // i don't know how the FUCK this resolves to the correct host
 	user: config.db.dbUser,
 	password: config.db.dbPassword,
 	database: config.db.dbName,
@@ -20,16 +20,10 @@ const pool = mysql.createPool({
 	enableKeepAlive: true
 });
 
-try {
-	const [results, fields] = await pool.query('SELECT 1 + 2 AS three');
-	console.log(results);
-	console.log(fields);
-} catch (err) {
-	console.error(err);
-}
 
 // express app
 const app = express();
+
 
 // root endpoint
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
@@ -61,10 +55,12 @@ app.get('/health', (req: Request, res: Response) => {
 	res.send(healthResponse);
 });
 
+
 // port magic
 const server = app.listen(config.server.port, () => {
 	console.log(`Server is running at http://localhost:${config.server.port}`);
 });
+
 
 // graceful shutdown
 async function shutdown() {
