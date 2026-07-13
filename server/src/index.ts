@@ -1,16 +1,19 @@
 // libs
 import express from 'express';
-
-// types
+import prettyMilliseconds from 'pretty-ms';
 import type ServiceResponse from './types/ServiceResponse.ts';
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
-// config
+
+// configs and db pool
 import config from './config/config.ts';
+
+
 
 const app = express();
 
-app.get('/', (req: Request, res: Response) => {
+// root endpoint
+app.get('/', (req: Request, res: Response, next: NextFunction) => {
 	const rootResponse: ServiceResponse = {
 		success: true,
 		statusCode: 200,
@@ -18,15 +21,28 @@ app.get('/', (req: Request, res: Response) => {
 			message: 'Sanguosha Baike API root endpoint',
 			data: null
 		}
-	}
+	};
 
 	res.send(rootResponse);
 });
 
+// health endpoint
 app.get('/health', (req: Request, res: Response) => {
-	res.send('Server is running');
+	const healthResponse: ServiceResponse = {
+		success: true,
+		statusCode: 200,
+		payload: {
+			message: 'OK',
+			data: {
+				uptime: prettyMilliseconds(process.uptime() * 1000)
+			}
+		}
+	};
+
+	res.send(healthResponse);
 });
 
+// port magic
 app.listen(config.server.port, () => {
 	console.log(`Server is running at http://localhost:${config.server.port}`);
 });
