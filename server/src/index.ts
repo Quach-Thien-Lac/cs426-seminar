@@ -5,21 +5,9 @@ import type ServiceResponse from './types/ServiceResponse.ts';
 import type { Request, Response, NextFunction } from 'express';
 
 
-// configs and db pool
-import mysql from 'mysql2/promise';
-import type { Pool } from 'mysql2/promise'
+// modules
 import config from './config/config.ts';
-
-const pool: Pool = mysql.createPool({
-	connectionLimit: 5,
-	host: 'db', // i don't know how the FUCK this resolves to the correct host
-	user: config.db.dbUser,
-	password: config.db.dbPassword,
-	database: config.db.dbName,
-	waitForConnections: true,
-	port: config.db.dbPort,
-	enableKeepAlive: true
-});
+import DbConnection from './connections/DbConnection.ts';
 
 // express app
 const app = express();
@@ -44,7 +32,7 @@ app.get('/health', async (req: Request, res: Response) => {
 	let dbPing;
 	let connection;
 	try {
-		connection = await pool.getConnection();
+		connection = await DbConnection.pool.getConnection();
 		await connection.ping();
 		dbPing = true;
 	} catch (err) {
@@ -82,7 +70,7 @@ async function shutdown() {
 			console.log(`Graceful shutdown failed. The server is fucked`);
 		}
 
-		await pool.end();
+		await DbConnection.pool.end();
 	});
 }
 
