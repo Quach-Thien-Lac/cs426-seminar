@@ -9,6 +9,7 @@ import type { Request, Response, NextFunction } from 'express';
 import config from './config/config.ts';
 import DbConnection from './connections/DbConnection.ts';
 
+
 // express app
 const app = express();
 

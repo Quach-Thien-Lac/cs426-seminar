@@ -1,6 +1,6 @@
 interface ServiceResponsePayload {
 	message: String,
-	data: Object | null
+	data: any
 }
 
 interface ServiceResponse {
