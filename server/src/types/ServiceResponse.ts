@@ -1,11 +1,11 @@
 interface ServiceResponsePayload {
 	message: String,
-	data: any
+	data?: any
 }
 
 interface ServiceResponse {
 	success: Boolean,
-	statusCode: Number,
+	statusCode: number,
 	payload: ServiceResponsePayload
 }
 
