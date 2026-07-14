@@ -1,6 +1,7 @@
 // libs
 import express from 'express';
 import prettyMilliseconds from 'pretty-ms';
+import bodyParser from 'body-parser';
 import type ServiceResponse from './types/ServiceResponse.ts';
 import type { Request, Response, NextFunction } from 'express';
 
@@ -12,6 +13,12 @@ import DbConnection from './connections/DbConnection.ts';
 
 // express app
 const app = express();
+app.use(bodyParser.json());
+
+
+// routes
+import DbRoute from './routes/DbRoute.ts';
+
 
 
 // root endpoint
@@ -56,6 +63,8 @@ app.get('/health', async (req: Request, res: Response) => {
 
 	res.send(healthResponse);
 });
+
+app.use('/api/db', DbRoute)
 
 
 // port magic

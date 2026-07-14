@@ -1,12 +1,10 @@
 interface ServiceResponsePayload {
-	message: String,
-	data?: any
+	message: string,
+	data?: unknown
 }
 
-interface ServiceResponse {
-	success: Boolean,
+export default interface ServiceResponse {
+	success: boolean,
 	statusCode: number,
 	payload: ServiceResponsePayload
 }
-
-export default ServiceResponse;

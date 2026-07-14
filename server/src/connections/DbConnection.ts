@@ -14,7 +14,7 @@ class DbConnection {
 			database: config.db.dbName,
 			waitForConnections: true,
 			port: config.db.dbPort,
-			enableKeepAlive: true
+			enableKeepAlive: true,
 		});
 	}
 }
