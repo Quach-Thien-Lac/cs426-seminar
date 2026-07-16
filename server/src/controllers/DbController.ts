@@ -3,24 +3,24 @@ import type ServiceResponse from '../types/ServiceResponse.ts';
 import DbService from '../services/DbService.ts';
 
 class DbController {
-	async dumpTable(req: Request, res: Response, next: NextFunction) {
-		const table: any = req.body.table;
-		console.log(table);
+	async getHero(req: Request, res: Response, next: NextFunction) : Promise<void> {
+		const hero: any = req.body.hero;
+		console.log(req.body);
 		
 		// if no table param is used
-		if (!table) {
+		if (!hero) {
 			const response: ServiceResponse = {
 				success: false,
 				statusCode: 400,
 				payload: {
-					message: 'Missing table parameter'
+					message: 'Missing hero parameter'
 				}
 			};
 
 			return void res.status(response.statusCode).json(response);
 		}
 
-		const response: ServiceResponse = await DbService.dumpTable(table);
+		const response: ServiceResponse = await DbService.getHero(hero);
 		return void res.status(response.statusCode).json(response);
 	}
 }

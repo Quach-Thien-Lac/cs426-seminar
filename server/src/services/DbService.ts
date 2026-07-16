@@ -2,8 +2,8 @@ import DbConnection from "../connections/DbConnection.ts";
 import type ServiceResponse from "../types/ServiceResponse.ts";
 
 class DbService {
-	async dumpTable(table: string): Promise<ServiceResponse> {
-		const [results, fields] = await DbConnection.pool.query(`SELECT * FROM ${table};`);
+	async getHero(hero: string): Promise<ServiceResponse> {
+		const [results] = await DbConnection.pool.execute(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
 
 		const response: ServiceResponse = {
 			success: true,

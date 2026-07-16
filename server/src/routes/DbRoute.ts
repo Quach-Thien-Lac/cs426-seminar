@@ -4,8 +4,9 @@ import ValidatorMiddleware from "../middleware/ValidatorMiddleware.ts";
 
 const router: Router = Router();
 
-router.all('/dump',
+router.all('/get-hero',
 	ValidatorMiddleware.validateMethod(['QUERY']),
-	DbController.dumpTable);
+	DbController.getHero
+);
 
 export default router;
