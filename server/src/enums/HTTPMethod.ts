@@ -1,9 +1,9 @@
 // used for validateMethod middleware
-export enum HTTPMethod {
-	GET = 'GET',
-	POST = 'POST',
-	PUT = 'PUT',
-	DELETE = 'DELETE',
-	PATCH = 'PATCH',
-	QUERY = 'QUERY'
-}
+export const HTTPMethod = {
+	GET: 'GET',
+	POST: 'POST',
+	PUT: 'PUT',
+	DELETE: 'DELETE',
+	PATCH: 'PATCH',
+	QUERY: 'QUERY'
+} as const;
