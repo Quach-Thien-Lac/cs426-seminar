@@ -15,6 +15,7 @@ class DbConnection {
 			waitForConnections: true,
 			port: config.db.dbPort,
 			enableKeepAlive: true,
+			charset: 'utf8mb4'
 		});
 	}
 }

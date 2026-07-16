@@ -1,4 +1,5 @@
 USE Sanguosuo;
+SET NAMES UTF8MB4 COLLATE UTF8MB4_UNICODE_CI;
 
 INSERT INTO UserStatus (user_status_code, user_status_name) VALUES
 	('ACTIVE', 'Active'),
