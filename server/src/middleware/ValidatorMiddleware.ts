@@ -19,6 +19,61 @@ class ValidatorMiddleware {
 			next();
 		}
 	}
+
+	validateAccessToken(req: Request, res: Response, next: NextFunction) {
+		const credentials = req.headers["authorization"];
+		if (!credentials) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 401;
+			response.payload = {
+				message: "Access denied, no credentials"
+			};
+
+			return void res.status(response.statusCode)
+				.set("WWW-Authenticate", 'Bearer realm="api"')
+				.json(response.get());
+		}
+
+		const credentialsParts = credentials.split(' '); // [scheme, token]
+		const credentialsScheme = credentialsParts[0];
+		const credentialsToken = credentialsParts[1];
+
+		if (credentialsScheme !== 'Bearer') {
+			const response = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 401;
+			response.payload = {
+				message: "Access denied, authorization type must be Bearer"
+			};
+
+			return void res.status(response.statusCode)
+				.set("WWW-Authenticate", 'Bearer realm="api"')
+				.json(response.get());
+		}
+
+		// subject to change later
+		// these bits are for future stuff
+		// if (credentialsToken === "MIKU_MIKU_OO_EE_OO") {
+		// 	next();
+		// 	return;
+		// }
+		
+		// try {
+		// 	jwt.verify(credentialsToken, process.env.JWT_SECRET);
+		// } catch (err) {
+		// 	const response = new ServiceResponse(
+		// 		false,
+		// 		401,
+		// 		`Access denied`
+		// 	);
+		// 	return void res.status(response.statusCode)
+		// 		.set("WWW-Authenticate", 'Bearer realm="api"')
+		// 		.json(response.get());
+		// }
+
+		next();
+	}
 }
 
 export default new ValidatorMiddleware();
