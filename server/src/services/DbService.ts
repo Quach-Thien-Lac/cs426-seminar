@@ -4,6 +4,12 @@ import ServiceResponse from "../types/ServiceResponse.ts";
 
 export class DbService {
 	/**
+	 * @hidden
+	 */
+	constructor() {
+	}
+
+	/**
 	 * Service function for <code>/api/db/get-hero</code>. Get all data for a hero. Supports <code>QUERY</code> requests.
 	 * @param {string} hero - The hero's ID
 	 * @returns {Promise<ServiceResponse>}
