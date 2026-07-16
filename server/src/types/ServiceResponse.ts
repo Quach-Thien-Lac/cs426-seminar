@@ -1,3 +1,5 @@
+import http from 'http';
+
 interface ServiceResponsePayload {
 	message: string,
 	data?: unknown
@@ -18,7 +20,10 @@ class ServiceResponse implements IServiceResponse {
 		const response: IServiceResponse = {
 			success: this.success,
 			statusCode: this.statusCode,
-			payload: this.payload
+			payload: {
+				message: `${this.payload.message} (${http.STATUS_CODES[this.statusCode]})`,
+				data: this.payload.data
+			}
 		};
 		return response; 
 	}
