@@ -20,7 +20,7 @@ class ValidatorMiddleware {
 		}
 	}
 
-	validateAccessToken(req: Request, res: Response, next: NextFunction) {
+	validateAccessToken(req: Request, res: Response, next: NextFunction): void {
 		const credentials = req.headers["authorization"];
 		if (!credentials) {
 			const response: ServiceResponse = new ServiceResponse;
@@ -75,7 +75,7 @@ class ValidatorMiddleware {
 		next();
 	}
 
-	validateContentType(req: Request, res: Response, next: NextFunction) {
+	validateContentType(req: Request, res: Response, next: NextFunction): void {
 		if (req.headers['content-type'] !== 'application/json') {
 			const response = new ServiceResponse;
 			response.success = false;
