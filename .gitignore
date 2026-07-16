@@ -1,3 +1,4 @@
+docs
 .env
 
 # idiot proofing
@@ -8,3 +9,4 @@
 *.fdb_latexmk
 *.fls
 *.out
+.idea
