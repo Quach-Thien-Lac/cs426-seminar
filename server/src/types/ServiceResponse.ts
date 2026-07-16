@@ -21,7 +21,7 @@ class ServiceResponse implements IServiceResponse {
 			throw new Error("Status code is still in default value you dumbfuck");
 		}
 
-		if (this.payload.message = "miku") {
+		if (this.payload.message === "miku") {
 			throw new Error("Payload message is still in default value you dumbfuck");
 		}
 
