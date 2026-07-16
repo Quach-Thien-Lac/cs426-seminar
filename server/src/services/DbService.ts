@@ -49,11 +49,12 @@ export class DbService {
 	 *   }
 	 * }
 	 * 
-	 * @property {OK} 200 - Successful request
-	 * @property {BAD_REQUEST} 400 - Missing any of the required parameters
-	 * @property {NOT_FOUND} 404 - The specified hero does not exist in the database
-	 * @property {METHOD_NOT_ALLOWED} 405 - The endpoint does not support the HTTP method specified
-	 * @property {INTERNAL_SERVER_ERROR} 500 - Internal server error (cooked)
+	 * @response
+	 * - `200 OK` - Successful request
+	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `404 NOT_FOUND` - The specified hero does not exist in the database
+	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
+	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
 	 */
 	public async getHero(hero: string): Promise<ServiceResponse> {
 		const [results, fields] = await DbConnection.pool.query<RowDataPacket[]>(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
