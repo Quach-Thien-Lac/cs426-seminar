@@ -1,1 +1,0 @@
-![miku](https://media.tenor.com/ouQzDmgC9CwAAAAi/miku-vocaloid.gif)

@@ -2,7 +2,7 @@ import type { FieldPacket, RowDataPacket } from "mysql2";
 import DbConnection from "../connections/DbConnection.ts";
 import ServiceResponse from "../types/ServiceResponse.ts";
 
-class DbService {
+export class DbService {
 	/**
 	 * Service function for <code>/api/db/get-hero</code>. Get all data for a hero. Supports <code>QUERY</code> requests.
 	 * @param {string} hero - The hero's ID
@@ -16,31 +16,31 @@ class DbService {
 	 * 
 	 * @example <caption>Response</caption>
 	 * {
-	 * 	"success": true,
-	 * 	"statusCode": 200,
-	 * 	"payload": {
-	 * 		"message": "OK (OK)",
-	 * 		"data": [
-	 * 			{
-	 * 				"hero_id": "WEI015",
-	 * 				"hero_name": "Từ Hoảng",
-	 * 				"hero_image_id": null,
-	 * 				"hero_faction_id": 1,
-	 * 				"hero_hp": 2,
-	 * 				"hero_epithet": "Chu Á Chi Phong",
-	 * 				"hero_quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
-	 * 				"hero_has_tradeoff": {
-	 * 					"type": "Buffer",
-	 * 					"data": [
-	 * 						0
-	 * 					]
-	 * 				},
-	 * 				"hero_skill_1_id": "WEI015_1",
-	 * 				"hero_skill_2_id": null,
-	 * 				"hero_skill_3_id": null
-	 * 			}
-	 * 		]
-	 * 	}
+	 *   "success": true,
+	 *   "statusCode": 200,
+	 *   "payload": {
+	 *     "message": "OK (OK)",
+	 *     "data": [
+	 *       {
+	 *         "hero_id": "WEI015",
+	 *         "hero_name": "Từ Hoảng",
+	 *         "hero_image_id": null,
+	 *         "hero_faction_id": 1,
+	 *         "hero_hp": 2,
+	 *         "hero_epithet": "Chu Á Chi Phong",
+	 *         "hero_quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+	 *         "hero_has_tradeoff": {
+	 *           "type": "Buffer",
+	 *           "data": [
+	 *             0
+	 *           ]
+	 *         },
+	 *         "hero_skill_1_id": "WEI015_1",
+	 *         "hero_skill_2_id": null,
+	 *         "hero_skill_3_id": null
+	 *       }
+	 *     ]
+	 *   }
 	 * }
 	 * 
 	 * @property {OK} 200 - Successful request
@@ -49,7 +49,7 @@ class DbService {
 	 * @property {METHOD_NOT_ALLOWED} 405 - The endpoint does not support the HTTP method specified
 	 * @property {INTERNAL_SERVER_ERROR} 500 - Internal server error (cooked)
 	 */
-	async getHero(hero: string): Promise<ServiceResponse> {
+	public async getHero(hero: string): Promise<ServiceResponse> {
 		const [results, fields] = await DbConnection.pool.query<RowDataPacket[]>(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
 
 		if (!results.length) {
@@ -75,4 +75,5 @@ class DbService {
 	}
 }
 
-export default new DbService();
+const dbService = new DbService();
+export default dbService;
