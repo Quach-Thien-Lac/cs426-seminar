@@ -2,7 +2,7 @@
 import express from 'express';
 import prettyMilliseconds from 'pretty-ms';
 import bodyParser from 'body-parser';
-import type ServiceResponse from './types/ServiceResponse.ts';
+import ServiceResponse from './types/ServiceResponse.ts';
 import type { Request, Response, NextFunction } from 'express';
 
 
@@ -23,13 +23,12 @@ import DbRoute from './routes/DbRoute.ts';
 
 // root endpoint
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	const rootResponse: ServiceResponse = {
-		success: true,
-		statusCode: 200,
-		payload: {
-			message: 'Sanguosha Baike API root endpoint',
-			data: null
-		}
+	const rootResponse: ServiceResponse = new ServiceResponse;
+	rootResponse.success = true,
+	rootResponse.statusCode = 200,
+	rootResponse.payload = {
+		message: 'Sanguosha Baike API root endpoint',
+		data: null
 	};
 
 	res.send(rootResponse);
@@ -49,17 +48,16 @@ app.get('/health', async (req: Request, res: Response) => {
 		connection?.release();
 	}
 
-	const healthResponse: ServiceResponse = {
-		success: true,
-		statusCode: 200,
-		payload: {
-			message: 'OK',
-			data: {
-				uptime: prettyMilliseconds(process.uptime() * 1000),
-				dbActive: dbPing
-			}
+	const healthResponse: ServiceResponse = new ServiceResponse;
+	healthResponse.success = true,
+	healthResponse.statusCode = 200,
+	healthResponse.payload = {
+		message: 'OK',
+		data: {
+			uptime: prettyMilliseconds(process.uptime() * 1000),
+			dbActive: dbPing
 		}
-	};
+	}
 
 	res.send(healthResponse);
 });
