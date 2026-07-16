@@ -1,3 +1,4 @@
+import type { FieldPacket, RowDataPacket } from "mysql2";
 import DbConnection from "../connections/DbConnection.ts";
 import ServiceResponse from "../types/ServiceResponse.ts";
 
@@ -16,7 +17,18 @@ class DbService {
 	 * @property {OK} 200 - Successful request
 	 */
 	async getHero(hero: string): Promise<ServiceResponse> {
-		const [results] = await DbConnection.pool.execute(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
+		const [results, fields] = await DbConnection.pool.query<RowDataPacket[]>(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
+
+		if (!results.length) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false,
+			response.statusCode = 404,
+			response.payload = {
+				message: 'Hero does not exist',
+			};
+
+			return response;
+		}
 
 		const response: ServiceResponse = new ServiceResponse;
 		response.success = true,

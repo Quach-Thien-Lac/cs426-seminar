@@ -5,7 +5,6 @@ import DbService from '../services/DbService.ts';
 class DbController {
 	async getHero(req: Request, res: Response, next: NextFunction) : Promise<void> {
 		const hero: any = req.body.hero;
-		console.log(req.body);
 		
 		// if no table param is used
 		if (!hero) {
