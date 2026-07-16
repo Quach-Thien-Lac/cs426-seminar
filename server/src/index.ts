@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 
 // routes
 import DbRoute from './routes/DbRoute.ts';
+import errorHandler from './middleware/errorHandler.ts';
 
 
 
@@ -62,7 +63,9 @@ app.get('/health', async (req: Request, res: Response) => {
 	res.send(healthResponse);
 });
 
-app.use('/api/db', DbRoute)
+app.use('/api/db', DbRoute);
+
+app.use(errorHandler);
 
 
 // port magic

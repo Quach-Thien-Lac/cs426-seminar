@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import ServiceResponse from '../types/ServiceResponse.ts';
 
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
@@ -14,3 +14,5 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
 
 	return void res.status(response.statusCode).json(response.get());
 }
+
+export default errorHandler;
