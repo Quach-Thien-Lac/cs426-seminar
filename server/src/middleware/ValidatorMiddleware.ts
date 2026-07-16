@@ -74,6 +74,19 @@ class ValidatorMiddleware {
 
 		next();
 	}
+
+	validateContentType(req: Request, res: Response, next: NextFunction) {
+		if (req.headers['content-type'] !== 'application/json') {
+			const response = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 415;
+			response.payload = {
+				message: 'Malformed Content-Type header; must be application/json'
+			};
+			return void res.status(response.statusCode).json(response.get());
+		}
+		next();
+	}
 }
 
 export default new ValidatorMiddleware();
