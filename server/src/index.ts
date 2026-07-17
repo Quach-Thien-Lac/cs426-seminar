@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 
 
 // routes
+import AuthRoute from './routes/AuthRoute.ts';
 import DbRoute from './routes/DbRoute.ts';
 import errorHandler from './middleware/errorHandler.ts';
 
@@ -63,6 +64,7 @@ app.get('/health', async (req: Request, res: Response) => {
 	res.send(healthResponse);
 });
 
+app.use('/api/auth', AuthRoute);
 app.use('/api/db', DbRoute);
 
 app.use(errorHandler);
