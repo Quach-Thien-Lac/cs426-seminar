@@ -4,6 +4,7 @@
 
     <string name="sign_in">SIGN IN</string>
     <string name="sign_up">SIGN UP</string>
+    <string name="sign_up_with_email">SIGN UP WITH EMAIL</string>
     <string name="continue_as_guest">CONTINUE AS GUEST</string>
 
     <string name="sign_in_title">Sign In</string>

@@ -34,10 +34,10 @@ fun SanguosuoTitle(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SanguosuoTitlePreview() {
-    SanguosuoClientTheme() {
-        SanguosuoTitle(Modifier.wrapContentSize())
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SanguosuoTitlePreview() {
+//    SanguosuoClientTheme() {
+//        SanguosuoTitle(Modifier.wrapContentSize())
+//    }
+//}

@@ -116,19 +116,19 @@ fun SignInScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        SanguosuoButton(
-                            text = "Sign In",
-                            onClick = { viewModel.signIn() },
-                            enabled = username.isNotBlank() && password.isNotBlank()
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        SanguosuoButton(
-                            text = "Don't have an account? Sign Up",
-                            onClick = onNavigateToSignUp,
-                            variant = SanguosuoButtonVariant.Text
-                        )
+//                        SanguosuoButton(
+//                            text = "Sign In",
+//                            onClick = { viewModel.signIn() },
+//                            enabled = username.isNotBlank() && password.isNotBlank()
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(16.dp))
+//
+//                        SanguosuoButton(
+//                            text = "Don't have an account? Sign Up",
+//                            onClick = onNavigateToSignUp,
+//                            variant = SanguosuoButtonVariant.Text
+//                        )
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.example.sanguosuoclient.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -33,7 +34,7 @@ val Typography = Typography(
     displaySmall = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Light,
-        fontSize = 16.sp
+        fontSize = 16.sp,
     ),
     titleLarge = TextStyle(
         fontFamily = MaShanZheng,
@@ -43,6 +44,7 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = LiuJianMaoCao,
         fontWeight = FontWeight.Normal,
-        fontSize = 83.sp
+        fontSize = 83.sp,
+        color = Color(0xFF6F0000)
     )
 )
