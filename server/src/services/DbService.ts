@@ -15,7 +15,7 @@ export class DbService {
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
-	 * curl -X POST \
+	 * curl -X QUERY \
 	 * --header 'Content-Type:application/json' \
 	 * --data '{"hero": "WEI015"}' \
 	 * http://localhost:8080/api/db/get-hero

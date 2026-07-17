@@ -36,8 +36,38 @@ export class AuthService {
 	constructor() {
 	}
 
+	/**
+	 * Service function for <code>/api/auth/register</code>. Registers a new user. The newly created user ID is included in the payload data, as well as the <code>Location</code> header of the response. Supports <code>POST</code> requests.
+	 * @param {UserRegistrationData} data - User registration's payload data.
+	 * @returns {Promise<ServiceResponse>}
+	 * 
+	 * @example <caption>cURL</caption>
+	 * curl -X POST \
+	 * --header 'Content-Type:application/json' \
+	 * --data '{"name": "Hatsune Miku", "email": "mikuuwu@gmail.com", "phone": "0393676939", "username": "therealhatsunemiku", "password": "supersecuremikumikupassword"}' \
+	 * http://localhost:8080/api/auth/register
+	 * 
+	 * @example <caption>Response</caption>
+	 * {
+	 *   "success": true,
+	 *   "statusCode": 201,
+	 *   "payload": {
+	 *     "message": "OK (CREATED)",
+	 *     "data": {
+	 *       "userID": "56892408",
+	 *       "username": "therealhatsunemiku"
+	 *     }
+	 *   }
+	 * }
+	 * 
+	 * @response
+	 * - `201 CREATED` - Successful request
+	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
+	 * - `409 CONFLICT` - Requested user already has some of the parameters in the database
+	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
+	 */
 	public async register(data: UserRegistrationData): Promise<ServiceResponse> {
-		let results: ResultSetHeader[];
 		const userID: string = await generateUniqueUserID();
 		const passwordHash: string = await bcrypt.hash(data.passwordPlainText, SALT_ROUNDS);
 
@@ -95,7 +125,7 @@ export class AuthService {
 
 		try {
 			// insert user
-			[results] = await DbConnection.pool.execute<ResultSetHeader[]>(`
+			await DbConnection.pool.execute<ResultSetHeader[]>(`
 				INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 			`, [
