@@ -1,0 +1,13 @@
+import { Router } from "express";
+import AuthController from "../controllers/AuthController.ts";
+import ValidatorMiddleware from "../middleware/ValidatorMiddleware.ts";
+import { HTTPMethod } from "../enums/HTTPMethod.ts";
+
+const router: Router = Router();
+
+router.all('/register',
+	ValidatorMiddleware.validateMethod([HTTPMethod.POST]),
+	AuthController.register
+);
+
+export default router;
