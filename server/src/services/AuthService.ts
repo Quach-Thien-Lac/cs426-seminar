@@ -104,7 +104,7 @@ export class AuthService {
 				data.phone,
 				data.username,
 				passwordHash,
-				,
+				dateToSQLDatetime(new Date(Date.now())),
 				activeUserStatusID,
 				viewerUserRoleID
 			]);
