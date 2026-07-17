@@ -3,4 +3,5 @@ export interface UserRegistrationData {
 	email: string,
 	phone: string,
 	username: string,
+	passwordPlainText: string
 }

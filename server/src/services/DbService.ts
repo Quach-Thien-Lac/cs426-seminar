@@ -67,9 +67,9 @@ export class DbService {
 				response.success = false;
 				response.statusCode = 500;
 				response.payload = {
-					message: 'The database is cooked',
+					message: 'The database is cooked while trying to find the given hero',
 					data: err.toString()
-				}
+				};
 				return response;
 			} else {
 				const response: ServiceResponse = new ServiceResponse;
@@ -77,10 +77,9 @@ export class DbService {
 				response.statusCode = 500;
 				response.payload = {
 					message: 'What the fuck bro even the ERROR is cooked??????',
-				}
+				};
 				return response;
 			}
-
 		}
 
 		if (!results.length) {
