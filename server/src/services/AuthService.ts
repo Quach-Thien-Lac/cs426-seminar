@@ -5,7 +5,7 @@ export class AuthService {
 	constructor() {
 	}
 
-	
+	// public async register()
 }
 
 const authService = new AuthService();
