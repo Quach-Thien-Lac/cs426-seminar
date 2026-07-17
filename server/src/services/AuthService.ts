@@ -187,6 +187,21 @@ export class AuthService {
 
 			return response;
 		}
+
+		// TODO: unique constraint on username
+		// THENNNNNNN we check password hashhhhhhh
+		const passwordHash = userWithGivenUsername[0]['user_password'];
+		const passwordMatch = await bcrypt.compare(password, passwordHash);
+		if (!passwordMatch) {
+			const response = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 401;
+			response.payload = {
+				message: 'Wrong password'
+			};
+
+			return response;
+		}
 		
 
 		// await DbConnection.pool.execute<ResultSetHeader[]>(`
