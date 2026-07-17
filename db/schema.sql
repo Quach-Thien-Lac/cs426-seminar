@@ -199,7 +199,7 @@ CREATE TABLE Session (
 	CONSTRAINT PK_Session_session_token
 		PRIMARY KEY (session_token),
 	CONSTRAINT FK_Session_session_user_id
-		FOREIGN KEY (session_user_id) REFERENCES `User` (session_user_id)
+		FOREIGN KEY (session_user_id) REFERENCES `User` (user_id)
 );
 
 /******************************************
