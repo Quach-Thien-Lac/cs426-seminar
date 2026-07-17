@@ -25,6 +25,10 @@ async function generateUniqueUserID(): Promise<string> {
 	return userID;
 }
 
+function dateToSQLDatetime(date: Date) {
+	return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
 export class AuthService {
 	/**
 	 * @hidden
@@ -92,7 +96,7 @@ export class AuthService {
 		try {
 			[results] = await DbConnection.pool.execute<ResultSetHeader[]>(`
 				INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 			`, [
 				userID,
 				data.name,
@@ -100,6 +104,7 @@ export class AuthService {
 				data.phone,
 				data.username,
 				passwordHash,
+				,
 				activeUserStatusID,
 				viewerUserRoleID
 			]);
