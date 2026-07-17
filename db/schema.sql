@@ -102,6 +102,8 @@ CREATE TABLE `User` (
 		UNIQUE (user_email),
 	CONSTRAINT UK_User_user_phone
 		UNIQUE (user_phone),
+	CONSTRAINT UK_User_user_username
+		UNIQUE (user_username),
 
 	CONSTRAINT FK_User_user_phone
 		FOREIGN KEY (user_status_id) REFERENCES UserStatus (user_status_id),

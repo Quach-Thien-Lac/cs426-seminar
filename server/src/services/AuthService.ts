@@ -196,7 +196,6 @@ export class AuthService {
 			return response;
 		}
 
-		// TODO: unique constraint on username
 		// THENNNNNNN we check password hashhhhhhh
 		const passwordHash = userWithGivenUsername[0]['user_password_hash'];
 		const passwordMatch = await bcrypt.compare(password, passwordHash);
@@ -213,6 +212,7 @@ export class AuthService {
 		
 		// finnalllLLYLLLLYYYY wee make session token and return it.
 		try {
+			// TODO: make it also update existing user token
 			const sessionToken = generateSessionToken();
 			await DbConnection.pool.execute<ResultSetHeader[]>(`
 				INSERT INTO Session (session_token, session_user_id, session_creation_time) VALUES
