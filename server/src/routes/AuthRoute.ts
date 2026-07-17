@@ -7,7 +7,14 @@ const router: Router = Router();
 
 router.all('/register',
 	ValidatorMiddleware.validateMethod([HTTPMethod.POST]),
+	ValidatorMiddleware.validateContentType,
 	AuthController.register
+);
+
+router.all('/login',
+	ValidatorMiddleware.validateMethod([HTTPMethod.POST]),
+	ValidatorMiddleware.validateContentType,
+	AuthController.login
 );
 
 export default router;
