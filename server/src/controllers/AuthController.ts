@@ -113,7 +113,9 @@ class AuthController {
 			passwordPlainText: password
 		}
 		const response: ServiceResponse = await AuthService.register(userRegistrationData);
-		return void res.status(response.statusCode).json(response.get());
+		return void res.status(response.statusCode)
+		.location('/api/users/' + response.payload.data.userID)
+		.json(response.get());
 	}
 }
 
