@@ -4,7 +4,7 @@ import DbService from '../services/DbService.ts';
 
 class DbController {
 	async getHero(req: Request, res: Response, next: NextFunction) : Promise<void> {
-		const hero: any = req.body.hero;
+		const hero: string = req.body.hero;
 		
 		// if no table param is used
 		if (!hero) {
@@ -23,4 +23,4 @@ class DbController {
 	}
 }
 
-export default new DbController()
+export default new DbController();

@@ -94,6 +94,7 @@ export class AuthService {
 		}
 
 		try {
+			// insert user
 			[results] = await DbConnection.pool.execute<ResultSetHeader[]>(`
 				INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -135,7 +136,8 @@ export class AuthService {
 		response.payload = {
 			message: "OK",
 			data: {
-				userID: userID
+				userID: userID,
+				username: data.username
 			}
 		}
 		return response;

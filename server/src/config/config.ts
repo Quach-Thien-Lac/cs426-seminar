@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-const config: any = {
+const config: unknown = {
 	client: {},
 	server: {
 		port: process.env.BACKEND_PORT
