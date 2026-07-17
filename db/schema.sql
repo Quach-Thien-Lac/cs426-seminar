@@ -88,7 +88,7 @@ CREATE TABLE `User` (
 	user_name VARCHAR(50) CHARACTER SET UTF8MB4,
 	user_email VARCHAR(255) CHARACTER SET UTF8MB4 NOT NULL,
 	user_phone CHAR(10) NOT NULL,
-	user_username VARCHAR(20) CHARACTER SET UTF8MB4 NOT NULL,
+	user_username VARCHAR(20) NOT NULL,
 	user_password_hash CHAR(60) NOT NULL,
 	user_registration_time DATETIME NOT NULL,
 	user_login_time DATETIME,
@@ -119,7 +119,11 @@ CREATE TABLE `User` (
 		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
 	-- user_password_hash must follow bcrypt hash format
 	CONSTRAINT CHK_User_user_password_hash_correct_format
-		CHECK (user_password_hash REGEXP '^\\$2[abxy]\\$(0[4-9]|[12][0-9]|3[01])\\$[./A-Za-z0-9]{53}$')
+		CHECK (user_password_hash REGEXP '^\\$2[abxy]\\$(0[4-9]|[12][0-9]|3[01])\\$[./A-Za-z0-9]{53}$'),
+	-- user_name must only be alphanumeric with underscore
+	CONSTRAINT CHK_User_user_username_correct_format
+		CHECK (user_username REGEXP '^[0-9a-zA-Z_]*$')
+	
 );
 
 CREATE TABLE Revision (
