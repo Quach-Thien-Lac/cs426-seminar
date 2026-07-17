@@ -57,7 +57,32 @@ export class DbService {
 	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
 	 */
 	public async getHero(hero: string): Promise<ServiceResponse> {
-		const [results, fields] = await DbConnection.pool.query<RowDataPacket[]>(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
+		let results: RowDataPacket[];
+
+		try {
+			[results] = await DbConnection.pool.query<RowDataPacket[]>(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
+
+		} catch (err) {
+			if (err instanceof Error) {
+				const response: ServiceResponse = new ServiceResponse;
+				response.success = false;
+				response.statusCode = 500;
+				response.payload = {
+					message: 'The database is cooked',
+					data: err.toString()
+				}
+				return response;
+			} else {
+				const response: ServiceResponse = new ServiceResponse;
+				response.success = false;
+				response.statusCode = 500;
+				response.payload = {
+					message: 'What the fuck bro even the ERROR is cooked??????',
+				}
+				return response;
+			}
+
+		}
 
 		if (!results.length) {
 			const response: ServiceResponse = new ServiceResponse;
