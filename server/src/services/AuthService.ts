@@ -173,21 +173,26 @@ export class AuthService {
 		return response;
 	}
 
-	// public async login(username: string, password: string): Promise<ServiceResponse> {
-	// 	// WELCOME TO HOW TO LOGIN 101
-	// 	// first...we check if the username exist!!!11!
-	// 	const userWithGivenUsername: RowDataPacket[] = (await DbConnection.pool.query<RowDataPacket[]>('SELECT * FROM `User` WHERE user_username = ?', [username]))[0];
-	// 	if (!userWithGivenUsername.length) {
-	// 		const response = new ServiceResponse;
-	// 		response.success = false;
-	// 		response
-	// 	}
+	public async login(username: string, password: string): Promise<ServiceResponse> {
+		// WELCOME TO HOW TO LOGIN 101
+		// first...we check if the username exist!!!11!
+		const userWithGivenUsername: RowDataPacket[] = (await DbConnection.pool.query<RowDataPacket[]>('SELECT * FROM `User` WHERE user_username = ?', [username]))[0];
+		if (!userWithGivenUsername.length) {
+			const response = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 404;
+			response.payload = {
+				message: 'Username not found'
+			};
+
+			return response;
+		}
 		
 
-	// 	// await DbConnection.pool.execute<ResultSetHeader[]>(`
-	// 	// 	INSERT INTO 	
-	// 	// `)
-	// }
+		// await DbConnection.pool.execute<ResultSetHeader[]>(`
+		// 	INSERT INTO 	
+		// `)
+	}
 }
 
 const authService = new AuthService();
