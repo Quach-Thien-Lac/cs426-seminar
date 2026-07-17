@@ -25,6 +25,14 @@ async function generateUniqueUserID(): Promise<string> {
 	return userID;
 }
 
+function generateSessionToken(): string {
+	const sessionToken = randomstring.generate({
+		length: 60,
+		charset: ['hex']
+	});
+	return sessionToken
+}
+
 function dateToSQLDatetime(date: Date) {
 	return date.toISOString().slice(0, 19).replace('T', ' ');
 }
@@ -203,10 +211,49 @@ export class AuthService {
 			return response;
 		}
 		
-
-		// await DbConnection.pool.execute<ResultSetHeader[]>(`
-		// 	INSERT INTO 	
-		// `)
+		// finnalllLLYLLLLYYYY wee make session token and return it.
+		try {
+			const sessionToken = generateSessionToken();
+			await DbConnection.pool.execute<ResultSetHeader[]>(`
+				INSERT INTO Session (session_token, session_user_id, session_creation_time) VALUES
+				(?, ?, ?)
+			`, [
+				sessionToken,
+				userWithGivenUsername[0]['user_id'],
+				dateToSQLDatetime(new Date(Date.now()))
+			]);
+			
+			const response = new ServiceResponse;
+			response.success = true;
+			response.statusCode = 201;
+			response.payload = {
+				message: 'OK',
+				data: {
+					userID: userWithGivenUsername[0]['user_id'],
+					sessionToken: sessionToken
+				}
+			};
+			return response;
+		} catch (err) {
+			if (err instanceof Error) {
+				const response: ServiceResponse = new ServiceResponse;
+				response.success = false;
+				response.statusCode = 500;
+				response.payload = {
+					message: 'The database is cooked while trying to insert a session token',
+					data: err.toString()
+				};
+				return response;
+			} else {
+				const response: ServiceResponse = new ServiceResponse;
+				response.success = false;
+				response.statusCode = 500;
+				response.payload = {
+					message: 'dude what the god DAMN ERROR??????? IS NOPT AN ERROR?????????????????????????'
+				};
+				return response;
+			}
+		}
 	}
 }
 
