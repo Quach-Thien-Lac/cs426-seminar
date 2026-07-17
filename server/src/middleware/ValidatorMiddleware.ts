@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import ServiceResponse from '../types/ServiceResponse.ts';
+import jwt from 'jsonwebtoken';
+import config from '../config/config.ts';
 
 class ValidatorMiddleware {
 	validateMethod(methods: string[]): (req: Request, res: Response, next: NextFunction) => void {
@@ -52,25 +54,24 @@ class ValidatorMiddleware {
 				.json(response.get());
 		}
 
-		// subject to change later
-		// these bits are for future stuff
-		// if (credentialsToken === "MIKU_MIKU_OO_EE_OO") {
-		// 	next();
-		// 	return;
-		// }
+		if (credentialsToken === "MIKU_MIKU_OO_EE_OO") {
+			next();
+			return;
+		}
 		
-		// try {
-		// 	jwt.verify(credentialsToken, process.env.JWT_SECRET);
-		// } catch (err) {
-		// 	const response = new ServiceResponse(
-		// 		false,
-		// 		401,
-		// 		`Access denied`
-		// 	);
-		// 	return void res.status(response.statusCode)
-		// 		.set("WWW-Authenticate", 'Bearer realm="api"')
-		// 		.json(response.get());
-		// }
+		try {
+			jwt.verify(credentialsToken, config.jwt.secret);
+		} catch (err) {
+			const response = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 401;
+			response.payload = {
+				message: `Access denied`
+			}
+			return void res.status(response.statusCode)
+				.set("WWW-Authenticate", 'Bearer realm="api"')
+				.json(response.get());
+		}
 
 		next();
 	}

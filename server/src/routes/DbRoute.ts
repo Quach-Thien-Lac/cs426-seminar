@@ -7,6 +7,7 @@ const router: Router = Router();
 
 router.all('/get-hero',
 	ValidatorMiddleware.validateMethod([HTTPMethod.QUERY]),
+	ValidatorMiddleware.validateAccessToken,
 	DbController.getHero
 );
 
