@@ -1,4 +1,4 @@
-import { RowDataPacket, type ResultSetHeader } from 'mysql2';
+import type { RowDataPacket, ResultSetHeader } from 'mysql2';
 import type { UserRegistrationData } from "../types/UserRegistrationData.ts";
 import DbConnection from '../connections/DbConnection.ts';
 import randomstring from 'randomstring'

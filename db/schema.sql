@@ -119,7 +119,7 @@ CREATE TABLE `User` (
 		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
 	-- user_password_hash must follow bcrypt hash format
 	CONSTRAINT CHK_User_user_password_hash_correct_format
-		CHECK (user_password_hash REGEXP '^\$2[axby]\$.{56}$')
+		CHECK (user_password_hash REGEXP '^\\$2[abxy]\\$(0[4-9]|[12][0-9]|3[01])\\$[./A-Za-z0-9]{53}$')
 );
 
 CREATE TABLE Revision (
