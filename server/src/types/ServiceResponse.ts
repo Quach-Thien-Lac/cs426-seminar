@@ -29,7 +29,7 @@ class ServiceResponse implements IServiceResponse {
 			success: this.success,
 			statusCode: this.statusCode,
 			payload: {
-				message: `${this.payload.message} (${http.STATUS_CODES[this.statusCode]})`,
+				message: `${this.payload.message} (${http.STATUS_CODES[this.statusCode]?.toUpperCase().split(' ').join('_')})`,
 				data: this.payload.data
 			}
 		};

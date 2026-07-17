@@ -61,7 +61,6 @@ export class DbService {
 
 		try {
 			[results] = await DbConnection.pool.query<RowDataPacket[]>(`SELECT * FROM Hero WHERE hero_id = ?;`, [hero]);
-
 		} catch (err) {
 			if (err instanceof Error) {
 				const response: ServiceResponse = new ServiceResponse;
