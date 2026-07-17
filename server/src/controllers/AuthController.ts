@@ -20,7 +20,7 @@ class AuthController {
 			response.statusCode = 400,
 			response.payload = {
 				message: 'Missing name parameter'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -31,7 +31,7 @@ class AuthController {
 			response.statusCode = 400,
 			response.payload = {
 				message: 'Missing email parameter'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -42,7 +42,7 @@ class AuthController {
 			response.statusCode = 400,
 			response.payload = {
 				message: 'Missing phone parameter'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -53,7 +53,7 @@ class AuthController {
 			response.statusCode = 400,
 			response.payload = {
 				message: 'Missing username parameter'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -64,7 +64,7 @@ class AuthController {
 			response.statusCode = 400,
 			response.payload = {
 				message: 'Missing password parameter'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -76,7 +76,7 @@ class AuthController {
 			response.statusCode = 409,
 			response.payload = {
 				message: 'A user registered with that email already exists'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -88,7 +88,7 @@ class AuthController {
 			response.statusCode = 409,
 			response.payload = {
 				message: 'A user registered with that phone number already exists'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -100,7 +100,7 @@ class AuthController {
 			response.statusCode = 409,
 			response.payload = {
 				message: 'A user registered with that username already exists'
-			}
+			};
 
 			return void res.status(response.statusCode).json(response.get());
 		}
@@ -111,11 +111,41 @@ class AuthController {
 			phone,
 			username,
 			passwordPlainText: password
-		}
+		};
 		const response: ServiceResponse = await AuthService.register(userRegistrationData);
 		return void res.status(response.statusCode)
 		.location('/api/users/' + response.payload.data.userID)
 		.json(response.get());
+	}
+
+	async login(req: Request, res: Response, next: NextFunction) : Promise<void> {
+		const username: string = req.body.username;
+		const password: string = req.body.password;
+
+		if (!username) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false,
+			response.statusCode = 400,
+			response.payload = {
+				message: 'Missing username parameter'
+			};
+
+			return void res.status(response.statusCode).json(response.get());
+		}
+
+		if (!password) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false,
+			response.statusCode = 400,
+			response.payload = {
+				message: 'Missing password parameter'
+			};
+
+			return void res.status(response.statusCode).json(response.get());
+		}
+
+		const response = await AuthService.login(username, password);
+		return void res.status(response.statusCode).json(response.get());
 	}
 }
 
