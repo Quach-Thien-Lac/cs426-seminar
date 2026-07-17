@@ -88,6 +88,10 @@ CREATE TABLE `User` (
 	user_name VARCHAR(50) CHARACTER SET UTF8MB4,
 	user_email VARCHAR(255) CHARACTER SET UTF8MB4 NOT NULL,
 	user_phone BINARY(10) NOT NULL,
+	user_username VARCHAR(20) CHARACTER SET UTF8MB4 NOT NULL,
+	user_password_hash BINARY(60) NOT NULL,
+	user_registration_time DATETIME NOT NULL,
+	user_login_time DATETIME,
 	user_status_id TINYINT NOT NULL,
 	user_role_id TINYINT NOT NULL,
 
@@ -112,7 +116,10 @@ CREATE TABLE `User` (
 		CHECK (LENGTH(user_phone) = 10 AND user_phone REGEXP '^0[0-9]*$'),
 	-- you know i am not gonna bother with understanding email regex
 	CONSTRAINT CHK_User_user_email_correct_format
-		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
+		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+	-- user_password_hash must follow bcrypt hash format
+	CONSTRAINT CHK_User_user_password_hash_correct_format
+		CHECK (user_password_hash REGEXP '^\$2[axby]\$.{56}$')
 );
 
 CREATE TABLE Revision (
