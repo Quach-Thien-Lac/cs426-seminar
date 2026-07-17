@@ -41,7 +41,7 @@ fun WelcomeScreen(
         ) {
             SanguosuoTitle()
 
-            Spacer(modifier = Modifier.height(243.dp))
+            Spacer(modifier = Modifier.height(275.dp))
 
             SanguosuoButton(
                 textId = R.string.sign_in,
