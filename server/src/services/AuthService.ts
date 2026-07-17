@@ -198,7 +198,7 @@ export class AuthService {
 
 		// TODO: unique constraint on username
 		// THENNNNNNN we check password hashhhhhhh
-		const passwordHash = userWithGivenUsername[0]['user_password'];
+		const passwordHash = userWithGivenUsername[0]['user_password_hash'];
 		const passwordMatch = await bcrypt.compare(password, passwordHash);
 		if (!passwordMatch) {
 			const response = new ServiceResponse;
