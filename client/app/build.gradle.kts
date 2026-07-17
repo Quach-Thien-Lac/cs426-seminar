@@ -53,6 +53,7 @@ dependencies {
 	implementation(libs.retrofit.converter.gson)
 	implementation(libs.okhttp)
 	implementation(libs.okhttp.logging.interceptor)
+	implementation("androidx.compose.ui:ui-text-google-fonts:1.11.3")
 	testImplementation(libs.junit)
 	androidTestImplementation(platform(libs.androidx.compose.bom))
 	androidTestImplementation(libs.androidx.compose.ui.test.junit4)

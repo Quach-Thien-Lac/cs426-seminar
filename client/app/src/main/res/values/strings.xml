@@ -1,11 +1,10 @@
 <resources>
-    <string name="app_name">SanguosuoClient</string>
+    <string name="app_name">Sanguosuo</string>
+    <string name="chinese_app_name">三国索</string>
 
-    <string name="welcome_title">Sanguosuo</string>
-    <string name="welcome_subtitle">Tam Quốc Sách</string>
-    <string name="sign_in">Sign In</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="continue_as_guest">Continue as Guest</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="continue_as_guest">CONTINUE AS GUEST</string>
 
     <string name="sign_in_title">Sign In</string>
     <string name="sign_up_title">Sign Up</string>
