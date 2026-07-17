@@ -2,7 +2,7 @@ import http from 'http';
 
 interface ServiceResponsePayload {
 	message: string,
-	data?: unknown
+	data?: any
 }
 
 interface IServiceResponse {
@@ -33,7 +33,7 @@ class ServiceResponse implements IServiceResponse {
 				data: this.payload.data
 			}
 		};
-		return response; 
+		return response;
 	}
 }
 
