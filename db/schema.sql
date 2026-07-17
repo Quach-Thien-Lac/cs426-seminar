@@ -73,7 +73,7 @@ CREATE TABLE HeroSkill (
 );
 
 CREATE TABLE RevisionText (
-	text_id BINARY(28),
+	text_id CHAR(28),
 	text_content TEXT,
 
 	CONSTRAINT PK_Text_text_id
@@ -84,12 +84,12 @@ CREATE TABLE RevisionText (
 );
 
 CREATE TABLE `User` (
-	user_id BINARY(8),
+	user_id CHAR(8),
 	user_name VARCHAR(50) CHARACTER SET UTF8MB4,
 	user_email VARCHAR(255) CHARACTER SET UTF8MB4 NOT NULL,
-	user_phone BINARY(10) NOT NULL,
+	user_phone CHAR(10) NOT NULL,
 	user_username VARCHAR(20) CHARACTER SET UTF8MB4 NOT NULL,
-	user_password_hash BINARY(60) NOT NULL,
+	user_password_hash CHAR(60) NOT NULL,
 	user_registration_time DATETIME NOT NULL,
 	user_login_time DATETIME,
 	user_status_id TINYINT NOT NULL,
@@ -123,10 +123,10 @@ CREATE TABLE `User` (
 );
 
 CREATE TABLE Revision (
-	revision_id BINARY(18),
+	revision_id CHAR(18),
 	revision_time DATETIME NOT NULL,
-	revision_text_id BINARY(28) NOT NULL,
-	revision_author_id BINARY(8) NOT NULL,
+	revision_text_id CHAR(28) NOT NULL,
+	revision_author_id CHAR(8) NOT NULL,
 
 	CONSTRAINT PK_Revision_revision_id
 		PRIMARY KEY (revision_id),
@@ -138,9 +138,9 @@ CREATE TABLE Revision (
 );
 
 CREATE TABLE Article (
-	article_id BINARY(6),
+	article_id CHAR(6),
 	article_title VARCHAR(50) CHARACTER SET UTF8MB4,
-	article_rev_id BINARY(18) NOT NULL,
+	article_rev_id CHAR(18) NOT NULL,
 
 	CONSTRAINT PK_Article_article_id
 		PRIMARY KEY (article_id),
@@ -192,8 +192,8 @@ CREATE TABLE Hero (
 );
 
 CREATE TABLE Session (
-	session_token BINARY(60),
-	session_user_id BINARY(8) NOT NULL,
+	session_token CHAR(60),
+	session_user_id CHAR(8) NOT NULL,
 	session_creation_time DATETIME NOT NULL,
 
 	CONSTRAINT PK_Session_session_token
