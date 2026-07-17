@@ -191,6 +191,17 @@ CREATE TABLE Hero (
 		CHECK (hero_id REGEXP '^[A-Z0-9]+$')
 );
 
+CREATE TABLE Session (
+	session_token BINARY(60),
+	session_user_id BINARY(8) NOT NULL,
+	session_creation_time DATETIME NOT NULL,
+
+	CONSTRAINT PK_Session_session_token
+		PRIMARY KEY (session_token),
+	CONSTRAINT FK_Session_session_user_id
+		FOREIGN KEY (session_user_id) REFERENCES `User` (session_user_id)
+);
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
