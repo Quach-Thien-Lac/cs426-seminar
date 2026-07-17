@@ -1,6 +1,6 @@
 import type { FieldPacket, RowDataPacket } from "mysql2";
 import DbConnection from "../connections/DbConnection.ts";
-import ServiceResponse from "../types/ServiceResponse.ts";
+import { ServiceResponse } from "../types/ServiceResponse.ts";
 
 export class DbService {
 	/**

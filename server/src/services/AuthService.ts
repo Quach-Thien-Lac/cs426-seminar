@@ -3,7 +3,7 @@ import type { UserRegistrationData } from "../types/UserRegistrationData.ts";
 import DbConnection from '../connections/DbConnection.ts';
 import randomstring from 'randomstring'
 import bcrypt from 'bcrypt';
-import ServiceResponse from '../types/ServiceResponse.ts';
+import { ServiceResponse } from '../types/ServiceResponse.ts';
 
 const SALT_ROUNDS: number = 10;
 

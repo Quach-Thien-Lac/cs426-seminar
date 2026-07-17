@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import ServiceResponse from "../types/ServiceResponse.ts";
+import { ServiceResponse } from "../types/ServiceResponse.ts";
 import AuthService from "../services/AuthService.ts";
 import DbConnection from "../connections/DbConnection.ts";
 import type { RowDataPacket } from "mysql2";

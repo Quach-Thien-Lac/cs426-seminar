@@ -2,7 +2,7 @@
 import express from 'express';
 import prettyMilliseconds from 'pretty-ms';
 import bodyParser from 'body-parser';
-import ServiceResponse from './types/ServiceResponse.ts';
+import { ServiceResponse } from './types/ServiceResponse.ts';
 import type { Request, Response, NextFunction } from 'express';
 
 

@@ -1,17 +1,17 @@
 import http from 'http';
 
-interface ServiceResponsePayload {
+export interface ServiceResponsePayload {
 	message: string,
 	data?: any
 }
 
-interface IServiceResponse {
+export interface IServiceResponse {
 	success: boolean,
 	statusCode: number,
 	payload: ServiceResponsePayload
 }
 
-class ServiceResponse implements IServiceResponse {
+export class ServiceResponse implements IServiceResponse {
 	success: boolean = false;
 	statusCode: number = -1;
 	payload: ServiceResponsePayload = { message: "miku" }
@@ -36,5 +36,3 @@ class ServiceResponse implements IServiceResponse {
 		return response;
 	}
 }
-
-export default ServiceResponse;

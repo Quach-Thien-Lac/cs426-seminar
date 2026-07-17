@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import ServiceResponse from '../types/ServiceResponse.ts';
+import { ServiceResponse } from '../types/ServiceResponse.ts';
 import DbService from '../services/DbService.ts';
 
 class DbController {
