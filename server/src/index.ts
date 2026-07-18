@@ -1,29 +1,26 @@
 // libs
 import express from 'express';
 import bodyParser from 'body-parser';
-import { ServiceResponse } from './types/ServiceResponse.ts';
-import type { Request, Response, NextFunction } from 'express';
-
 
 // modules
 import config from './config/config.ts';
 import DbConnection from './connections/DbConnection.ts';
 
-
-// express app
-const app = express();
-app.use(bodyParser.json());
-
-
 // routes
 import AuthRoute from './routes/AuthRoute.ts';
 import DbRoute from './routes/DbRoute.ts';
-
 
 // callbacks
 import errorHandler from './middleware/errorHandler.ts';
 import { rootCallback } from './middleware/rootCallback.ts';
 import { healthCallback } from './middleware/healthCallback.ts';
+
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+const app = express();
+app.use(bodyParser.json());
 
 app.use('/api/auth', AuthRoute);
 app.use('/api/db', DbRoute);
