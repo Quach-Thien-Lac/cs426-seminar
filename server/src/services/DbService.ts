@@ -28,7 +28,7 @@ interface HeroData {
 	skills: HeroSkill[]
 }
 
-async function queryHero(hero: string) {
+async function queryHero(heroId: string) {
 	return await DbConnection.pool.query<RowDataPacket[]>(`
 		SELECT
 			h.hero_id,
@@ -56,7 +56,57 @@ async function queryHero(hero: string) {
 			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
 		WHERE hero_id = ?;
-		`, [hero]);
+		`, [heroId]);
+}
+
+async function querySkillTag(skillId: string) {
+	return await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT
+			st.skill_tag_code,
+			st.skill_tag_name
+		FROM HeroSkillTag hst
+			INNER JOIN SkillTag st ON st.skill_tag_id = hst.skill_tag_id
+		WHERE hst.skill_id = ?
+	`, [skillId]);
+}
+
+async function parseDatabaseDataToReturnable(results: RowDataPacket[]) {
+	return await Promise.all(results.map(async (result: RowDataPacket) => {
+		const parsedResult: HeroData = {
+			id: result.hero_id,
+			name: result.hero_name,
+			imageUrl: null, // TODO: fix later
+			factionCode: result.hero_faction_code,
+			factionName: result.hero_faction_name,
+			hp: result.hero_hp,
+			epithet: result.hero_epithet,
+			quote: result.hero_quote,
+			hasTradeoff: result.hero_has_tradeoff,
+			skills: []
+		}
+
+		for (let i = 1; i <= 3; i++) {
+			if (!result[`hero_skill_${i}_id`]) continue;
+			let skillTags: HeroSkillTag[] = [];
+
+			const [skillTagsResults] = await querySkillTag(result[`hero_skill_${i}_id`]);
+			for (const skillTagResult of skillTagsResults) {
+				skillTags.push({
+					skillTagCode: skillTagResult.skill_tag_code,
+					skillTagName: skillTagResult.skill_tag_name
+				});
+			}
+
+			parsedResult.skills.push({
+				skillId: result[`hero_skill_${i}_id`],
+				skillTags,
+				skillName: result[`hero_skill_${i}_name`],
+				skillDescription: result[`hero_skill_${i}_description`]
+			});
+		}
+
+		return parsedResult;
+	}));
 }
 
 export class DbService {
@@ -121,52 +171,8 @@ export class DbService {
 		} catch (err) {
 			return getDatabaseErrorResponse(err);
 		}
-
 		
-		const data: HeroData[] = await Promise.all(results.map(async (result: RowDataPacket) => {
-			const parsedResult: HeroData = {
-				id: result.hero_id,
-				name: result.hero_name,
-				imageUrl: null, // TODO: fix later
-				factionCode: result.hero_faction_code,
-				factionName: result.hero_faction_name,
-				hp: result.hero_hp,
-				epithet: result.hero_epithet,
-				quote: result.hero_quote,
-				hasTradeoff: result.hero_has_tradeoff,
-				skills: []
-			}
-
-			for (let i = 1; i <= 3; i++) {
-				if (!result[`hero_skill_${i}_id`]) continue;
-				let skillTags: HeroSkillTag[] = [];
-
-				const [skillTagsResults] = await DbConnection.pool.query<RowDataPacket[]>(`
-					SELECT
-						st.skill_tag_code,
-						st.skill_tag_name
-					FROM HeroSkillTag hst
-						INNER JOIN SkillTag st ON st.skill_tag_id = hst.skill_tag_id
-					WHERE hst.skill_id = ?
-				`, [result[`hero_skill_${i}_id`]]);
-
-				for (const skillTagResult of skillTagsResults) {
-					skillTags.push({
-						skillTagCode: skillTagResult.skill_tag_code,
-						skillTagName: skillTagResult.skill_tag_name
-					});
-				}
-
-				parsedResult.skills.push({
-					skillId: result[`hero_skill_${i}_id`],
-					skillTags,
-					skillName: result[`hero_skill_${i}_name`],
-					skillDescription: result[`hero_skill_${i}_description`]
-				});
-			}
-
-			return parsedResult;
-		}));
+		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
 
 		const response: ServiceResponse = new ServiceResponse;
 		response.success = true,
@@ -175,7 +181,6 @@ export class DbService {
 			message: 'OK',
 			data
 		};
-
 		return response;
 	}
 }
