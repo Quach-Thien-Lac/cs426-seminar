@@ -90,56 +90,56 @@ fun SignUpScreen(
                     ) {
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        SanguosuoTextField(
-                            value = username,
-                            onValueChange = viewModel::onUsernameChanged,
-                            label = "Username",
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Next
-                            )
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        SanguosuoTextField(
-                            value = email,
-                            onValueChange = viewModel::onEmailChanged,
-                            label = "Email",
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Next
-                            )
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        SanguosuoTextField(
-                            value = password,
-                            onValueChange = viewModel::onPasswordChanged,
-                            label = "Password",
-                            visualTransformation = PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Next
-                            )
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        SanguosuoTextField(
-                            value = confirmPassword,
-                            onValueChange = viewModel::onConfirmPasswordChanged,
-                            label = "Confirm Password",
-                            visualTransformation = PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = { viewModel.signUp() }
-                            )
-                        )
+//                        SanguosuoTextField(
+//                            value = username,
+//                            onValueChange = viewModel::onUsernameChanged,
+//                            label = "Username",
+//                            keyboardOptions = KeyboardOptions(
+//                                keyboardType = KeyboardType.Text,
+//                                imeAction = ImeAction.Next
+//                            ),
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(16.dp))
+//
+//                        SanguosuoTextField(
+//                            value = email,
+//                            onValueChange = viewModel::onEmailChanged,
+//                            label = "Email",
+//                            keyboardOptions = KeyboardOptions(
+//                                keyboardType = KeyboardType.Email,
+//                                imeAction = ImeAction.Next
+//                            )
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(16.dp))
+//
+//                        SanguosuoTextField(
+//                            value = password,
+//                            onValueChange = viewModel::onPasswordChanged,
+//                            label = "Password",
+//                            visualTransformation = PasswordVisualTransformation(),
+//                            keyboardOptions = KeyboardOptions(
+//                                keyboardType = KeyboardType.Password,
+//                                imeAction = ImeAction.Next
+//                            )
+//                        )
+//
+//                        Spacer(modifier = Modifier.height(16.dp))
+//
+//                        SanguosuoTextField(
+//                            value = confirmPassword,
+//                            onValueChange = viewModel::onConfirmPasswordChanged,
+//                            label = "Confirm Password",
+//                            visualTransformation = PasswordVisualTransformation(),
+//                            keyboardOptions = KeyboardOptions(
+//                                keyboardType = KeyboardType.Password,
+//                                imeAction = ImeAction.Done
+//                            ),
+//                            keyboardActions = KeyboardActions(
+//                                onDone = { viewModel.signUp() }
+//                            )
+//                        )
 
                         Spacer(modifier = Modifier.height(24.dp))
 

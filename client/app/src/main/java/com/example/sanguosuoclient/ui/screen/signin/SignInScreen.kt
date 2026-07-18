@@ -1,5 +1,6 @@
 package com.example.sanguosuoclient.ui.screen.signin
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,9 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,18 +22,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.di.LocalAppContainer
 import com.example.sanguosuoclient.ui.components.SanguosuoBackground
 import com.example.sanguosuoclient.ui.components.SanguosuoButton
 import com.example.sanguosuoclient.ui.components.SanguosuoButtonVariant
 import com.example.sanguosuoclient.ui.components.SanguosuoLoadingIndicator
 import com.example.sanguosuoclient.ui.components.SanguosuoTextField
+import com.example.sanguosuoclient.ui.components.SanguosuoTitle
 import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
 
 @Composable
@@ -67,71 +76,77 @@ fun SignInScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            SanguosuoTopBar(
-                title = "Sign In",
-                showBack = true,
-                onBack = onBack
+    SanguosuoBackground (isWhiteTinted = true){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = 5.dp,
+                    vertical = 20.dp
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            SanguosuoTitle()
+
+            Spacer(modifier = Modifier.height(64.dp))
+
+            SanguosuoTextField(
+                value = username,
+                onValueChange = viewModel::onUsernameChanged,
+                label = "Username",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                hintTextId = R.string.email_place_holder
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            if (uiState is SignInUiState.Loading) {
-                SanguosuoLoadingIndicator()
-            } else {
-                SanguosuoBackground {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(32.dp))
 
-                        SanguosuoTextField(
-                            value = username,
-                            onValueChange = viewModel::onUsernameChanged,
-                            label = "Username",
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Next
-                            )
-                        )
+            Spacer(modifier = Modifier.height(24.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
+            SanguosuoTextField(
+                value = password,
+                onValueChange = viewModel::onPasswordChanged,
+                label = "Password",
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { viewModel.signIn() }
+                ),
+                hintTextId = R.string.password_place_holder
+            )
 
-                        SanguosuoTextField(
-                            value = password,
-                            onValueChange = viewModel::onPasswordChanged,
-                            label = "Password",
-                            visualTransformation = PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = { viewModel.signIn() }
-                            )
-                        )
+//            Spacer(modifier = Modifier.height(6.dp))
 
-                        Spacer(modifier = Modifier.height(24.dp))
-
-//                        SanguosuoButton(
-//                            text = "Sign In",
-//                            onClick = { viewModel.signIn() },
-//                            enabled = username.isNotBlank() && password.isNotBlank()
-//                        )
-//
-//                        Spacer(modifier = Modifier.height(16.dp))
-//
-//                        SanguosuoButton(
-//                            text = "Don't have an account? Sign Up",
-//                            onClick = onNavigateToSignUp,
-//                            variant = SanguosuoButtonVariant.Text
-//                        )
-                    }
-                }
+            TextButton(
+                onClick = {/*OnNavigateToForgotPassword*/},
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(
+                    text = stringResource(R.string.forgot_password),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black
+                )
             }
+
+//            Spacer(modifier = Modifier.height(6.dp))
+
+            SanguosuoButton(
+                textId = R.string.sign_in,
+                onClick = { viewModel.signIn() },
+                enabled = username.isNotBlank() && password.isNotBlank()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            SanguosuoButton(
+                textId = R.string.no_account_text,
+                onClick = onNavigateToSignUp,
+                variant = SanguosuoButtonVariant.Outlined
+            )
         }
     }
 }
