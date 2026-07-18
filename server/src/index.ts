@@ -21,20 +21,8 @@ import AuthRoute from './routes/AuthRoute.ts';
 import DbRoute from './routes/DbRoute.ts';
 import errorHandler from './middleware/errorHandler.ts';
 
-
-
-// root endpoint
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	const rootResponse: ServiceResponse = new ServiceResponse;
-	rootResponse.success = true,
-	rootResponse.statusCode = 200,
-	rootResponse.payload = {
-		message: 'Sanguosha Baike API root endpoint',
-		data: null
-	};
-
-	res.send(rootResponse);
-});
+app.use('/api/auth', AuthRoute);
+app.use('/api/db', DbRoute);
 
 // health endpoint
 app.get('/health', async (req: Request, res: Response) => {
@@ -50,10 +38,10 @@ app.get('/health', async (req: Request, res: Response) => {
 		connection?.release();
 	}
 
-	const healthResponse: ServiceResponse = new ServiceResponse;
-	healthResponse.success = true,
-	healthResponse.statusCode = 200,
-	healthResponse.payload = {
+	const response: ServiceResponse = new ServiceResponse;
+	response.success = true,
+	response.statusCode = 200,
+	response.payload = {
 		message: 'OK',
 		data: {
 			uptime: prettyMilliseconds(process.uptime() * 1000),
@@ -61,11 +49,21 @@ app.get('/health', async (req: Request, res: Response) => {
 		}
 	}
 
-	res.send(healthResponse);
+	res.status(response.statusCode).json(response.get());
 });
 
-app.use('/api/auth', AuthRoute);
-app.use('/api/db', DbRoute);
+// root endpoint
+app.get('/', (req: Request, res: Response, next: NextFunction) => {
+	const response: ServiceResponse = new ServiceResponse;
+	response.success = true,
+	response.statusCode = 200,
+	response.payload = {
+		message: 'Sanguosha Baike API root endpoint',
+		data: null
+	};
+
+	res.status(response.statusCode).json(response.get());
+});
 
 app.use(errorHandler);
 
