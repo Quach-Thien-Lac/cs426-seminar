@@ -73,7 +73,7 @@ CREATE TABLE HeroSkill (
 );
 
 CREATE TABLE RevisionText (
-	text_id BINARY(28),
+	text_id CHAR(28),
 	text_content TEXT,
 
 	CONSTRAINT PK_Text_text_id
@@ -84,10 +84,14 @@ CREATE TABLE RevisionText (
 );
 
 CREATE TABLE `User` (
-	user_id BINARY(8),
+	user_id CHAR(8),
 	user_name VARCHAR(50) CHARACTER SET UTF8MB4,
 	user_email VARCHAR(255) CHARACTER SET UTF8MB4 NOT NULL,
-	user_phone BINARY(10) NOT NULL,
+	user_phone CHAR(10) NOT NULL,
+	user_username VARCHAR(20) NOT NULL,
+	user_password_hash CHAR(60) NOT NULL,
+	user_registration_time DATETIME NOT NULL,
+	user_login_time DATETIME,
 	user_status_id TINYINT NOT NULL,
 	user_role_id TINYINT NOT NULL,
 
@@ -98,6 +102,8 @@ CREATE TABLE `User` (
 		UNIQUE (user_email),
 	CONSTRAINT UK_User_user_phone
 		UNIQUE (user_phone),
+	CONSTRAINT UK_User_user_username
+		UNIQUE (user_username),
 
 	CONSTRAINT FK_User_user_phone
 		FOREIGN KEY (user_status_id) REFERENCES UserStatus (user_status_id),
@@ -112,14 +118,21 @@ CREATE TABLE `User` (
 		CHECK (LENGTH(user_phone) = 10 AND user_phone REGEXP '^0[0-9]*$'),
 	-- you know i am not gonna bother with understanding email regex
 	CONSTRAINT CHK_User_user_email_correct_format
-		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
+		CHECK (user_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+	-- user_password_hash must follow bcrypt hash format
+	CONSTRAINT CHK_User_user_password_hash_correct_format
+		CHECK (user_password_hash REGEXP '^\\$2[abxy]\\$(0[4-9]|[12][0-9]|3[01])\\$[./A-Za-z0-9]{53}$'),
+	-- user_name must only be alphanumeric with underscore
+	CONSTRAINT CHK_User_user_username_correct_format
+		CHECK (user_username REGEXP '^[0-9a-zA-Z_]*$')
+	
 );
 
 CREATE TABLE Revision (
-	revision_id BINARY(18),
+	revision_id CHAR(18),
 	revision_time DATETIME NOT NULL,
-	revision_text_id BINARY(28) NOT NULL,
-	revision_author_id BINARY(8) NOT NULL,
+	revision_text_id CHAR(28) NOT NULL,
+	revision_author_id CHAR(8) NOT NULL,
 
 	CONSTRAINT PK_Revision_revision_id
 		PRIMARY KEY (revision_id),
@@ -131,9 +144,9 @@ CREATE TABLE Revision (
 );
 
 CREATE TABLE Article (
-	article_id BINARY(6),
+	article_id CHAR(6),
 	article_title VARCHAR(50) CHARACTER SET UTF8MB4,
-	article_rev_id BINARY(18) NOT NULL,
+	article_rev_id CHAR(18) NOT NULL,
 
 	CONSTRAINT PK_Article_article_id
 		PRIMARY KEY (article_id),
@@ -182,6 +195,17 @@ CREATE TABLE Hero (
 
 	CONSTRAINT CHK_Hero_hero_id_correct_format
 		CHECK (hero_id REGEXP '^[A-Z0-9]+$')
+);
+
+CREATE TABLE Session (
+	session_token CHAR(60),
+	session_user_id CHAR(8) NOT NULL,
+	session_creation_time DATETIME NOT NULL,
+
+	CONSTRAINT PK_Session_session_token
+		PRIMARY KEY (session_token),
+	CONSTRAINT FK_Session_session_user_id
+		FOREIGN KEY (session_user_id) REFERENCES `User` (user_id)
 );
 
 /******************************************
