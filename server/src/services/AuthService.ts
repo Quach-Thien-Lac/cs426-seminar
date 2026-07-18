@@ -4,6 +4,7 @@ import DbConnection from '../connections/DbConnection.ts';
 import randomstring from 'randomstring'
 import bcrypt from 'bcrypt';
 import { ServiceResponse } from '../types/ServiceResponse.ts';
+import getDatabaseErrorResponse from '../helper/getDatabaseErrorResponse.ts';
 
 const SALT_ROUNDS: number = 10;
 
@@ -85,24 +86,7 @@ export class AuthService {
 				SELECT user_status_id FROM UserStatus WHERE user_status_code = 'ACTIVE';		
 			`))[0][0].user_status_id;
 		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to find the given active user status ID',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'What the fuck bro even the ERROR is COOKOEKDKD!??????????????'
-				};
-				return response;
-			}
+			return getDatabaseErrorResponse(err);
 		}
 
 		let viewerUserRoleID: number;
@@ -111,24 +95,7 @@ export class AuthService {
 				SELECT user_role_id FROM UserRole WHERE user_role_code = 'VIEWER';		
 			`))[0][0].user_role_id;
 		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to find the given viewer user role ID',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: '...fym the error is NOT AN ERROR????????????????????????'
-				};
-				return response;
-			}
+			return getDatabaseErrorResponse(err);
 		}
 
 		try {
@@ -148,24 +115,7 @@ export class AuthService {
 				viewerUserRoleID
 			]);
 		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to insert user',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'i am NOT DEALING WITH *checks error* A ERROR THAT IS NOT AN ERROR?????????'
-				};
-				return response;
-			}
+			return getDatabaseErrorResponse(err);
 		}
 
 		const response: ServiceResponse = new ServiceResponse;
@@ -273,24 +223,7 @@ export class AuthService {
 			};
 			return response;
 		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to insert a session token',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'dude what the god DAMN ERROR??????? IS NOPT AN ERROR?????????????????????????'
-				};
-				return response;
-			}
+			return getDatabaseErrorResponse(err);
 		}
 	}
 }

@@ -1,6 +1,7 @@
-import type { FieldPacket, RowDataPacket } from "mysql2";
+import type { RowDataPacket } from "mysql2";
 import DbConnection from "../connections/DbConnection.ts";
 import { ServiceResponse } from "../types/ServiceResponse.ts";
+import getDatabaseErrorResponse from "../helper/getDatabaseErrorResponse.ts";
 
 export class DbService {
 	/**
@@ -89,25 +90,7 @@ export class DbService {
 				WHERE hero_id = ?;
 				`, [hero]);
 		} catch (err) {
-			// TODO: package these response to helper function
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to find the given hero',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'What the fuck bro even the ERROR is cooked??????',
-				};
-				return response;
-			}
+			return getDatabaseErrorResponse(err);
 		}
 
 		
