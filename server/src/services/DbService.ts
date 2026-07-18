@@ -123,8 +123,8 @@ export class DbService {
 		}
 
 		
-		const data = await Promise.all(results.map(async (result: RowDataPacket) => {
-			const parsedResult: any = {
+		const data: HeroData[] = await Promise.all(results.map(async (result: RowDataPacket) => {
+			const parsedResult: HeroData = {
 				id: result.hero_id,
 				name: result.hero_name,
 				imageUrl: null, // TODO: fix later
@@ -139,7 +139,7 @@ export class DbService {
 
 			for (let i = 1; i <= 3; i++) {
 				if (!result[`hero_skill_${i}_id`]) continue;
-				let skillTags = [];
+				let skillTags: HeroSkillTag[] = [];
 
 				const [skillTagsResults] = await DbConnection.pool.query<RowDataPacket[]>(`
 					SELECT
