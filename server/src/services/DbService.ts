@@ -3,6 +3,18 @@ import DbConnection from "../connections/DbConnection.ts";
 import { ServiceResponse } from "../types/ServiceResponse.ts";
 import getDatabaseErrorResponse from "../helper/getDatabaseErrorResponse.ts";
 
+interface HeroSkillTag {
+	skillTagCode: string,
+	skillTagName: string
+}
+
+interface HeroSkill {
+	skillId: string,
+	skillTags: HeroSkillTag[],
+	skillName: string,
+	skillDescription: string
+}
+
 interface HeroData {
 	id: string,
 	name: string,
@@ -13,7 +25,7 @@ interface HeroData {
 	epithet: string,
 	quote: string,
 	hasTradeoff: boolean,
-	skills: HeroSKill[]
+	skills: HeroSkill[]
 }
 
 async function queryHero(hero: string) {
