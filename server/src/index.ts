@@ -14,6 +14,7 @@ import DbRoute from './routes/DbRoute.ts';
 import errorHandler from './middleware/errorHandler.ts';
 import { rootCallback } from './middleware/rootCallback.ts';
 import { healthCallback } from './middleware/healthCallback.ts';
+import { nonexistentRouteCallback } from './middleware/nonexistentRouteCallback.ts';
 
 
 //////////////////////////////////////////////////////////////////
@@ -26,6 +27,7 @@ app.use('/api/auth', AuthRoute);
 app.use('/api/db', DbRoute);
 app.get('/health', healthCallback);
 app.get('/', rootCallback);
+app.use(nonexistentRouteCallback);
 app.use(errorHandler);
 
 

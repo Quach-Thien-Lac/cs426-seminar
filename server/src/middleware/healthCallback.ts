@@ -26,7 +26,7 @@ export const healthCallback = async (req: Request, res: Response, next: NextFunc
 			uptime: prettyMilliseconds(process.uptime() * 1000),
 			dbActive: dbPing
 		}
-	}
+	};
 
 	return void res.status(response.statusCode).json(response.get());
 }
