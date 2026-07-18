@@ -181,6 +181,39 @@ export class AuthService {
 		return response;
 	}
 
+	/**
+	 * Service function for <code>/api/auth/login</code>. Logs in a user. Technically, this user simply generates a session token which is used to access other API endpoints that require Bearer tokens. Supports <code>POST</code> requests.
+	 * @param {string} username - Username
+	 * @param {string} password - Password
+	 * @returns {Promise<ServiceResponse>}
+	 * 
+	 * @example <caption>cURL</caption>
+	 * curl -X POST \
+	 * --header 'Content-Type:application/json' \
+	 * --data '{"username": "gangaganga", "password": "chickentendon"}' \
+	 * http://localhost:8080/api/auth/login
+	 * 
+	 * @example <caption>Response</caption>
+	 * {
+	 *   "success": true,
+	 *   "statusCode": 201,
+	 *   "payload": {
+	 *     "message": "OK (CREATED)",
+	 *     "data": {
+	 *       "userID": "32645925",
+	 *       "sessionToken": "78a520f741f26d3482e75089833e1a558c51a27eceab8acd35efafc2f920"
+	 *     }
+	 *   }
+	 * }
+	 * 
+	 * @response
+	 * - `201 CREATED` - Successful request
+	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `401 UNAUTHORIZED` - Wrong password
+	 * - `404 NOT_FOUND` - The username does not exist
+	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
+	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
+	 */
 	public async login(username: string, password: string): Promise<ServiceResponse> {
 		// WELCOME TO HOW TO LOGIN 101
 		// first...we check if the username exist!!!11!
