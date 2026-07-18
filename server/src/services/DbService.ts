@@ -127,6 +127,7 @@ export class DbService {
 
 			for (let i = 1; i <= 3; i++) {
 				if (!result[`hero_skill_${i}_id`]) continue;
+				let skillTags = [];
 
 				const [skillTagsResults] = await DbConnection.pool.query<RowDataPacket[]>(`
 					SELECT
@@ -136,9 +137,17 @@ export class DbService {
 						INNER JOIN SkillTag st ON st.skill_tag_id = hst.skill_tag_id
 					WHERE hst.skill_id = ?
 				`, [result[`hero_skill_${i}_id`]]);
+
+				for (const skillTagResult of skillTagsResults) {
+					skillTags.push({
+						skillTagCode: skillTagResult.skill_tag_code,
+						skillTagName: skillTagResult.skill_tag_name
+					});
+				}
+
 				parsedResult.skills.push({
 					skillId: result[`hero_skill_${i}_id`],
-					skillTags: skillTagsResults,
+					skillTags,
 					skillName: result[`hero_skill_${i}_name`],
 					skillDescription: result[`hero_skill_${i}_description`]
 				});
