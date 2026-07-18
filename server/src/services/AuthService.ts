@@ -227,6 +227,7 @@ export class AuthService {
 				dateToSQLDatetime(new Date(Date.now()))
 			]);
 			
+			// ADNDDDDDDDDDDDDDDDDDDDDDDDD WE ARE DONE (these commetns where wriiten in 2am)
 			const response = new ServiceResponse;
 			response.success = true;
 			response.statusCode = 201;
