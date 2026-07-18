@@ -13,6 +13,11 @@
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="confirm_password_label">Confirm Password</string>
+    <string name="forgot_password">Forgot password?</string>
     <string name="no_account_text">Don\'t have an account?</string>
     <string name="has_account_text">Already have an account?</string>
+
+    <string name="email_place_holder">abc@email.com</string>
+    <string name="password_place_holder">abc123!@#</string>
+    <string name="phone_place_holder">0123456***</string>
 </resources>
