@@ -28,22 +28,23 @@ export class DbService {
 	 *     "message": "OK (OK)",
 	 *     "data": [
 	 *       {
-	 *         "hero_id": "WEI015",
-	 *         "hero_name": "Từ Hoảng",
-	 *         "hero_image_id": null,
-	 *         "hero_faction_id": 1,
-	 *         "hero_hp": 2,
-	 *         "hero_epithet": "Chu Á Chi Phong",
-	 *         "hero_quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
-	 *         "hero_has_tradeoff": {
-	 *           "type": "Buffer",
-	 *           "data": [
-	 *             0
-	 *           ]
-	 *         },
-	 *         "hero_skill_1_id": "WEI015_1",
-	 *         "hero_skill_2_id": null,
-	 *         "hero_skill_3_id": null
+	 *         "id": "WEI015",
+	 *         "name": "Từ Hoảng",
+	 *         "imageUrl": null,
+	 *         "factionCode": "WEI",
+	 *         "factionName": "Nguỵ",
+	 *         "hp": 2,
+	 *         "epithet": "Chu Á Chi Phong",
+	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+	 *         "hasTradeoff": false,
+	 *         "skills": [
+	 *           {
+	 *             "skillId": "WEI015_1",
+	 *             "skillTags": [],
+	 *             "skillName": "Đoạn Lương",
+	 *             "skillDescription": "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+	 *           }
+	 *         ]
 	 *       }
 	 *     ]
 	 *   }
@@ -52,7 +53,6 @@ export class DbService {
 	 * @response
 	 * - `200 OK` - Successful request
 	 * - `400 BAD_REQUEST` - Missing any of the required parameters
-	 * - `404 NOT_FOUND` - The specified hero does not exist in the database
 	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
 	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
 	 */
@@ -88,18 +88,8 @@ export class DbService {
 					LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
 				WHERE hero_id = ?;
 				`, [hero]);
-
-			// if (!heroResults.length) {
-			// 	const response: ServiceResponse = new ServiceResponse;
-			// 	response.success = false,
-			// 	response.statusCode = 404,
-			// 	response.payload = {
-			// 		message: 'Hero does not exist',
-			// 	};
-	
-			// 	return response;
-			// }
 		} catch (err) {
+			// TODO: package these response to helper function
 			if (err instanceof Error) {
 				const response: ServiceResponse = new ServiceResponse;
 				response.success = false;
