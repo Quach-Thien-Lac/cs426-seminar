@@ -212,11 +212,15 @@ export class AuthService {
 		
 		// finnalllLLYLLLLYYYY wee make session token and return it.
 		try {
-			// TODO: make it also update existing user token
 			const sessionToken = generateSessionToken();
 			await DbConnection.pool.execute<ResultSetHeader[]>(`
+				DELETE FROM Session WHERE session_user_id = ?;	
+			`, [
+				userWithGivenUsername[0]['user_id']
+			]);	
+			await DbConnection.pool.execute<ResultSetHeader[]>(`
 				INSERT INTO Session (session_token, session_user_id, session_creation_time) VALUES
-				(?, ?, ?)
+				(?, ?, ?);
 			`, [
 				sessionToken,
 				userWithGivenUsername[0]['user_id'],
