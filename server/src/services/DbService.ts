@@ -3,6 +3,37 @@ import DbConnection from "../connections/DbConnection.ts";
 import { ServiceResponse } from "../types/ServiceResponse.ts";
 import getDatabaseErrorResponse from "../helper/getDatabaseErrorResponse.ts";
 
+async function queryHero(hero: string) {
+	return await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT
+			h.hero_id,
+			h.hero_name,
+			h.hero_image_id,
+			hf.hero_faction_code,
+			hf.hero_faction_name,
+			h.hero_hp,
+			h.hero_epithet,
+			h.hero_quote,
+			h.hero_has_tradeoff,
+			hs1.skill_id AS hero_skill_1_id,
+			hs1.skill_name AS hero_skill_1_name,
+			hs1.skill_description AS hero_skill_1_description,
+			hs2.skill_id AS hero_skill_2_id,
+			hs2.skill_name AS hero_skill_2_name,
+			hs2.skill_description AS hero_skill_2_description,			
+			hs3.skill_id AS hero_skill_3_id,
+			hs3.skill_name AS hero_skill_3_name,
+			hs3.skill_description AS hero_skill_3_description
+		FROM Hero h
+			INNER JOIN HeroFaction hf ON hf.hero_faction_id = h.hero_faction_id
+			
+			LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
+			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
+			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
+		WHERE hero_id = ?;
+		`, [hero]);
+}
+
 export class DbService {
 	/**
 	 * @hidden
@@ -61,40 +92,13 @@ export class DbService {
 		let results: RowDataPacket[];
 
 		try {
-			[results] = await DbConnection.pool.query<RowDataPacket[]>(`
-				SELECT
-					h.hero_id,
-					h.hero_name,
-					h.hero_image_id,
-					hf.hero_faction_code,
-					hf.hero_faction_name,
-					h.hero_hp,
-					h.hero_epithet,
-					h.hero_quote,
-					h.hero_has_tradeoff,
-					hs1.skill_id AS hero_skill_1_id,
-					hs1.skill_name AS hero_skill_1_name,
-					hs1.skill_description AS hero_skill_1_description,
-					hs2.skill_id AS hero_skill_2_id,
-					hs2.skill_name AS hero_skill_2_name,
-					hs2.skill_description AS hero_skill_2_description,			
-					hs3.skill_id AS hero_skill_3_id,
-					hs3.skill_name AS hero_skill_3_name,
-					hs3.skill_description AS hero_skill_3_description
-				FROM Hero h
-					INNER JOIN HeroFaction hf ON hf.hero_faction_id = h.hero_faction_id
-					
-					LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
-					LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
-					LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
-				WHERE hero_id = ?;
-				`, [hero]);
+			[results] = await queryHero(hero);
 		} catch (err) {
 			return getDatabaseErrorResponse(err);
 		}
 
 		
-		const data = await Promise.all(results.map(async result => {
+		const data = await Promise.all(results.map(async (result: RowDataPacket) => {
 			const parsedResult: any = {
 				id: result.hero_id,
 				name: result.hero_name,
