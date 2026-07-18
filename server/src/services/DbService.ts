@@ -3,6 +3,19 @@ import DbConnection from "../connections/DbConnection.ts";
 import { ServiceResponse } from "../types/ServiceResponse.ts";
 import getDatabaseErrorResponse from "../helper/getDatabaseErrorResponse.ts";
 
+interface HeroData {
+	id: string,
+	name: string,
+	imageUrl: string | null,
+	factionCode: string,
+	factionName: string,
+	hp: number,
+	epithet: string,
+	quote: string,
+	hasTradeoff: boolean,
+	skills: HeroSKill[]
+}
+
 async function queryHero(hero: string) {
 	return await DbConnection.pool.query<RowDataPacket[]>(`
 		SELECT
