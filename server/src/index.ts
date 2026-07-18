@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 import AuthRoute from './routes/AuthRoute.ts';
 import DbRoute from './routes/DbRoute.ts';
 import errorHandler from './middleware/errorHandler.ts';
+import { rootCallback } from './middleware/rootCallback.ts';
 
 app.use('/api/auth', AuthRoute);
 app.use('/api/db', DbRoute);
@@ -52,19 +53,7 @@ app.get('/health', async (req: Request, res: Response) => {
 	res.status(response.statusCode).json(response.get());
 });
 
-// root endpoint
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	const response: ServiceResponse = new ServiceResponse;
-	response.success = true,
-	response.statusCode = 200,
-	response.payload = {
-		message: 'Sanguosha Baike API root endpoint',
-		data: null
-	};
-
-	res.status(response.statusCode).json(response.get());
-});
-
+app.get('/', rootCallback);
 app.use(errorHandler);
 
 
