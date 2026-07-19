@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 import { ServiceResponse } from '../types/ServiceResponse.ts';
 import { generateDatabaseErrorResponse } from '../helper/generateDatabaseErrorResponse.ts';
 import { generate201Response } from '../helper/generate201Response.ts';
+import assert from 'node:assert/strict'
 
 const SALT_ROUNDS: number = 10;
 
@@ -35,8 +36,17 @@ function generateSessionToken(): string {
 	return sessionToken
 }
 
-function dateToSQLDatetime(date: Date) {
+function dateToSQLDatetime(date: Date): string {
 	return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+async function queryActiveUserId(): Promise<number> {
+	const [activeUserStatusResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT user_status_id FROM UserStatus WHERE user_status_code = 'ACTIVE';		
+	`);
+	assert(activeUserStatusResults.length > 0, "user_status_code ACTIVE does not return valid row");
+	const activeUserStatusId = activeUserStatusResults[0].user_status_id;
+	return activeUserStatusId;
 }
 
 export class AuthService {
@@ -83,9 +93,7 @@ export class AuthService {
 
 		let activeUserStatusID: number;
 		try {
-			activeUserStatusID = (await DbConnection.pool.query<RowDataPacket[]>(`
-				SELECT user_status_id FROM UserStatus WHERE user_status_code = 'ACTIVE';		
-			`))[0][0].user_status_id;
+			activeUserStatusID = await queryActiveUserId();
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}
