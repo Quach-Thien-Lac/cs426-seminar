@@ -49,6 +49,15 @@ async function queryActiveUserId(): Promise<number> {
 	return activeUserStatusId;
 }
 
+async function queryViewerUserId(): Promise<number> {
+	const [viewerUserRoleResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT user_role_id FROM UserRole WHERE user_role_code = 'VIEWER';
+	`);
+	assert(viewerUserRoleResults.length > 0, "user_role_code VIEWER does not return valid row");
+	const viewerUserRoleId = viewerUserRoleResults[0].user_role_id;
+	return viewerUserRoleId;
+}
+
 export class AuthService {
 	/**
 	 * @hidden
@@ -100,9 +109,7 @@ export class AuthService {
 
 		let viewerUserRoleID: number;
 		try {
-			viewerUserRoleID = (await DbConnection.pool.query<RowDataPacket[]>(`
-				SELECT user_role_id FROM UserRole WHERE user_role_code = 'VIEWER';		
-			`))[0][0].user_role_id;
+			viewerUserRoleID = await queryViewerUserId();
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}
