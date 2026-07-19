@@ -8,7 +8,7 @@ import DbConnection from './connections/DbConnection.ts';
 
 // routes
 import AuthRoute from './routes/AuthRoute.ts';
-import DbRoute from './routes/DbRoute.ts';
+import HeroRoute from './routes/HeroRoute.ts';
 
 // callbacks
 import errorHandler from './middleware/errorHandler.ts';
@@ -24,7 +24,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/api/auth', AuthRoute);
-app.use('/api/db', DbRoute);
+app.use('/api/heroes', HeroRoute);
 app.get('/health', healthCallback);
 app.get('/', rootCallback);
 app.use(nonexistentRouteCallback);

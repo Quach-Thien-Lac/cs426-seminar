@@ -1,14 +1,14 @@
 import { Router } from "express";
-import DbController from "../controllers/DbController.ts";
+import HeroController from "../controllers/HeroController.ts";
 import ValidatorMiddleware from "../middleware/ValidatorMiddleware.ts";
 import { HTTPMethod } from "../enums/HTTPMethod.ts";
 
 const router: Router = Router();
 
-router.all('/get-hero',
+router.all('/:heroId',
 	ValidatorMiddleware.validateMethod([HTTPMethod.QUERY]),
 	ValidatorMiddleware.validateAccessToken,
-	DbController.getHero
+	HeroController.getHero
 );
 
 export default router;
