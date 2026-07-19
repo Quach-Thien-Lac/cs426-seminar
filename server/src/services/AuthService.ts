@@ -5,7 +5,7 @@ import randomstring from 'randomstring'
 import bcrypt from 'bcrypt';
 import { ServiceResponse } from '../types/ServiceResponse.ts';
 import { generateDatabaseErrorResponse } from '../helper/generateDatabaseErrorResponse.ts';
-import { generate200Response } from '../helper/generate200Response.ts';
+import { generate201Response } from '../helper/generate201Response.ts';
 
 const SALT_ROUNDS: number = 10;
 
@@ -123,7 +123,7 @@ export class AuthService {
 			userID,
 			username: data.username
 		}
-		return generate200Response(responseData);
+		return generate201Response(responseData);
 	}
 
 	/**
@@ -206,17 +206,11 @@ export class AuthService {
 			]);
 			
 			// ADNDDDDDDDDDDDDDDDDDDDDDDDD WE ARE DONE (these commetns where wriiten in 2am)
-			const response = new ServiceResponse;
-			response.success = true;
-			response.statusCode = 201;
-			response.payload = {
-				message: 'OK',
-				data: {
-					userID: userWithGivenUsername[0]['user_id'],
-					sessionToken: sessionToken
-				}
-			};
-			return response;
+			const responseData = {
+				userID: userWithGivenUsername[0]['user_id'],
+				sessionToken: sessionToken
+			}
+			return generate201Response(responseData);
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}
