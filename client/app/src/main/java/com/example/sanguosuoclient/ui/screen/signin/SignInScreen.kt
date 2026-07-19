@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sanguosuoclient.R
-import com.example.sanguosuoclient.di.LocalAppContainer
 import com.example.sanguosuoclient.ui.components.SanguosuoBackground
 import com.example.sanguosuoclient.ui.components.SanguosuoButton
 import com.example.sanguosuoclient.ui.components.SanguosuoButtonVariant

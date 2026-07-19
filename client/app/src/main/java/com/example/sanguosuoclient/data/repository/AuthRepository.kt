@@ -12,7 +12,7 @@ interface AuthRepository {
     suspend fun signUp(request: SignUpRequest): Result<User>
 }
 
-class AuthRepositoryImpl(
+class NetworkAuthRepository(
     private val apiService: ApiService
 ) : AuthRepository {
     override suspend fun signIn(request: SignInRequest): Result<SignInResponse> {

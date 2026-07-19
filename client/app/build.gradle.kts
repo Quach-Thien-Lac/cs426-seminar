@@ -1,6 +1,7 @@
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.compose)
+	id("org.jetbrains.kotlin.plugin.serialization") version "2.4.10"
 }
 
 android {
@@ -50,11 +51,13 @@ dependencies {
 	implementation(libs.androidx.lifecycle.viewmodel.compose)
 	implementation(libs.androidx.navigation.compose)
 	implementation(libs.retrofit)
-	implementation(libs.retrofit.converter.gson)
+	implementation(libs.retrofit2.kotlinx.serialization.converter)
 	implementation(libs.okhttp)
-	implementation(libs.okhttp.logging.interceptor)
+	implementation(libs.coil.compose)
+	implementation(libs.kotlinx.serialization.json)
 	implementation("androidx.compose.ui:ui-text-google-fonts:1.11.3")
 	testImplementation(libs.junit)
+
 	androidTestImplementation(platform(libs.androidx.compose.bom))
 	androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 	androidTestImplementation(libs.androidx.espresso.core)
