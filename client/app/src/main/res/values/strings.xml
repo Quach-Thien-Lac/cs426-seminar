@@ -3,6 +3,7 @@
     <string name="chinese_app_name">三国索</string>
 
     <string name="sign_in">SIGN IN</string>
+    <string name="continuee">CONTINUE</string>
     <string name="sign_up">SIGN UP</string>
     <string name="sign_up_with_email">SIGN UP WITH EMAIL</string>
     <string name="continue_as_guest">CONTINUE AS GUEST</string>
@@ -11,6 +12,7 @@
     <string name="sign_up_title">Sign Up</string>
     <string name="username_label">Username</string>
     <string name="email_label">Email</string>
+    <string name="phone_label">Phone</string>
     <string name="password_label">Password</string>
     <string name="confirm_password_label">Confirm Password</string>
     <string name="forgot_password">Forgot password?</string>

@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.sanguosuoclient.ui.screen.welcome.WelcomeScreen
 import com.example.sanguosuoclient.ui.screen.signin.SignInScreen
-import com.example.sanguosuoclient.ui.screen.signup.SignUpScreen
+import com.example.sanguosuoclient.ui.screen.signup.FirstSignUpScreenRoute
 
 @Composable
 fun AppNavHost(
@@ -39,7 +39,8 @@ fun AppNavHost(
         }
 
         composable(NavRoute.SignUp.route) {
-            SignUpScreen(
+            FirstSignUpScreenRoute(
+                onContinue = {},
                 onBack = {
                     navController.popBackStack()
                 }

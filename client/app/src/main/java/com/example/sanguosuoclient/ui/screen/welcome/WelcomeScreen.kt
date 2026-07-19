@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,9 +27,12 @@ import com.example.sanguosuoclient.ui.theme.primaryLight
 @Composable
 fun WelcomeScreen(
     onNavigateToSignIn: () -> Unit,
-    onNavigateToSignUp: () -> Unit
+    onNavigateToSignUp: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    SanguosuoBackground {
+    SanguosuoBackground(
+        modifier = modifier
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -44,7 +48,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(275.dp))
 
             SanguosuoButton(
-                textId = R.string.sign_in,
+                text = stringResource(R.string.sign_in),
                 onClick = onNavigateToSignIn,
                 color = onSurfaceDark
             )
@@ -52,7 +56,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             SanguosuoButton(
-                textId = R.string.sign_up_with_email,
+                text = stringResource(R.string.sign_up_with_email),
                 onClick = onNavigateToSignUp,
                 color = primaryLight
             )
@@ -60,7 +64,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             SanguosuoButton(
-                textId = R.string.continue_as_guest,
+                text = stringResource(R.string.continue_as_guest),
                 onClick = { /* TODO: navigate to main app or show snackbar */ },
                 variant = SanguosuoButtonVariant.Outlined
             )

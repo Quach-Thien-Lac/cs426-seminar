@@ -33,7 +33,7 @@ fun SanguosuoTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    hintTextId: Int,
+    hintText: String,
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -52,7 +52,7 @@ fun SanguosuoTextField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = stringResource(hintTextId),
+                    text = hintText,
                     style = MaterialTheme.typography.displaySmall,
                 )
             },
@@ -94,7 +94,7 @@ fun SanguosuoTextFieldPreview() {
                 value = "cc",
                 onValueChange = {},
                 label = "Email",
-                hintTextId = R.string.email_place_holder,
+                hintText = stringResource(R.string.email_place_holder),
                 isError = false,
                 trailingIcon = {
                     IconButton(
