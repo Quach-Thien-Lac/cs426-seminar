@@ -155,6 +155,7 @@ export class HeroService {
 	 * 
 	 * @example <caption>cURL</caption>
 	 * curl -X GET \
+	* -H 'Authorization: your_session_token_goes_here' \
 	 * http://localhost:8080/api/heroes/id/WEI015
 	 * 
 	 * @example <caption>Response</caption>
@@ -190,6 +191,7 @@ export class HeroService {
 	 * @response
 	 * - `200 OK` - Successful request
 	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `401 UNAUTHORIZED` - No session token is provided
 	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
 	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
 	 */
@@ -213,6 +215,7 @@ export class HeroService {
 	 * 
 	 * @example <caption>cURL</caption>
 	 * curl -X GET \
+	 * -H 'Authorization: your_session_token_goes_here' \
 	 * http://localhost:8080/api/heroes/name/T%E1%BB%AB%20Ho%E1%BA%A3ng
 	 * 
 	 * @example <caption>Response</caption>
@@ -248,6 +251,7 @@ export class HeroService {
 	 * @response
 	 * - `200 OK` - Successful request
 	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `401 UNAUTHORIZED` - No session token is provided
 	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
 	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
 	 */
