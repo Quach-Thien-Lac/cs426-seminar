@@ -58,6 +58,23 @@ async function queryViewerUserId(): Promise<number> {
 	return viewerUserRoleId;
 }
 
+async function insertUser(userID: string, data: UserRegistrationData, passwordHash: string, activeUserStatusId: number, viewerUserRoleId: number): Promise<void> {
+	await DbConnection.pool.execute<ResultSetHeader[]>(`
+		INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+	`, [
+		userID,
+		data.name,
+		data.email,
+		data.phone,
+		data.username,
+		passwordHash,
+		dateToSQLDatetime(new Date(Date.now())),
+		activeUserStatusId,
+		viewerUserRoleId
+	]);
+}
+
 export class AuthService {
 	/**
 	 * @hidden
@@ -101,43 +118,20 @@ export class AuthService {
 		const passwordHash: string = await bcrypt.hash(data.passwordPlainText, SALT_ROUNDS);
 
 		let activeUserStatusID: number;
+		let viewerUserRoleID: number;
+
 		try {
 			activeUserStatusID = await queryActiveUserId();
-		} catch (err) {
-			return generateDatabaseErrorResponse(err);
-		}
-
-		let viewerUserRoleID: number;
-		try {
 			viewerUserRoleID = await queryViewerUserId();
+			insertUser(userID, data, passwordHash, activeUserStatusID, viewerUserRoleID);
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}
-
-		try {
-			// insert user
-			await DbConnection.pool.execute<ResultSetHeader[]>(`
-				INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-			`, [
-				userID,
-				data.name,
-				data.email,
-				data.phone,
-				data.username,
-				passwordHash,
-				dateToSQLDatetime(new Date(Date.now())),
-				activeUserStatusID,
-				viewerUserRoleID
-			]);
-		} catch (err) {
-			return generateDatabaseErrorResponse(err);
-		}
-
+		
 		const responseData = {
 			userID,
 			username: data.username
-		}
+		};
 		return generate201Response(responseData);
 	}
 
