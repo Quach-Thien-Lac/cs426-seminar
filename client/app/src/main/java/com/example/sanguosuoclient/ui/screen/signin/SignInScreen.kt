@@ -87,7 +87,7 @@ fun SignInScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                hintTextId = R.string.email_place_holder
+                hintText = stringResource(R.string.email_place_holder)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -104,7 +104,7 @@ fun SignInScreen(
                 keyboardActions = KeyboardActions(
                     onDone = { viewModel.signIn() }
                 ),
-                hintTextId = R.string.password_place_holder
+                hintText = stringResource(R.string.password_place_holder)
             )
 
 //            Spacer(modifier = Modifier.height(6.dp))
@@ -123,7 +123,7 @@ fun SignInScreen(
 //            Spacer(modifier = Modifier.height(6.dp))
 
             SanguosuoButton(
-                textId = R.string.sign_in,
+                text = stringResource(R.string.sign_in),
                 onClick = { viewModel.signIn() },
                 enabled = username.isNotBlank() && password.isNotBlank()
             )
@@ -131,7 +131,7 @@ fun SignInScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             SanguosuoButton(
-                textId = R.string.no_account_text,
+                text = stringResource(R.string.no_account_text),
                 onClick = onNavigateToSignUp,
                 variant = SanguosuoButtonVariant.Outlined
             )
