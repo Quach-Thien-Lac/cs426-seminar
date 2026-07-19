@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { ServiceResponse } from '../types/ServiceResponse.ts';
 import HeroService from '../services/HeroService.ts';
 
-class DbController {
+class HeroController {
 	async getHero(req: Request, res: Response, next: NextFunction) : Promise<void> {
 		const hero: string = req.body.hero;
 		
@@ -23,4 +23,4 @@ class DbController {
 	}
 }
 
-export default new DbController();
+export default new HeroController();
