@@ -8,24 +8,24 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.sanguosuoclient.di.AppContainer
-import com.example.sanguosuoclient.di.LocalAppContainer
 import com.example.sanguosuoclient.ui.navigation.AppNavHost
 import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 
 @Composable
 fun SanguosuoApp(modifier: Modifier = Modifier) {
-    val appContainer = remember { AppContainer() }
+//    val appContainer = remember { AppContainer() }
+//
+//    CompositionLocalProvider(LocalAppContainer provides appContainer) {
+//
+//    }
 
-    CompositionLocalProvider(LocalAppContainer provides appContainer) {
-        SanguosuoClientTheme {
-            Surface(
-                modifier = modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                val navController = rememberNavController()
-                AppNavHost(navController = navController)
-            }
+    SanguosuoClientTheme {
+        Surface(
+            modifier = modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            val navController = rememberNavController()
+            AppNavHost(navController = navController)
         }
     }
 }
