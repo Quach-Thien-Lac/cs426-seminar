@@ -27,9 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.ui.components.SanguosuoBackground
@@ -43,21 +41,12 @@ import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
 @Composable
 fun SignInScreen(
     onNavigateToSignUp: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: SignInViewModel = viewModel(factory = SignInViewModel.Factory)
 ) {
-    val appContainer = LocalAppContainer.current
-    val viewModel: SignInViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                return SignInViewModel(appContainer.authRepository) as T
-            }
-        }
-    )
-
-    val uiState by viewModel.uiState.collectAsState()
-    val username by viewModel.username.collectAsState()
-    val password by viewModel.password.collectAsState()
+    val uiState by viewModel.signInUiState.collectAsState()
+    val username = viewModel.signInFormState.collectAsState().value.username
+    val password = viewModel.signInFormState.collectAsState().value.password
 
     val snackbarHostState = remember { SnackbarHostState() }
 
