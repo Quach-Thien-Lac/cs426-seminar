@@ -6,13 +6,13 @@ import { HTTPMethod } from "../enums/HTTPMethod.ts";
 const router: Router = Router();
 
 router.all('/id/:heroId',
-	ValidatorMiddleware.validateMethod([HTTPMethod.QUERY]),
+	ValidatorMiddleware.validateMethod([HTTPMethod.GET]),
 	ValidatorMiddleware.validateAccessToken,
 	HeroController.getHeroById
 );
 
 router.all('/name/:heroName',
-	ValidatorMiddleware.validateMethod([HTTPMethod.QUERY]),
+	ValidatorMiddleware.validateMethod([HTTPMethod.GET]),
 	ValidatorMiddleware.validateAccessToken,
 	HeroController.getHeroByName
 );
