@@ -171,7 +171,7 @@ export class AuthService {
 	public async login(username: string, password: string): Promise<ServiceResponse> {
 		// WELCOME TO HOW TO LOGIN 101
 		// first...we check if the username exist!!!11!
-		const userWithGivenUsername: RowDataPacket[] = (await DbConnection.pool.query<RowDataPacket[]>('SELECT * FROM `User` WHERE user_username = ?', [username]))[0];
+		const [userWithGivenUsername] = await DbConnection.pool.query<RowDataPacket[]>('SELECT * FROM `User` WHERE user_username = ?', [username]);
 		if (!userWithGivenUsername.length) {
 			const response = new ServiceResponse;
 			response.success = false;
