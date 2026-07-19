@@ -149,14 +149,13 @@ export class HeroService {
 
 	
 	/**
-	 * Service function for <code>/api/heroes/:id</code>. Get all data for a hero. Supports <code>QUERY</code> requests.
+	 * Service function for <code>/api/heroes/id/:heroId</code>. Get all data for a hero given a hero ID. Supports <code>GET</code> requests.
 	 * @param {string} heroId - The hero's ID
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
-	 * curl -X QUERY \
-	 * --header 'Content-Type:application/json' \
-	 * http://localhost:8080/api/heroes/:id
+	 * curl -X GET \
+	 * http://localhost:8080/api/heroes/id/WEI015
 	 * 
 	 * @example <caption>Response</caption>
 	 * {
@@ -207,6 +206,51 @@ export class HeroService {
 		return generate200Response(data);
 	}
 
+	/**
+	 * Service function for <code>/api/heroes/name/:heroName</code>. Get all data for a hero given hero name. Supports <code>GET</code> requests.
+	 * @param {string} heroName - The hero's name
+	 * @returns {Promise<ServiceResponse>}
+	 * 
+	 * @example <caption>cURL</caption>
+	 * curl -X GET \
+	 * http://localhost:8080/api/heroes/name/T%E1%BB%AB%20Ho%E1%BA%A3ng
+	 * 
+	 * @example <caption>Response</caption>
+	 * {
+	 *   "success": true,
+	 *   "statusCode": 200,
+	 *   "payload": {
+	 *     "message": "OK (OK)",
+	 *     "data": [
+	 *       {
+	 *         "id": "WEI015",
+	 *         "name": "Từ Hoảng",
+	 *         "imageUrl": null,
+	 *         "factionCode": "WEI",
+	 *         "factionName": "Nguỵ",
+	 *         "hp": 2,
+	 *         "epithet": "Chu Á Chi Phong",
+	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+	 *         "hasTradeoff": false,
+	 *         "skills": [
+	 *           {
+	 *             "skillId": "WEI015_1",
+	 *             "skillTags": [],
+	 *             "skillName": "Đoạn Lương",
+	 *             "skillDescription": "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+	 *           }
+	 *         ]
+	 *       }
+	 *     ]
+	 *   }
+	 * }
+	 * 
+	 * @response
+	 * - `200 OK` - Successful request
+	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
+	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
+	 */
 	public async getHeroByName(heroName: string): Promise<ServiceResponse> {
 		let results: RowDataPacket[];
 		try {
