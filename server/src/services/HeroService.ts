@@ -29,7 +29,7 @@ interface HeroData {
 	skills: HeroSkill[]
 }
 
-async function queryHero(heroId: string) {
+async function queryHeroById(heroId: string) {
 	return await DbConnection.pool.query<RowDataPacket[]>(`
 		SELECT
 			h.hero_id,
@@ -58,6 +58,37 @@ async function queryHero(heroId: string) {
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
 		WHERE hero_id = ?;
 		`, [heroId]);
+}
+
+async function queryHeroByName(heroName: string) {
+	return await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT
+			h.hero_id,
+			h.hero_name,
+			h.hero_image_id,
+			hf.hero_faction_code,
+			hf.hero_faction_name,
+			h.hero_hp,
+			h.hero_epithet,
+			h.hero_quote,
+			h.hero_has_tradeoff,
+			hs1.skill_id AS hero_skill_1_id,
+			hs1.skill_name AS hero_skill_1_name,
+			hs1.skill_description AS hero_skill_1_description,
+			hs2.skill_id AS hero_skill_2_id,
+			hs2.skill_name AS hero_skill_2_name,
+			hs2.skill_description AS hero_skill_2_description,			
+			hs3.skill_id AS hero_skill_3_id,
+			hs3.skill_name AS hero_skill_3_name,
+			hs3.skill_description AS hero_skill_3_description
+		FROM Hero h
+			INNER JOIN HeroFaction hf ON hf.hero_faction_id = h.hero_faction_id
+			
+			LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
+			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
+			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
+		WHERE hero_name = ?;
+		`, [heroName]);
 }
 
 async function querySkillTag(skillId: string) {
@@ -167,11 +198,23 @@ export class HeroService {
 		let results: RowDataPacket[];
 
 		try {
-			[results] = await queryHero(heroId);
+			[results] = await queryHeroById(heroId);
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}
 		
+		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
+		return generate200Response(data);
+	}
+
+	public async getHeroByName(heroName: string): Promise<ServiceResponse> {
+		let results: RowDataPacket[];
+		try {
+			[results] = await queryHeroByName(heroName);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
 		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
 		return generate200Response(data);
 	}
