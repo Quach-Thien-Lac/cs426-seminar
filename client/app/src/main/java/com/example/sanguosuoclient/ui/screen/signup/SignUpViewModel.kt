@@ -12,6 +12,7 @@ import com.example.sanguosuoclient.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface SignUpUiState {
@@ -42,9 +43,23 @@ class SignUpViewModel(
 //        username.value = value
 //    }
 //
-//    fun onEmailChanged(value: String) {
-//        email.value = value
-//    }
+    fun onEmailChanged(value: String) {
+        _signUpFormState.update {
+            currentState ->
+            currentState.copy(
+                email = value
+            )
+        }
+    }
+
+    fun onPhoneChanged(value: String) {
+        _signUpFormState.update {
+            currentState ->
+            currentState.copy(
+                phone = value
+            )
+        }
+    }
 //
 //    fun onPasswordChanged(value: String) {
 //        password.value = value

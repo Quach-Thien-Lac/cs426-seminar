@@ -45,107 +45,107 @@ fun SignInScreen(
     onNavigateToSignUp: () -> Unit,
     onBack: () -> Unit
 ) {
-    val appContainer = LocalAppContainer.current
-    val viewModel: SignInViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                return SignInViewModel(appContainer.authRepository) as T
-            }
-        }
-    )
-
-    val uiState by viewModel.uiState.collectAsState()
-    val username by viewModel.username.collectAsState()
-    val password by viewModel.password.collectAsState()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(uiState) {
-        when (val state = uiState) {
-            is SignInUiState.Success -> {
-                snackbarHostState.showSnackbar(state.message)
-                // TODO: navigate to main app
-            }
-            is SignInUiState.Error -> {
-                snackbarHostState.showSnackbar(state.message)
-                viewModel.clearError()
-            }
-            else -> {}
-        }
-    }
-
-    SanguosuoBackground (isWhiteTinted = true){
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    horizontal = 5.dp,
-                    vertical = 20.dp
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            SanguosuoTitle()
-
-            Spacer(modifier = Modifier.height(64.dp))
-
-            SanguosuoTextField(
-                value = username,
-                onValueChange = viewModel::onUsernameChanged,
-                label = "Username",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                hintTextId = R.string.email_place_holder
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SanguosuoTextField(
-                value = password,
-                onValueChange = viewModel::onPasswordChanged,
-                label = "Password",
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { viewModel.signIn() }
-                ),
-                hintTextId = R.string.password_place_holder
-            )
-
-//            Spacer(modifier = Modifier.height(6.dp))
-
-            TextButton(
-                onClick = {/*OnNavigateToForgotPassword*/},
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(
-                    text = stringResource(R.string.forgot_password),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
-                )
-            }
-
-//            Spacer(modifier = Modifier.height(6.dp))
-
-            SanguosuoButton(
-                textId = R.string.sign_in,
-                onClick = { viewModel.signIn() },
-                enabled = username.isNotBlank() && password.isNotBlank()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            SanguosuoButton(
-                textId = R.string.no_account_text,
-                onClick = onNavigateToSignUp,
-                variant = SanguosuoButtonVariant.Outlined
-            )
-        }
-    }
+//    val appContainer = LocalAppContainer.current
+//    val viewModel: SignInViewModel = viewModel(
+//        factory = object : ViewModelProvider.Factory {
+//            @Suppress("UNCHECKED_CAST")
+//            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+//                return SignInViewModel(appContainer.authRepository) as T
+//            }
+//        }
+//    )
+//
+//    val uiState by viewModel.uiState.collectAsState()
+//    val username by viewModel.username.collectAsState()
+//    val password by viewModel.password.collectAsState()
+//
+//    val snackbarHostState = remember { SnackbarHostState() }
+//
+//    LaunchedEffect(uiState) {
+//        when (val state = uiState) {
+//            is SignInUiState.Success -> {
+//                snackbarHostState.showSnackbar(state.message)
+//                // TODO: navigate to main app
+//            }
+//            is SignInUiState.Error -> {
+//                snackbarHostState.showSnackbar(state.message)
+//                viewModel.clearError()
+//            }
+//            else -> {}
+//        }
+//    }
+//
+//    SanguosuoBackground (isWhiteTinted = true){
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(
+//                    horizontal = 5.dp,
+//                    vertical = 20.dp
+//                ),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            SanguosuoTitle()
+//
+//            Spacer(modifier = Modifier.height(64.dp))
+//
+//            SanguosuoTextField(
+//                value = username,
+//                onValueChange = viewModel::onUsernameChanged,
+//                label = "Username",
+//                keyboardOptions = KeyboardOptions(
+//                    keyboardType = KeyboardType.Text,
+//                    imeAction = ImeAction.Next
+//                ),
+//                hintTextId = R.string.email_place_holder
+//            )
+//
+//            Spacer(modifier = Modifier.height(24.dp))
+//
+//            SanguosuoTextField(
+//                value = password,
+//                onValueChange = viewModel::onPasswordChanged,
+//                label = "Password",
+//                visualTransformation = PasswordVisualTransformation(),
+//                keyboardOptions = KeyboardOptions(
+//                    keyboardType = KeyboardType.Password,
+//                    imeAction = ImeAction.Done
+//                ),
+//                keyboardActions = KeyboardActions(
+//                    onDone = { viewModel.signIn() }
+//                ),
+//                hintTextId = R.string.password_place_holder
+//            )
+//
+////            Spacer(modifier = Modifier.height(6.dp))
+//
+//            TextButton(
+//                onClick = {/*OnNavigateToForgotPassword*/},
+//                modifier = Modifier.align(Alignment.End)
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.forgot_password),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = Color.Black
+//                )
+//            }
+//
+////            Spacer(modifier = Modifier.height(6.dp))
+//
+//            SanguosuoButton(
+//                textId = R.string.sign_in,
+//                onClick = { viewModel.signIn() },
+//                enabled = username.isNotBlank() && password.isNotBlank()
+//            )
+//
+//            Spacer(modifier = Modifier.height(12.dp))
+//
+//            SanguosuoButton(
+//                textId = R.string.no_account_text,
+//                onClick = onNavigateToSignUp,
+//                variant = SanguosuoButtonVariant.Outlined
+//            )
+//        }
+//    }
 }

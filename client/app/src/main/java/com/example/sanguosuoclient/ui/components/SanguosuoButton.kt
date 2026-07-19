@@ -32,7 +32,7 @@ enum class SanguosuoButtonVariant {
 
 @Composable
 fun SanguosuoButton(
-    textId: Int,
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     variant: SanguosuoButtonVariant = SanguosuoButtonVariant.Normal,
@@ -59,7 +59,7 @@ fun SanguosuoButton(
                 shape = primaryRoundedRectangleShape
             ) {
                 Text(
-                    text = stringResource(textId),
+                    text = text,
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
@@ -75,7 +75,7 @@ fun SanguosuoButton(
                 )
             ) {
                 Text(
-                    text = stringResource(textId),
+                    text = text,
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Black
                 )
