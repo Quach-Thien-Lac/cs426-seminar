@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,7 @@ fun SanguosuoTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    hintText: String = "",
+    hintTextId: Int,
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -51,7 +52,7 @@ fun SanguosuoTextField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = hintText,
+                    text = stringResource(hintTextId),
                     style = MaterialTheme.typography.displaySmall,
                 )
             },
@@ -93,7 +94,7 @@ fun SanguosuoTextFieldPreview() {
                 value = "cc",
                 onValueChange = {},
                 label = "Email",
-                hintText = "abc@gmail.com",
+                hintTextId = R.string.email_place_holder,
                 isError = false,
                 trailingIcon = {
                     IconButton(
