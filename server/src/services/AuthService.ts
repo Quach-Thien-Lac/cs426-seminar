@@ -4,6 +4,9 @@ import DbConnection from '../connections/DbConnection.ts';
 import randomstring from 'randomstring'
 import bcrypt from 'bcrypt';
 import { ServiceResponse } from '../types/ServiceResponse.ts';
+import { generateDatabaseErrorResponse } from '../helper/generateDatabaseErrorResponse.ts';
+import { generate201Response } from '../helper/generate201Response.ts';
+import assert from 'node:assert/strict'
 
 const SALT_ROUNDS: number = 10;
 
@@ -33,8 +36,43 @@ function generateSessionToken(): string {
 	return sessionToken
 }
 
-function dateToSQLDatetime(date: Date) {
+function dateToSQLDatetime(date: Date): string {
 	return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+async function queryActiveUserId(): Promise<number> {
+	const [activeUserStatusResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT user_status_id FROM UserStatus WHERE user_status_code = 'ACTIVE';		
+	`);
+	assert(activeUserStatusResults.length > 0, "user_status_code ACTIVE does not return valid row");
+	const activeUserStatusId = activeUserStatusResults[0].user_status_id;
+	return activeUserStatusId;
+}
+
+async function queryViewerUserId(): Promise<number> {
+	const [viewerUserRoleResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT user_role_id FROM UserRole WHERE user_role_code = 'VIEWER';
+	`);
+	assert(viewerUserRoleResults.length > 0, "user_role_code VIEWER does not return valid row");
+	const viewerUserRoleId = viewerUserRoleResults[0].user_role_id;
+	return viewerUserRoleId;
+}
+
+async function insertUser(userID: string, data: UserRegistrationData, passwordHash: string, activeUserStatusId: number, viewerUserRoleId: number): Promise<void> {
+	await DbConnection.pool.execute<ResultSetHeader[]>(`
+		INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+	`, [
+		userID,
+		data.name,
+		data.email,
+		data.phone,
+		data.username,
+		passwordHash,
+		dateToSQLDatetime(new Date(Date.now())),
+		activeUserStatusId,
+		viewerUserRoleId
+	]);
 }
 
 export class AuthService {
@@ -80,105 +118,21 @@ export class AuthService {
 		const passwordHash: string = await bcrypt.hash(data.passwordPlainText, SALT_ROUNDS);
 
 		let activeUserStatusID: number;
-		try {
-			activeUserStatusID = (await DbConnection.pool.query<RowDataPacket[]>(`
-				SELECT user_status_id FROM UserStatus WHERE user_status_code = 'ACTIVE';		
-			`))[0][0].user_status_id;
-		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to find the given active user status ID',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'What the fuck bro even the ERROR is COOKOEKDKD!??????????????'
-				};
-				return response;
-			}
-		}
-
 		let viewerUserRoleID: number;
-		try {
-			viewerUserRoleID = (await DbConnection.pool.query<RowDataPacket[]>(`
-				SELECT user_role_id FROM UserRole WHERE user_role_code = 'VIEWER';		
-			`))[0][0].user_role_id;
-		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to find the given viewer user role ID',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: '...fym the error is NOT AN ERROR????????????????????????'
-				};
-				return response;
-			}
-		}
 
 		try {
-			// insert user
-			await DbConnection.pool.execute<ResultSetHeader[]>(`
-				INSERT INTO User (user_id, user_name, user_email, user_phone, user_username, user_password_hash, user_registration_time, user_status_id, user_role_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-			`, [
-				userID,
-				data.name,
-				data.email,
-				data.phone,
-				data.username,
-				passwordHash,
-				dateToSQLDatetime(new Date(Date.now())),
-				activeUserStatusID,
-				viewerUserRoleID
-			]);
+			activeUserStatusID = await queryActiveUserId();
+			viewerUserRoleID = await queryViewerUserId();
+			insertUser(userID, data, passwordHash, activeUserStatusID, viewerUserRoleID);
 		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to insert user',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'i am NOT DEALING WITH *checks error* A ERROR THAT IS NOT AN ERROR?????????'
-				};
-				return response;
-			}
+			return generateDatabaseErrorResponse(err);
 		}
-
-		const response: ServiceResponse = new ServiceResponse;
-		response.success = true;
-		response.statusCode = 201;
-		response.payload = {
-			message: "OK",
-			data: {
-				userID: userID,
-				username: data.username
-			}
-		}
-		return response;
+		
+		const responseData = {
+			userID,
+			username: data.username
+		};
+		return generate201Response(responseData);
 	}
 
 	/**
@@ -217,7 +171,7 @@ export class AuthService {
 	public async login(username: string, password: string): Promise<ServiceResponse> {
 		// WELCOME TO HOW TO LOGIN 101
 		// first...we check if the username exist!!!11!
-		const userWithGivenUsername: RowDataPacket[] = (await DbConnection.pool.query<RowDataPacket[]>('SELECT * FROM `User` WHERE user_username = ?', [username]))[0];
+		const [userWithGivenUsername] = await DbConnection.pool.query<RowDataPacket[]>('SELECT * FROM `User` WHERE user_username = ?', [username]);
 		if (!userWithGivenUsername.length) {
 			const response = new ServiceResponse;
 			response.success = false;
@@ -261,36 +215,13 @@ export class AuthService {
 			]);
 			
 			// ADNDDDDDDDDDDDDDDDDDDDDDDDD WE ARE DONE (these commetns where wriiten in 2am)
-			const response = new ServiceResponse;
-			response.success = true;
-			response.statusCode = 201;
-			response.payload = {
-				message: 'OK',
-				data: {
-					userID: userWithGivenUsername[0]['user_id'],
-					sessionToken: sessionToken
-				}
-			};
-			return response;
-		} catch (err) {
-			if (err instanceof Error) {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'The database is cooked while trying to insert a session token',
-					data: err.toString()
-				};
-				return response;
-			} else {
-				const response: ServiceResponse = new ServiceResponse;
-				response.success = false;
-				response.statusCode = 500;
-				response.payload = {
-					message: 'dude what the god DAMN ERROR??????? IS NOPT AN ERROR?????????????????????????'
-				};
-				return response;
+			const responseData = {
+				userID: userWithGivenUsername[0]['user_id'],
+				sessionToken: sessionToken
 			}
+			return generate201Response(responseData);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
 		}
 	}
 }
