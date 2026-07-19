@@ -3,8 +3,8 @@ import { ServiceResponse } from '../types/ServiceResponse.ts';
 import HeroService from '../services/HeroService.ts';
 
 class HeroController {
-	async getHero(req: Request, res: Response, next: NextFunction) : Promise<void> {
-		let hero: string;
+	async getHeroById(req: Request, res: Response, next: NextFunction) : Promise<void> {
+		let heroId: string;
 		if (Array.isArray(req.params.heroId)) {
 			const response: ServiceResponse = new ServiceResponse;
 			response.success = false;
@@ -14,11 +14,11 @@ class HeroController {
 			};
 			return void res.status(response.statusCode).json(response.get());
 		} else {
-			hero = req.params.heroId;
+			heroId = req.params.heroId;
 		}
 
 		// if no table param is used
-		if (!hero) {
+		if (!heroId) {
 			const response: ServiceResponse = new ServiceResponse;
 			response.success = false,
 			response.statusCode = 400,
@@ -29,7 +29,7 @@ class HeroController {
 			return void res.status(response.statusCode).json(response.get());
 		}
 
-		const response: ServiceResponse = await HeroService.getHero(hero);
+		const response: ServiceResponse = await HeroService.getHeroById(heroId);
 		return void res.status(response.statusCode).json(response.get());
 	}
 }

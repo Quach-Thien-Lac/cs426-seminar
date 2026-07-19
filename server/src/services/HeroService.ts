@@ -119,13 +119,12 @@ export class HeroService {
 	
 	/**
 	 * Service function for <code>/api/heroes/:id</code>. Get all data for a hero. Supports <code>QUERY</code> requests.
-	 * @param {string} hero - The hero's ID
+	 * @param {string} heroId - The hero's ID
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
 	 * curl -X QUERY \
 	 * --header 'Content-Type:application/json' \
-	 * --data '{"hero": "WEI015"}' \
 	 * http://localhost:8080/api/heroes/:id
 	 * 
 	 * @example <caption>Response</caption>
@@ -164,11 +163,11 @@ export class HeroService {
 	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
 	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
 	 */
-	public async getHero(hero: string): Promise<ServiceResponse> {
+	public async getHeroById(heroId: string): Promise<ServiceResponse> {
 		let results: RowDataPacket[];
 
 		try {
-			[results] = await queryHero(hero);
+			[results] = await queryHero(heroId);
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}

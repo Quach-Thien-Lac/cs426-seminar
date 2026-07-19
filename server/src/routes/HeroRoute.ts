@@ -5,10 +5,10 @@ import { HTTPMethod } from "../enums/HTTPMethod.ts";
 
 const router: Router = Router();
 
-router.all('/:heroId',
+router.all('/id/:heroId',
 	ValidatorMiddleware.validateMethod([HTTPMethod.QUERY]),
 	ValidatorMiddleware.validateAccessToken,
-	HeroController.getHero
+	HeroController.getHeroById
 );
 
 export default router;
