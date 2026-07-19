@@ -1,6 +1,6 @@
 import { ServiceResponse } from "../types/ServiceResponse.ts";
 
-function getDatabaseErrorResponse(err: unknown): ServiceResponse {
+export function generateDatabaseErrorResponse(err: unknown): ServiceResponse {
 	if (err instanceof Error) {
 		const response: ServiceResponse = new ServiceResponse;
 		response.success = false;
@@ -20,5 +20,3 @@ function getDatabaseErrorResponse(err: unknown): ServiceResponse {
 		return response;
 	}
 }
-
-export default getDatabaseErrorResponse;

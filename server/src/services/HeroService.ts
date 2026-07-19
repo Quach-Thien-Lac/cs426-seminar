@@ -1,7 +1,8 @@
 import { ServiceResponse } from "../types/ServiceResponse.ts";
 import type { RowDataPacket } from "mysql2";
 import DbConnection from "../connections/DbConnection.ts";
-import getDatabaseErrorResponse from "../helper/getDatabaseErrorResponse.ts";
+import { generateDatabaseErrorResponse } from "../helper/generateDatabaseErrorResponse.ts";
+import { generate200Response } from "../helper/generate200Response.ts";
 
 interface HeroSkillTag {
 	skillTagCode: string,
@@ -169,19 +170,11 @@ export class HeroService {
 		try {
 			[results] = await queryHero(hero);
 		} catch (err) {
-			return getDatabaseErrorResponse(err);
+			return generateDatabaseErrorResponse(err);
 		}
 		
 		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
-
-		const response: ServiceResponse = new ServiceResponse;
-		response.success = true,
-		response.statusCode = 200,
-		response.payload = {
-			message: 'OK',
-			data
-		};
-		return response;
+		return generate200Response(data);
 	}
 }
 

@@ -4,7 +4,8 @@ import DbConnection from '../connections/DbConnection.ts';
 import randomstring from 'randomstring'
 import bcrypt from 'bcrypt';
 import { ServiceResponse } from '../types/ServiceResponse.ts';
-import getDatabaseErrorResponse from '../helper/getDatabaseErrorResponse.ts';
+import { generateDatabaseErrorResponse } from '../helper/generateDatabaseErrorResponse.ts';
+import { generate200Response } from '../helper/generate200Response.ts';
 
 const SALT_ROUNDS: number = 10;
 
@@ -86,7 +87,7 @@ export class AuthService {
 				SELECT user_status_id FROM UserStatus WHERE user_status_code = 'ACTIVE';		
 			`))[0][0].user_status_id;
 		} catch (err) {
-			return getDatabaseErrorResponse(err);
+			return generateDatabaseErrorResponse(err);
 		}
 
 		let viewerUserRoleID: number;
@@ -95,7 +96,7 @@ export class AuthService {
 				SELECT user_role_id FROM UserRole WHERE user_role_code = 'VIEWER';		
 			`))[0][0].user_role_id;
 		} catch (err) {
-			return getDatabaseErrorResponse(err);
+			return generateDatabaseErrorResponse(err);
 		}
 
 		try {
@@ -115,20 +116,14 @@ export class AuthService {
 				viewerUserRoleID
 			]);
 		} catch (err) {
-			return getDatabaseErrorResponse(err);
+			return generateDatabaseErrorResponse(err);
 		}
 
-		const response: ServiceResponse = new ServiceResponse;
-		response.success = true;
-		response.statusCode = 201;
-		response.payload = {
-			message: "OK",
-			data: {
-				userID: userID,
-				username: data.username
-			}
+		const responseData = {
+			userID,
+			username: data.username
 		}
-		return response;
+		return generate200Response(responseData);
 	}
 
 	/**
@@ -223,7 +218,7 @@ export class AuthService {
 			};
 			return response;
 		} catch (err) {
-			return getDatabaseErrorResponse(err);
+			return generateDatabaseErrorResponse(err);
 		}
 	}
 }
