@@ -34,7 +34,14 @@ class SignInViewModel(
     }
 
     fun signIn() {
-        // TODO: add form validation (empty fields, etc.)
+        val currentName = username.value.trim()
+        val currentPassword = password.value
+
+        if (currentName.isEmpty() || currentPassword.isEmpty()) {
+            _uiState.value = SignInUiState.Error("Please enter both username and password!")
+            return
+        }
+
         viewModelScope.launch {
             _uiState.value = SignInUiState.Loading
 
