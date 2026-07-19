@@ -118,7 +118,7 @@ export class HeroService {
 
 	
 	/**
-	 * Service function for <code>/api/db/get-hero</code>. Get all data for a hero. Supports <code>QUERY</code> requests.
+	 * Service function for <code>/api/heroes/:id</code>. Get all data for a hero. Supports <code>QUERY</code> requests.
 	 * @param {string} hero - The hero's ID
 	 * @returns {Promise<ServiceResponse>}
 	 * 
@@ -126,7 +126,7 @@ export class HeroService {
 	 * curl -X QUERY \
 	 * --header 'Content-Type:application/json' \
 	 * --data '{"hero": "WEI015"}' \
-	 * http://localhost:8080/api/db/get-hero
+	 * http://localhost:8080/api/heroes/:id
 	 * 
 	 * @example <caption>Response</caption>
 	 * {
