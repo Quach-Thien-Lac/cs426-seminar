@@ -1,5 +1,6 @@
 package com.example.sanguosuoclient.ui.screen.signup
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -23,6 +24,7 @@ sealed interface SignUpUiState {
 }
 
 data class SignUpFormState(
+    val isFirstPage: Boolean = true,
     val email: String = "",
     val username: String = "",
     val phone: String = "",
@@ -39,10 +41,15 @@ class SignUpViewModel(
     private val _signUpUiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Idle)
     val signUpUiState: StateFlow<SignUpUiState> = _signUpUiState.asStateFlow()
 
-//    fun onUsernameChanged(value: String) {
-//        username.value = value
-//    }
-//
+    fun onUsernameChanged(value: String) {
+        _signUpFormState.update {
+            currentState ->
+            currentState.copy(
+                username = value
+            )
+        }
+    }
+
     fun onEmailChanged(value: String) {
         _signUpFormState.update {
             currentState ->
@@ -60,15 +67,66 @@ class SignUpViewModel(
             )
         }
     }
-//
-//    fun onPasswordChanged(value: String) {
-//        password.value = value
-//    }
-//
-//    fun onConfirmPasswordChanged(value: String) {
-//        confirmPassword.value = value
-//    }
-//
+
+    fun onPasswordChanged(value: String) {
+        _signUpFormState.update {
+            currentState ->
+            currentState.copy(
+                password = value
+            )
+        }
+    }
+
+    fun onConfirmPasswordChanged(value: String) {
+        _signUpFormState.update {
+            currentState ->
+            currentState.copy(
+                confirmPassword = value
+            )
+        }
+    }
+
+    fun onNextPage() {
+        val email = _signUpFormState.value.email
+        val phone = _signUpFormState.value.phone
+        if (email.isEmpty() or phone.isEmpty()) {
+            _signUpUiState.value = SignUpUiState.Error(message = "All fields must be filled")
+        }
+        else if (!isValidEmail(email)) {
+            _signUpUiState.value = SignUpUiState.Error(message = "Invalid Email")
+        }
+        else if(!isValidPhone(phone)) {
+            _signUpUiState.value = SignUpUiState.Error(message = "Invalid Phone")
+        }
+        else {
+            _signUpUiState.value = SignUpUiState.Idle
+            _signUpFormState.update {
+                currentState ->
+                currentState.copy(
+                    isFirstPage = false
+                )
+            }
+        }
+    }
+
+    fun onPreviousPage() {
+        _signUpFormState.update {
+            currentState ->
+            currentState.copy(
+                isFirstPage = true
+            )
+        }
+    }
+
+    fun isValidEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    fun isValidPhone(phone: String): Boolean {
+        return phone.length == 5 && phone.all{ it.isDigit() }
+    }
+
+
 //    fun signUp() {
 //        // TODO: add form validation (empty fields, email format, password match)
 //        if (password.value != confirmPassword.value) {
