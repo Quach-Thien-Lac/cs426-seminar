@@ -1,6 +1,7 @@
 // libs
 import express from 'express';
 import bodyParser from 'body-parser';
+import morgan from 'morgan';
 
 // modules
 import config from './config/config.ts';
@@ -22,6 +23,7 @@ import { nonexistentRouteCallback } from './middleware/nonexistentRouteCallback.
 //////////////////////////////////////////////////////////////////
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan('dev'));
 
 app.use('/api/auth', AuthRoute);
 app.use('/api/heroes', HeroRoute);
