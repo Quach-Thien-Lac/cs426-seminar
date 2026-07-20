@@ -25,10 +25,7 @@ sealed interface SignInUiState {
 
 data class SignInFormState(
     val email: String = "",
-    val username: String = "",
-    val phone: String = "",
-    val password: String = "",
-    val confirmPassword: String = ""
+    val password: String = ""
 )
 
 class SignInViewModel(
@@ -40,10 +37,10 @@ class SignInViewModel(
     private val _signInUIState = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
     val signInUiState: StateFlow<SignInUiState> = _signInUIState.asStateFlow()
 
-    fun onUsernameChanged(value: String) {
+    fun onEmailchanged(value: String) {
         _signInFormState.update {
             currentState ->
-            currentState.copy(username = value)
+            currentState.copy(email = value)
         }
     }
 
@@ -55,10 +52,10 @@ class SignInViewModel(
     }
 
     fun signIn() {
-        val currentName = _signInFormState.value.username.trim()
+        val currentEmail = _signInFormState.value.email
         val currentPassword = _signInFormState.value.password
 
-        if (currentName.isEmpty() || currentPassword.isEmpty()) {
+        if (currentEmail.isEmpty() || currentPassword.isEmpty()) {
             _signInUIState.value = SignInUiState.Error("Please enter both username and password!")
             return
         }
@@ -67,7 +64,7 @@ class SignInViewModel(
             _signInUIState.value = SignInUiState.Loading
 
             val request = SignInRequest(
-                username = _signInFormState.value.username,
+                email = _signInFormState.value.email,
                 password = _signInFormState.value.password
             )
 

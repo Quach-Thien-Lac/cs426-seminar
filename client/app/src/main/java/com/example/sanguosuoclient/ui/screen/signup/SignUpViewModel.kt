@@ -123,7 +123,7 @@ class SignUpViewModel(
     }
 
     fun isValidPhone(phone: String): Boolean {
-        return phone.length == 5 && phone.all{ it.isDigit() }
+        return phone.length == 10 && phone.all{ it.isDigit() }
     }
 
 

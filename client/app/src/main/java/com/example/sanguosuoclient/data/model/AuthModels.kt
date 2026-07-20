@@ -1,7 +1,7 @@
 package com.example.sanguosuoclient.data.model
 
 data class SignInRequest(
-    val username: String,
+    val email: String,
     val password: String
 )
 
