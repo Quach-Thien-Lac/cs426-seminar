@@ -1,0 +1,100 @@
+package com.example.sanguosuoclient.ui.screen.signin
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.sanguosuoclient.SanguosuoApplication
+import com.example.sanguosuoclient.data.model.SignInRequest
+import com.example.sanguosuoclient.data.repository.AuthRepository
+import com.example.sanguosuoclient.ui.screen.signup.SignUpViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+sealed interface SignInUiState {
+    data object Idle : SignInUiState
+    data object Loading : SignInUiState
+    data class Success(val message: String) : SignInUiState
+    data class Error(val message: String) : SignInUiState
+}
+
+data class SignInFormState(
+    val email: String = "",
+    val password: String = ""
+)
+
+class SignInViewModel(
+    private val authRepository: AuthRepository
+) : ViewModel() {
+    private val _signInFormState = MutableStateFlow<SignInFormState>(SignInFormState())
+    val signInFormState: StateFlow<SignInFormState> = _signInFormState.asStateFlow()
+
+    private val _signInUIState = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
+    val signInUiState: StateFlow<SignInUiState> = _signInUIState.asStateFlow()
+
+    fun onEmailchanged(value: String) {
+        _signInFormState.update {
+            currentState ->
+            currentState.copy(email = value)
+        }
+    }
+
+    fun onPasswordChanged(value: String) {
+        _signInFormState.update {
+            currentState ->
+            currentState.copy(password = value)
+        }
+    }
+
+    fun signIn() {
+        val currentEmail = _signInFormState.value.email
+        val currentPassword = _signInFormState.value.password
+
+        if (currentEmail.isEmpty() || currentPassword.isEmpty()) {
+            _signInUIState.value = SignInUiState.Error("Please enter both username and password!")
+            return
+        }
+
+        viewModelScope.launch {
+            _signInUIState.value = SignInUiState.Loading
+
+            val request = SignInRequest(
+                email = _signInFormState.value.email,
+                password = _signInFormState.value.password
+            )
+
+            val result = authRepository.signIn(request)
+
+            result.fold(
+                onSuccess = {
+                    // TODO: store token, navigate to main app
+                    _signInUIState.value = SignInUiState.Success("Welcome back!")
+                },
+                onFailure = { error ->
+                    _signInUIState.value = SignInUiState.Error(
+                        error.message ?: "Sign in failed"
+                    )
+                }
+            )
+        }
+    }
+
+    fun clearError() {
+        _signInUIState.value = SignInUiState.Idle
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as SanguosuoApplication)
+                val authRepository = application.container.authRepository
+                SignInViewModel(authRepository = authRepository)
+            }
+        }
+    }
+}

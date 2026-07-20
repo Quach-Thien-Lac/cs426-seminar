@@ -1,3 +1,29 @@
 <resources>
-    <string name="app_name">SanguosuoClient</string>
+    <string name="app_name">Sanguosuo</string>
+    <string name="chinese_app_name">三国索</string>
+
+    <string name="sign_in">SIGN IN</string>
+    <string name="next">NEXT</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="sign_up_with_email">SIGN UP WITH EMAIL</string>
+    <string name="continue_as_guest">CONTINUE AS GUEST</string>
+    <string name="back">BACK</string>
+
+    <string name="sign_in_title">Sign In</string>
+    <string name="sign_up_title">Sign Up</string>
+
+    <string name="username_label">Username</string>
+    <string name="email_label">Email</string>
+    <string name="phone_label">Phone</string>
+    <string name="password_label">Password</string>
+    <string name="confirm_password_label">Confirm Password</string>
+
+    <string name="forgot_password">Forgot password?</string>
+    <string name="no_account_text">Don\'t have an account?</string>
+    <string name="has_account_text">Already have an account?</string>
+
+    <string name="email_place_holder">abc@email.com</string>
+    <string name="password_place_holder">abc123!@#</string>
+    <string name="phone_place_holder">0123456***</string>
+    <string name="username_place_holder">abcxyz123</string>
 </resources>

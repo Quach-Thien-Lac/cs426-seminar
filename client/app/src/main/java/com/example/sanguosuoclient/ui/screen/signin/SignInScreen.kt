@@ -1,0 +1,191 @@
+package com.example.sanguosuoclient.ui.screen.signin
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.sanguosuoclient.R
+import com.example.sanguosuoclient.ui.components.SanguosuoBackground
+import com.example.sanguosuoclient.ui.components.SanguosuoButton
+import com.example.sanguosuoclient.ui.components.SanguosuoButtonVariant
+import com.example.sanguosuoclient.ui.components.SanguosuoLoadingIndicator
+import com.example.sanguosuoclient.ui.components.SanguosuoTextField
+import com.example.sanguosuoclient.ui.components.SanguosuoTitle
+import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
+
+@Composable
+fun SignInScreenRoute (
+    onSubmit: () -> Unit,
+    onBack: () -> Unit,
+    viewModel: SignInViewModel = viewModel(factory = SignInViewModel.Factory),
+    onNavigateToSignUp: () -> Unit
+) {
+    val uiState by viewModel.signInUiState.collectAsState()
+    val forState by viewModel.signInFormState.collectAsState()
+
+    SignInScreen(
+        formState = forState,
+        uiState = uiState,
+        onEmailChanged = viewModel::onEmailchanged,
+        onPasswordChanged = viewModel::onPasswordChanged,
+        onSubmit = onSubmit,
+        onBack = onBack,
+        onNavigateToSignUp = onNavigateToSignUp
+    )
+}
+
+@Composable
+fun SignInScreen(
+    formState: SignInFormState,
+    uiState: SignInUiState,
+    onEmailChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onSubmit: () -> Unit,
+    onBack: () -> Unit,
+    onNavigateToSignUp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showPassowrd by rememberSaveable { mutableStateOf(false) }
+
+    SanguosuoBackground (
+        isWhiteTinted = true,
+        modifier = modifier
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = 5.dp,
+                    vertical = 20.dp
+                )
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Spacer(modifier = Modifier.height((100.dp)))
+
+            SanguosuoTitle()
+
+            Spacer(modifier = Modifier.height(37.dp))
+
+            if (uiState is SignInUiState.Error) {
+                Text (
+                    text = uiState.message,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            SanguosuoTextField(
+                value = formState.email,
+                onValueChange = onEmailChanged,
+                label = "Email",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                hintText = stringResource(R.string.email_place_holder)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            SanguosuoTextField(
+                value = formState.password,
+                onValueChange = onPasswordChanged,
+                label = "Password",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { onSubmit() }
+                ),
+                hintText = stringResource(R.string.password_place_holder),
+                visualTransformation = if (showPassowrd) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            showPassowrd = !showPassowrd
+                        }
+                    ) {
+                        Icon (
+                            painter = if (showPassowrd) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
+                            contentDescription = "",
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            TextButton(
+                onClick = {/*OnNavigateToForgotPassword*/},
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(
+                    text = stringResource(R.string.forgot_password),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            SanguosuoButton(
+                text = stringResource(R.string.sign_in),
+                onClick = { onSubmit() },
+                enabled = formState.email.isNotBlank() && formState.password.isNotBlank()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            SanguosuoButton(
+                text = stringResource(R.string.no_account_text),
+                onClick = onNavigateToSignUp,
+                variant = SanguosuoButtonVariant.Outlined
+            )
+        }
+    }
+}
