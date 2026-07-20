@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SecureTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,7 +38,6 @@ fun SanguosuoTextField(
     modifier: Modifier = Modifier,
     hintText: String,
     trailingIcon: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -70,7 +72,6 @@ fun SanguosuoTextField(
             ),
             trailingIcon = trailingIcon,
             modifier = Modifier.fillMaxWidth(),
-            isError = isError,
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
@@ -79,6 +80,42 @@ fun SanguosuoTextField(
         )
     }
 }
+//
+//@Composable
+//fun SanguosuoPasswordTextField(
+//    value: String,
+//    onValueChange: (String) -> Unit,
+//    label: String,
+//    hintText: String,
+//    modifier: Modifier = Modifier,
+//    trailingIcon: @Composable (()->Unit)? = null,
+//    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+//    keyboardActions: KeyboardActions = KeyboardActions.Default,
+//    singleLine: Boolean = true
+//) {
+//    Column(modifier = modifier) {
+//        Text(
+//            text = label,
+//            style = MaterialTheme.typography.labelSmall,
+//        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//        OutlinedSecureTextField(
+//            state = TODO(),
+//            modifier = TODO(),
+//            enabled = TODO(),
+//            textStyle = TODO(),
+//            labelPosition = TODO(),
+//            label = TODO(),
+//            placeholder = TODO(),
+//            trailingIcon = TODO(),
+//            textObfuscationMode = TODO(),
+//            textObfuscationCharacter = TODO(),
+//            keyboardOptions = keyboardOptions,
+//            shape = TODO(),
+//            colors = TODO(),
+//        )
+//    }
+//}
 
 @Preview (showBackground = true)
 @Composable
@@ -95,7 +132,6 @@ fun SanguosuoTextFieldPreview() {
                 onValueChange = {},
                 label = "Email",
                 hintText = stringResource(R.string.email_place_holder),
-                isError = false,
                 trailingIcon = {
                     IconButton(
                         onClick = {}
