@@ -63,7 +63,7 @@ fun SignInScreenRoute (
     SignInScreen(
         formState = forState,
         uiState = uiState,
-        onEmailChanged = viewModel::onEmailchanged,
+        onUsernameChanged = viewModel::onUsernamechanged,
         onPasswordChanged = viewModel::onPasswordChanged,
         onSubmit = onSubmit,
         onBack = onBack,
@@ -75,7 +75,7 @@ fun SignInScreenRoute (
 fun SignInScreen(
     formState: SignInFormState,
     uiState: SignInUiState,
-    onEmailChanged: (String) -> Unit,
+    onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onSubmit: () -> Unit,
     onBack: () -> Unit,
@@ -118,14 +118,14 @@ fun SignInScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             SanguosuoTextField(
-                value = formState.email,
-                onValueChange = onEmailChanged,
-                label = "Email",
+                value = formState.username,
+                onValueChange = onUsernameChanged,
+                label = "Username",
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                hintText = stringResource(R.string.email_place_holder)
+                hintText = stringResource(R.string.username_place_holder)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -176,7 +176,7 @@ fun SignInScreen(
             SanguosuoButton(
                 text = stringResource(R.string.sign_in),
                 onClick = { onSubmit() },
-                enabled = formState.email.isNotBlank() && formState.password.isNotBlank()
+                enabled = formState.username.isNotBlank() && formState.password.isNotBlank()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
