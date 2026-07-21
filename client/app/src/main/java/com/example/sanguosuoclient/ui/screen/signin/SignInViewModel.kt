@@ -24,7 +24,7 @@ sealed interface SignInUiState {
 }
 
 data class SignInFormState(
-    val email: String = "",
+    val username: String = "",
     val password: String = ""
 )
 
@@ -37,10 +37,10 @@ class SignInViewModel(
     private val _signInUIState = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
     val signInUiState: StateFlow<SignInUiState> = _signInUIState.asStateFlow()
 
-    fun onEmailchanged(value: String) {
+    fun onUsernamechanged(value: String) {
         _signInFormState.update {
             currentState ->
-            currentState.copy(email = value)
+            currentState.copy(username = value)
         }
     }
 
@@ -52,7 +52,7 @@ class SignInViewModel(
     }
 
     fun signIn() {
-        val currentEmail = _signInFormState.value.email
+        val currentEmail = _signInFormState.value.username
         val currentPassword = _signInFormState.value.password
 
         if (currentEmail.isEmpty() || currentPassword.isEmpty()) {
@@ -64,7 +64,7 @@ class SignInViewModel(
             _signInUIState.value = SignInUiState.Loading
 
             val request = SignInRequest(
-                email = _signInFormState.value.email,
+                email = _signInFormState.value.username,
                 password = _signInFormState.value.password
             )
 
