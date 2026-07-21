@@ -99,7 +99,7 @@ class SignUpViewModel(
             _signUpUiState.value = SignUpUiState.Error(message = "Invalid Phone")
         }
         else {
-            _signUpUiState.value = SignUpUiState.Idle
+            clearError()
             _signUpFormState.update {
                 currentState ->
                 currentState.copy(
@@ -123,45 +123,67 @@ class SignUpViewModel(
     }
 
     fun isValidPhone(phone: String): Boolean {
-        return phone.length == 10 && phone.all{ it.isDigit() }
+        return phone.length == 10 && phone.all{ it.isDigit() } && phone[0] == '0'
     }
 
 
-//    fun signUp() {
-//        // TODO: add form validation (empty fields, email format, password match)
-//        if (password.value != confirmPassword.value) {
-//            _uiState.value = SignUpUiState.Error("Passwords do not match")
-//            return
-//        }
-//
-//        viewModelScope.launch {
-//            _uiState.value = SignUpUiState.Loading
-//
-//            val request = SignUpRequest(
-//                username = username.value,
-//                email = email.value,
-//                password = password.value
-//            )
-//
-//            val result = authRepository.signUp(request)
-//
-//            result.fold(
-//                onSuccess = {
-//                    // TODO: navigate to sign in or auto-login
-//                    _uiState.value = SignUpUiState.Success("Account created! Please sign in.")
-//                },
-//                onFailure = { error ->
-//                    _uiState.value = SignUpUiState.Error(
-//                        error.message ?: "Sign up failed"
-//                    )
-//                }
-//            )
-//        }
-//    }
-//
-//    fun clearError() {
-//        _uiState.value = SignUpUiState.Idle
-//    }
+    fun signUp() {
+
+        val email = _signUpFormState.value.email
+        val username = _signUpFormState.value.username
+        val phone = _signUpFormState.value.phone
+        val password = _signUpFormState.value.password
+        val confirmPassword = _signUpFormState.value.confirmPassword
+
+        if (email.isEmpty() or username.isEmpty() or phone.isEmpty() or password.isEmpty() or confirmPassword.isEmpty()) {
+            _signUpUiState.value = SignUpUiState.Error("All fields must be filled")
+            return
+        }
+        else if (!isValidEmail(email)) {
+            _signUpUiState.value = SignUpUiState.Error("Invalid email")
+            return
+        }
+        else if (!isValidPhone(phone)) {
+            _signUpUiState.value = SignUpUiState.Error("Invalid phone")
+            return
+        }
+        else if (password != confirmPassword) {
+            _signUpUiState.value = SignUpUiState.Error("Passwords do not match")
+            return
+        }
+        else {
+            clearError()
+        }
+
+        viewModelScope.launch {
+            _signUpUiState.value = SignUpUiState.Loading
+
+            val request = SignUpRequest(
+                name = "null",
+                username = username,
+                email = email,
+                phone = phone,
+                password = password
+            )
+
+            val result = authRepository.signUp(request)
+
+            result.fold(
+                onSuccess = {
+                    _signUpUiState.value = SignUpUiState.Success("Account created! Please sign in.")
+                },
+                onFailure = { error ->
+                    _signUpUiState.value = SignUpUiState.Error(
+                        error.message ?: "Sign up failed"
+                    )
+                }
+            )
+        }
+    }
+
+    fun clearError() {
+        _signUpUiState.value = SignUpUiState.Idle
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

@@ -1,12 +1,8 @@
 package com.example.sanguosuoclient.data.model
 
-data class SignInRequest(
-    val email: String,
-    val password: String
-)
+import kotlinx.serialization.Serializable
 
-data class SignUpRequest(
-    val username: String,
+data class SignInRequest(
     val email: String,
     val password: String
 )
@@ -16,8 +12,24 @@ data class SignInResponse(
     val user: User
 )
 
-data class User(
-    val id: String,
+@Serializable
+data class SignUpRequest(
+    val name: String,
     val username: String,
-    val email: String
+    val email: String,
+    val password: String,
+    val phone: String
+)
+
+@Serializable
+data class User(
+    val userID: String,
+    val username: String,
+)
+
+
+@Serializable
+data class SignUpPayload(
+    val message: String,
+    val data: User
 )

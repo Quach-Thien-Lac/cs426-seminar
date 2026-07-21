@@ -42,7 +42,12 @@ fun AppNavHost(
 
         composable(NavRoute.SignUp.route) {
             SignUpScreenRoute(
-                onSubmit = {},
+                onNavigateToSignIn = {
+                    navController.navigate(NavRoute.SignIn.route)
+                },
+                onSubmit = {
+
+                },
                 onBack = {
                     navController.popBackStack()
                 }
