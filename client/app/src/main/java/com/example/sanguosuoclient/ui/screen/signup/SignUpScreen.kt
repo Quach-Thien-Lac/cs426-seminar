@@ -77,11 +77,16 @@ fun SignUpScreenRoute(
         onNavigateToSignIn = onNavigateToSignIn,
         onSubmit = {
             viewModel.signUp()
-            onSubmit()
         },
         onBack = onBack,
         modifier = Modifier.fillMaxSize()
     )
+    LaunchedEffect(uiState) {
+        if (uiState is SignUpUiState.Success) {
+            onSubmit()
+            viewModel.clearError()
+        }
+    }
 }
 
 @Composable

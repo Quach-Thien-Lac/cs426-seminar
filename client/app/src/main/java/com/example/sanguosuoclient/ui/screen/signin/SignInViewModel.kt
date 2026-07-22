@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sanguosuoclient.SanguosuoApplication
 import com.example.sanguosuoclient.data.model.SignInRequest
 import com.example.sanguosuoclient.data.repository.AuthRepository
-import com.example.sanguosuoclient.ui.screen.signup.SignUpViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +36,7 @@ class SignInViewModel(
     private val _signInUIState = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
     val signInUiState: StateFlow<SignInUiState> = _signInUIState.asStateFlow()
 
-    fun onUsernamechanged(value: String) {
+    fun onUsernameChanged(value: String) {
         _signInFormState.update {
             currentState ->
             currentState.copy(username = value)
@@ -52,10 +51,10 @@ class SignInViewModel(
     }
 
     fun signIn() {
-        val currentEmail = _signInFormState.value.username
+        val currentUsername = _signInFormState.value.username
         val currentPassword = _signInFormState.value.password
 
-        if (currentEmail.isEmpty() || currentPassword.isEmpty()) {
+        if (currentUsername.isEmpty() || currentPassword.isEmpty()) {
             _signInUIState.value = SignInUiState.Error("Please enter both username and password!")
             return
         }
@@ -64,7 +63,7 @@ class SignInViewModel(
             _signInUIState.value = SignInUiState.Loading
 
             val request = SignInRequest(
-                email = _signInFormState.value.username,
+                username = _signInFormState.value.username,
                 password = _signInFormState.value.password
             )
 

@@ -58,17 +58,24 @@ fun SignInScreenRoute (
     onNavigateToSignUp: () -> Unit
 ) {
     val uiState by viewModel.signInUiState.collectAsState()
-    val forState by viewModel.signInFormState.collectAsState()
+    val formState by viewModel.signInFormState.collectAsState()
 
     SignInScreen(
-        formState = forState,
+        formState = formState,
         uiState = uiState,
-        onUsernameChanged = viewModel::onUsernamechanged,
+        onUsernameChanged = viewModel::onUsernameChanged,
         onPasswordChanged = viewModel::onPasswordChanged,
-        onSubmit = onSubmit,
+        onSubmit = { viewModel.signIn() },
         onBack = onBack,
         onNavigateToSignUp = onNavigateToSignUp
     )
+
+    // Placehodler
+    LaunchedEffect(uiState) {
+        if (uiState is SignInUiState.Success) {
+            onSubmit()
+        }
+    }
 }
 
 @Composable
@@ -82,7 +89,7 @@ fun SignInScreen(
     onNavigateToSignUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showPassowrd by rememberSaveable { mutableStateOf(false) }
+    var showPassword by rememberSaveable { mutableStateOf(false) }
 
     SanguosuoBackground (
         isWhiteTinted = true,
@@ -142,15 +149,15 @@ fun SignInScreen(
                     onDone = { onSubmit() }
                 ),
                 hintText = stringResource(R.string.password_place_holder),
-                visualTransformation = if (showPassowrd) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            showPassowrd = !showPassowrd
+                            showPassword = !showPassword
                         }
                     ) {
                         Icon (
-                            painter = if (showPassowrd) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
+                            painter = if (showPassword) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
                             contentDescription = "",
                             modifier = Modifier.size(22.dp)
                         )

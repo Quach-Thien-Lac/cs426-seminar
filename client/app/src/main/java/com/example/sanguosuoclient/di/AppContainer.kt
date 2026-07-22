@@ -16,6 +16,8 @@ interface AppContainer {
 class DefaultAppContainer : AppContainer {
     private val baseUrl = "http://10.0.2.2:8080/"
 
+    private val json = Json { ignoreUnknownKeys = true }
+
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
