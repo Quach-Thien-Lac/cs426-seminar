@@ -26,4 +26,6 @@
     <string name="password_place_holder">abc123!@#</string>
     <string name="phone_place_holder">0123456***</string>
     <string name="username_place_holder">abcxyz123</string>
+
+    <string name="registration_successful">Registration Successful</string>
 </resources>

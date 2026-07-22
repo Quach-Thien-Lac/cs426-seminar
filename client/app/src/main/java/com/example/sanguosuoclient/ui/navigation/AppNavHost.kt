@@ -36,13 +36,18 @@ fun AppNavHost(
                 onBack = {
                     navController.popBackStack()
                 },
-                onSubmit = {}
+                onSubmit = {/*pop up later*/}
             )
         }
 
         composable(NavRoute.SignUp.route) {
             SignUpScreenRoute(
-                onSubmit = {},
+                onNavigateToSignIn = {
+                    navController.navigate(NavRoute.SignIn.route)
+                },
+                onSubmit = {
+
+                },
                 onBack = {
                     navController.popBackStack()
                 }

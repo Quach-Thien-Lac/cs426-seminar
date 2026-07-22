@@ -1,6 +1,8 @@
 package com.example.sanguosuoclient.ui.screen.signup
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +14,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sanguosuoclient.R
@@ -44,6 +56,7 @@ import com.example.sanguosuoclient.ui.theme.primaryLight
 
 @Composable
 fun SignUpScreenRoute(
+    onNavigateToSignIn: () -> Unit,
     onSubmit: () -> Unit,
     onBack: () -> Unit,
     viewModel: SignUpViewModel = viewModel(factory = SignUpViewModel.Factory)
@@ -61,9 +74,19 @@ fun SignUpScreenRoute(
         onConfirmPasswordChanged = viewModel::onConfirmPasswordChanged,
         onNextPage = viewModel::onNextPage,
         onPreviousPage = viewModel::onPreviousPage,
-        onSubmit = onSubmit,
+        onNavigateToSignIn = onNavigateToSignIn,
+        onSubmit = {
+            viewModel.signUp()
+        },
         onBack = onBack,
+        modifier = Modifier.fillMaxSize()
     )
+    LaunchedEffect(uiState) {
+        if (uiState is SignUpUiState.Success) {
+            onSubmit()
+            viewModel.clearError()
+        }
+    }
 }
 
 @Composable
@@ -77,165 +100,201 @@ fun SignUpScreen(
     onConfirmPasswordChanged: (String) -> Unit,
     onNextPage: () -> Unit,
     onPreviousPage: () -> Unit,
+    onNavigateToSignIn: () -> Unit,
     onSubmit: () -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var showPassword by rememberSaveable { mutableStateOf(false) }
     var showConfirmPassword by rememberSaveable { mutableStateOf(false) }
 
     SanguosuoBackground(
         isWhiteTinted = true,
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    horizontal = 5.dp,
-                    vertical = 20.dp
-                )
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
+        Box (
+            modifier = modifier
         ) {
-            Spacer(modifier = Modifier.height(100.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = 5.dp,
+                        vertical = 20.dp
+                    )
+                    .verticalScroll(rememberScrollState())
+                    .imePadding(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
+            ) {
+                Spacer(modifier = Modifier.height(100.dp))
 
-            SanguosuoTitle()
+                SanguosuoTitle()
 
-            Spacer(modifier = Modifier.height(37.dp))
+                Spacer(modifier = Modifier.height(37.dp))
 
-            if (uiState is SignUpUiState.Error) {
-                Text(
-                    text = uiState.message,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Start)
-                )
+                if (uiState is SignUpUiState.Error) {
+                    Text(
+                        text = uiState.message,
+                        style = MaterialTheme.typography.displaySmall,
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                if (formState.isFirstPage) {
+                    SanguosuoTextField(
+                        value = formState.email,
+                        onValueChange = onEmailChanged,
+                        label = stringResource(R.string.email_label),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp),
+                        hintText = stringResource(R.string.email_place_holder),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SanguosuoTextField(
+                        value = formState.phone,
+                        onValueChange = onPhoneChanged,
+                        label = stringResource(R.string.phone_label),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp),
+                        hintText = stringResource((R.string.phone_place_holder)),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Phone
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SanguosuoButton(
+                        text = stringResource(R.string.next),
+                        onClick = onNextPage,
+                        color = primaryLight
+                    )
+                } else {
+                    SanguosuoTextField(
+                        value = formState.username,
+                        onValueChange = onUsernameChanged,
+                        label = stringResource(R.string.username_label),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp),
+                        hintText = stringResource((R.string.username_place_holder)),
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SanguosuoTextField(
+                        value = formState.password,
+                        onValueChange = onPasswordChanged,
+                        label = stringResource(R.string.password_label),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp),
+                        hintText = stringResource((R.string.password_place_holder)),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password
+                        ),
+                        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    showPassword = !showPassword
+                                }
+                            ) {
+                                Icon(
+                                    painter = if (showPassword) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SanguosuoTextField(
+                        value = formState.confirmPassword,
+                        onValueChange = onConfirmPasswordChanged,
+                        label = stringResource(R.string.confirm_password_label),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp),
+                        hintText = stringResource((R.string.password_place_holder)),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password
+                        ),
+                        visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    showConfirmPassword = !showConfirmPassword
+                                }
+                            ) {
+                                Icon(
+                                    painter = if (showConfirmPassword) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SanguosuoButton(
+                        text = stringResource(R.string.back),
+                        onClick = onPreviousPage,
+                        variant = SanguosuoButtonVariant.Outlined
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SanguosuoButton(
+                        text = stringResource(R.string.sign_up),
+                        onClick = onSubmit,
+                        color = primaryLight
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            if (formState.isFirstPage) {
-                SanguosuoTextField(
-                    value = formState.email,
-                    onValueChange = onEmailChanged,
-                    label = stringResource(R.string.email_label),
+            if (uiState is SignUpUiState.Loading) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 2.dp),
-                    hintText = stringResource(R.string.email_place_holder),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SanguosuoTextField(
-                    value = formState.phone,
-                    onValueChange = onPhoneChanged,
-                    label = stringResource(R.string.phone_label),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 2.dp),
-                    hintText = stringResource((R.string.phone_place_holder)),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Phone
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SanguosuoButton(
-                    text = stringResource(R.string.next),
-                    onClick = onNextPage,
-                    color = primaryLight
-                )
-            } else {
-                SanguosuoTextField(
-                    value = formState.username,
-                    onValueChange = onUsernameChanged,
-                    label = stringResource(R.string.username_label),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 2.dp),
-                    hintText = stringResource((R.string.username_place_holder)),
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SanguosuoTextField(
-                    value = formState.password,
-                    onValueChange = onPasswordChanged,
-                    label = stringResource(R.string.password_label),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 2.dp),
-                    hintText = stringResource((R.string.password_place_holder)),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = primaryLight)
+                }
+            }
+            else if (uiState is SignUpUiState.Success) {
+                AlertDialog(
+                    properties = DialogProperties(
+                        dismissOnBackPress = false,
+                        dismissOnClickOutside = false
                     ),
-                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                showPassword = !showPassword
-                            }
-                        ) {
-                            Icon(
-                                painter = if (showPassword) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
-                                contentDescription = "",
-                                modifier = Modifier.size(22.dp)
-                            )
+                    onDismissRequest = {},
+                    title = {
+                        Text(text = stringResource(R.string.registration_successful))
+                    },
+                    text = {
+                        Text(text = uiState.message)
+                    },
+                    confirmButton = {
+                        Button(onClick = onNavigateToSignIn) {
+                            Text(stringResource(R.string.sign_in_title))
                         }
                     }
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SanguosuoTextField(
-                    value = formState.confirmPassword,
-                    onValueChange = onConfirmPasswordChanged,
-                    label = stringResource(R.string.confirm_password_label),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 2.dp),
-                    hintText = stringResource((R.string.password_place_holder)),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
-                    ),
-                    visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                showConfirmPassword = !showConfirmPassword
-                            }
-                        ) {
-                            Icon(
-                                painter = if (showConfirmPassword) painterResource(R.drawable.visibility_off) else painterResource(R.drawable.visibility),
-                                contentDescription = "",
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SanguosuoButton(
-                    text = stringResource(R.string.back),
-                    onClick = onPreviousPage,
-                    variant = SanguosuoButtonVariant.Outlined
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SanguosuoButton(
-                    text = stringResource(R.string.sign_up),
-                    onClick = onSubmit,
-                    color = primaryLight
                 )
             }
         }
@@ -248,7 +307,7 @@ fun SignUpScreenPreview() {
     SanguosuoClientTheme {
         SignUpScreen(
             formState = SignUpFormState(),
-            uiState = SignUpUiState.Error(message = "error cc"),
+            uiState = SignUpUiState.Success("cc"),
             onEmailChanged = {},
             onPhoneChanged = {},
             onUsernameChanged = {},
@@ -256,8 +315,9 @@ fun SignUpScreenPreview() {
             onConfirmPasswordChanged = {},
             onNextPage = {},
             onPreviousPage = {},
+            onNavigateToSignIn = {},
             onSubmit = {},
-            onBack = {},
+            onBack = {}
         )
     }
 }
