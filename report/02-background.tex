@@ -1,5 +1,4 @@
 \subsection{DoS/DDoS attacks}
-\lipsum[1-2]
 Denial-of-service (DoS) and distributed denial-of-service (DDoS) attacks are malicious attempts to disrupt the normal traffic of a targeted server, service, or network by overwhelming the target or its surrounding infrastructure with a flood of Internet traffic. These attacks can be executed in various ways, including sending excessive requests to a server, exploiting vulnerabilities in network protocols, or using botnets to generate massive amounts of traffic. The main difference between DoS and DDoS attacks is that DoS attacks typically originate from a single source, while DDoS attacks involve multiple compromised systems (often infected with malware) that are used to target a single system. The impact of these attacks can range from temporary service outages to significant financial losses and reputational damage for the affected organizations.
 
 There exist numerous attack strategies that attackers can  employ to execute DoS/DDoS attacks, including but not limited to:
@@ -9,7 +8,8 @@ There exist numerous attack strategies that attackers can  employ to execute DoS
     \item \textbf{Application Layer Attacks:} These attacks target specific applications or services, often by sending seemingly legitimate requests that consume server resources. Examples include HTTP floods and Slowloris attacks. This project will focus on application layer attacks, specifically Slowloris attacks, as they are more difficult to detect and mitigate compared to volumetric and protocol attacks.
 \end{itemize}
 \subsection{SQL injection}
-\lipsum[1-2]
+SQL injection is another common attack vector that targets web applications by manipulating SQL queries. Attackers exploit vulnerabilities in the application's input validation to inject malicious SQL code, which can lead to unauthorized access to the database, data leakage, or even complete control over the database server. SQL injection attacks can be executed through various methods, such as inserting malicious code into form fields, URL parameters, or cookies. The consequences of a successful SQL injection attack can be severe, including data breaches, loss of sensitive information, and damage to the organization's reputation.
+
+In this project, we explore how SQL injection can occur when arguments are passed to the database without proper sanitization or validation. By understanding the mechanics of SQL injection attacks, we can develop effective strategies to prevent them, such as using prepared statements, parameterized queries, and input validation techniques.
 
 \subsection{Password breaches}
-\lipsum[1-2]
