@@ -1,1 +1,16 @@
-\lipsum[1-2]
+Our demonstration for the vulnerabilities and approaches is a wiki app called Sanguosuo to provide information about the board name with the approximately similar name Sanguosha.
+
+As a quick summary on the game's premise, players are assigned to factions (Wei, Shu, Wu, and Qun), and the ultimate objective of every player is to bring victory for their faction. To this end, each player is assigned two heroes determining their skillset and health point (abbreviated as HP), and using playing cards with various utilities, they make an effort to weaken enemies and strengthen allies.
+
+The demonstration Sanguosuo indexes the information of every hero, which consists of:
+\begin{itemize}
+	\item name,
+	\item image,
+	\item faction the hero belongs to,
+	\item HP,
+	\item epithet (a short phrase highlighting a hero's quality)
+	\item quote,
+	\item skills.
+\end{itemize}
+
+At its very core, Sanguosuo contains a functional user authentication system and a catalog search system. Once a user created an account and used it to log in, they are presented with a search bar to search for information regarding the hero. Thus, the app is divided into three main modules: the server (locally hosted on \verb|http://localhost:8080|), the database (locally hosted on \verb|http://localhost:3306|), and the client.
