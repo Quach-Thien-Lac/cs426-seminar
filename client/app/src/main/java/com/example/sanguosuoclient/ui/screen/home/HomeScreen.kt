@@ -10,12 +10,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.ui.components.PopularHeroesSection
 import com.example.sanguosuoclient.ui.components.TopNewsSection
 
 @Composable
 fun HomeScreen(
-    onHeroClick: (String) -> Unit,
+    onHeroClick: (Hero) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(

@@ -6,6 +6,7 @@ import kotlinx.coroutines.CancellationException
 
 interface HeroRepository {
     suspend fun searchHeroesByName(token: String, name: String): Result<List<Hero>>
+    suspend fun getHeroById(token: String, heroId: String): Result<Hero>
 }
 
 class NetworkHeroRepository(
@@ -19,6 +20,21 @@ class NetworkHeroRepository(
             }
             val heroes = response.payload?.data ?: emptyList()
             Result.success(heroes)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getHeroById(token: String, heroId: String): Result<Hero> {
+        return try {
+            val response = apiService.searchHeroesById(token, heroId)
+            if (!response.success) {
+                throw Exception("Hero fetch failed (${response.statusCode})")
+            }
+            val hero = response.payload?.data?.firstOrNull() ?: throw Exception("Hero not found")
+            Result.success(hero)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
