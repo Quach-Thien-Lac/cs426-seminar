@@ -1,6 +1,8 @@
 package com.example.sanguosuoclient.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +34,8 @@ import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 
 @Composable
 fun SanguosuoTopBar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSearchClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -44,12 +47,20 @@ fun SanguosuoTopBar(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        SanguosuoSearchBar(
-            query = "",
-            onQueryChange = {},
-            enabled = false,
-            modifier = Modifier.width(160.dp)
-        )
+        Box(modifier = Modifier.width(160.dp)) {
+            SanguosuoSearchBar(
+                query = "",
+                onQueryChange = {},
+                enabled = false,
+                modifier = Modifier.width(160.dp)
+            )
+            // Transparent overlay to intercept taps
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable(onClick = onSearchClick)
+            )
+        }
 
         Spacer(modifier = Modifier.width(12.dp))
 
