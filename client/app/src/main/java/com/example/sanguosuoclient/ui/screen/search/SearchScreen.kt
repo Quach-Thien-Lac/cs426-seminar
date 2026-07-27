@@ -121,21 +121,6 @@ private fun SearchResults(heroes: List<Hero>) {
                 SearchResultRow(label = hero.name)
             }
         }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        // News section (static)
-        item {
-            Text(
-                text = "News",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-        }
-        items(staticNewsResults) { title ->
-            SearchResultRow(label = title)
-        }
     }
 }
 

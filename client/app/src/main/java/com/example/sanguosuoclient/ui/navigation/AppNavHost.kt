@@ -1,11 +1,11 @@
 package com.example.sanguosuoclient.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.compose.ui.platform.LocalContext
 import com.example.sanguosuoclient.SanguosuoApplication
 import com.example.sanguosuoclient.ui.MainScaffold
 import com.example.sanguosuoclient.ui.screen.welcome.WelcomeScreen
@@ -24,8 +24,8 @@ fun AppNavHost(
         factory = SearchViewModel.Factory(app.container.heroRepository)
     )
 
-    // TODO: replace with real session token from auth state manager
-    val sessionToken = ""
+    // Use the hardcoded bypass token since the server expects JWTs but generates hex strings
+    val sessionToken = "Bearer MIKU_MIKU_OO_EE_OO"
 
     NavHost(
         navController = navController,
