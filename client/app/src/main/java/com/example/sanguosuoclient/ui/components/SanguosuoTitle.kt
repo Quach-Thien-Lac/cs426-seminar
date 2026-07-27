@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 
@@ -34,10 +35,20 @@ fun SanguosuoTitle(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun SanguosuoSmallTitle(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(R.string.app_name),
+        style = MaterialTheme.typography.titleLarge,
+        fontSize = 43.sp,
+        modifier = modifier
+    )
+}
+
 //@Preview(showBackground = true)
 //@Composable
 //fun SanguosuoTitlePreview() {
 //    SanguosuoClientTheme() {
-//        SanguosuoTitle(Modifier.wrapContentSize())
+//        SanguosuoSmallTitle(Modifier.wrapContentSize())
 //    }
 //}

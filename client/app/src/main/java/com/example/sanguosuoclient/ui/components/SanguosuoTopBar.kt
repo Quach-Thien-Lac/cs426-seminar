@@ -1,5 +1,17 @@
 package com.example.sanguosuoclient.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,35 +22,71 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.sanguosuoclient.R
+import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SanguosuoTopBar(
-    title: String,
-    showBack: Boolean = false,
-    onBack: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    onSearchClick: () -> Unit = {},
+    onBackClick: (() -> Unit)? = null
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold
+    Row(
+        modifier = modifier
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // if (onBackClick != null) {
+        //     IconButton(onClick = onBackClick) {
+        //         Icon(
+        //             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        //             contentDescription = "Back",
+        //             tint = Color.Black
+        //         )
+        //     }
+        // }
+        SanguosuoSmallTitle()
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Box(modifier = Modifier.width(160.dp)) {
+            SanguosuoSearchBar(
+                query = "",
+                onQueryChange = {},
+                enabled = false,
+                modifier = Modifier.width(160.dp)
             )
-        },
-        navigationIcon = {
-            if (showBack) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface
+            // Transparent overlay to intercept taps
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable(onClick = onSearchClick)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.ic_account),
+            contentDescription = "Profile",
+            tint = Color.Black,
+            modifier = Modifier.size(36.dp)
         )
-    )
+    }
+}
+
+@Preview (showBackground = true)
+@Composable
+fun TopBarPreview() {
+    SanguosuoClientTheme() {
+        SanguosuoTopBar(modifier = Modifier.fillMaxWidth())
+    }
 }

@@ -70,8 +70,7 @@ class SignInViewModel(
             val result = authRepository.signIn(request)
 
             result.fold(
-                onSuccess = {
-                    // TODO: store token, navigate to main app
+                onSuccess = { signInData ->
                     _signInUIState.value = SignInUiState.Success("Welcome back!")
                 },
                 onFailure = { error ->
