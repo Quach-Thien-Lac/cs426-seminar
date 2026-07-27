@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -21,6 +22,7 @@ import com.example.sanguosuoclient.ui.screen.home.HomeScreen
 
 @Composable
 fun MainScaffold(
+    onSearchClick: () -> Unit = {},
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -29,7 +31,8 @@ fun MainScaffold(
     Scaffold(
         topBar = {
             SanguosuoTopBar(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onSearchClick = onSearchClick
             )
         },
         bottomBar = {
@@ -37,9 +40,7 @@ fun MainScaffold(
                 currentRoute = currentRoute ?: "undefined",
                 onNavigate = { route ->
                     navController.navigate(route) {
-                        // avoid piling up duplicate destinations on repeated taps
                         launchSingleTop = true
-                        // pop back to start destination when reselecting a tab
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }
@@ -55,7 +56,11 @@ fun MainScaffold(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home_route") {
-                HomeScreen()
+                HomeScreen(
+                    onHeroClick = { heroId ->
+                        navController.navigate(NavRoute.HeroDetail.createRoute(heroId))
+                    }
+                )
             }
             composable("saved_route") {
                 Text("Saved Screen Placeholder")

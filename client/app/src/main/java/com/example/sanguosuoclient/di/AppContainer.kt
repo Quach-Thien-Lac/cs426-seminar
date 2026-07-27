@@ -3,7 +3,9 @@ package com.example.sanguosuoclient.di
 import android.net.Network
 import com.example.sanguosuoclient.data.remote.ApiService
 import com.example.sanguosuoclient.data.repository.AuthRepository
+import com.example.sanguosuoclient.data.repository.HeroRepository
 import com.example.sanguosuoclient.data.repository.NetworkAuthRepository
+import com.example.sanguosuoclient.data.repository.NetworkHeroRepository
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -11,6 +13,7 @@ import kotlinx.serialization.json.Json
 
 interface AppContainer {
     val authRepository: AuthRepository
+    val heroRepository: HeroRepository
 }
 
 class DefaultAppContainer : AppContainer {
@@ -29,5 +32,9 @@ class DefaultAppContainer : AppContainer {
 
     override val authRepository: AuthRepository by lazy {
         NetworkAuthRepository(retrofitService)
+    }
+
+    override val heroRepository: HeroRepository by lazy {
+        NetworkHeroRepository(retrofitService)
     }
 }
