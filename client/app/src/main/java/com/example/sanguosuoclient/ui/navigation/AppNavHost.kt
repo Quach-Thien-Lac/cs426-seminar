@@ -104,7 +104,10 @@ fun AppNavHost(
             SearchScreen(
                 viewModel = searchViewModel,
                 token = sessionToken,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onHeroClick = { hero ->
+                    navController.navigate(NavRoute.HeroDetail.createRoute(hero.id))
+                }
             )
         }
 

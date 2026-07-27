@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -39,6 +40,7 @@ fun SearchScreen(
     viewModel: SearchViewModel,
     token: String,
     onBack: () -> Unit,
+    onHeroClick: (Hero) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val query by viewModel.query.collectAsState()
@@ -82,7 +84,7 @@ fun SearchScreen(
             }
 
             is SearchUiState.Success -> {
-                SearchResults(heroes = state.heroes)
+                SearchResults(heroes = state.heroes, onHeroClick = onHeroClick)
             }
 
             is SearchUiState.Error -> {
@@ -97,7 +99,7 @@ fun SearchScreen(
 }
 
 @Composable
-private fun SearchResults(heroes: List<Hero>) {
+private fun SearchResults(heroes: List<Hero>, onHeroClick: (Hero) -> Unit) {
     LazyColumn {
         // Heroes section
         item {
@@ -118,18 +120,22 @@ private fun SearchResults(heroes: List<Hero>) {
             }
         } else {
             items(heroes) { hero ->
-                SearchResultRow(label = hero.name)
+                SearchResultRow(
+                    label = hero.name,
+                    onClick = { onHeroClick(hero) }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SearchResultRow(label: String) {
+private fun SearchResultRow(label: String, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = 8.dp)
     ) {
         Icon(
