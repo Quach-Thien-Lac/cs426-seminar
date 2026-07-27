@@ -46,5 +46,5 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 83.sp,
         color = Color(0xFF6F0000)
-    )
+    ),
 )

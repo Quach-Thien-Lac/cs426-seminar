@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.sanguosuoclient.ui.MainScaffold
 import com.example.sanguosuoclient.ui.screen.welcome.WelcomeScreen
 import com.example.sanguosuoclient.ui.screen.signin.SignInScreen
 import com.example.sanguosuoclient.ui.screen.signin.SignInScreenRoute
@@ -15,7 +16,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavRoute.Welcome.route
+        startDestination = NavRoute.Main.route
     ) {
         composable(NavRoute.Welcome.route) {
             WelcomeScreen(
@@ -36,7 +37,12 @@ fun AppNavHost(
                 onBack = {
                     navController.popBackStack()
                 },
-                onSubmit = {/*pop up later*/}
+                onSubmit = {
+                    navController.navigate(NavRoute.Main.route) {
+                        // clear the whole auth stack so back button doesn't return to it
+                        popUpTo(NavRoute.Welcome.route) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -52,6 +58,10 @@ fun AppNavHost(
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable(NavRoute.Main.route) {
+            MainScaffold()
         }
     }
 }
