@@ -18,8 +18,8 @@ data class Hero(
     val factionCode: String,
     val factionName: String,
     val hp: Int,
-    val epithet: String,
-    val quote: String,
+    val epithet: String? = null,
+    val quote: String? = null,
     val hasTradeoff: Boolean = false,
     val skills: List<HeroSkill> = emptyList()
 )

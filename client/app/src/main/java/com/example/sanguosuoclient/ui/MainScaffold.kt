@@ -12,8 +12,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.sanguosuoclient.data.model.Hero
+import com.example.sanguosuoclient.data.model.HeroSkill
 import com.example.sanguosuoclient.ui.components.SanguosuoBottomBar
 import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
+import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreen
 import com.example.sanguosuoclient.ui.screen.home.HomeScreen
 
 @Composable
@@ -48,7 +51,7 @@ fun MainScaffold(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "home_route",
+            startDestination = "hero",
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home_route") {
@@ -63,10 +66,29 @@ fun MainScaffold(
             composable("settings_route") {
                 Text("Settings Screen Placeholder")
             }
-//            composable("hero/{heroId}") { backStackEntry ->
-//                val heroId = backStackEntry.arguments?.getString("heroId").orEmpty()
-//                HeroDetailScreen(heroId)
-//            }
+            composable("hero") {
+                HeroDetailScreen(mockHeroTuHoang)
+            }
         }
     }
 }
+
+val mockHeroTuHoang = Hero(
+    id = "WEI015",
+    name = "Từ Hoảng",
+    imageUrl = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/pacific-chorus-frog.png",
+    factionCode = "WEI",
+    factionName = "Nguỵ",
+    hp = 2,
+    epithet = "Chu Á Chi Phong",
+    quote = "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+    hasTradeoff = false,
+    skills = listOf(
+        HeroSkill(
+            skillId = "WEI015_1",
+            skillTags = emptyList(),
+            skillName = "Đoạn Lương",
+            skillDescription = "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+        )
+    )
+)
