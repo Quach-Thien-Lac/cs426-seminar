@@ -11,18 +11,59 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-
-private data class HeroEntry(val id: String, val name: String, val imageUrl: String? = null)
+import com.example.sanguosuoclient.data.model.Hero
+import com.example.sanguosuoclient.data.model.HeroSkill
 
 private val popularHeroes = listOf(
-    HeroEntry(id = "cao_cao",   name = "Tào Tháo"),
-    HeroEntry(id = "liu_bei",   name = "Lưu Bị"),
-    HeroEntry(id = "guan_yu",   name = "Quan Vũ")
+    Hero(
+        id = "WEI015",
+        name = "Từ Hoảng",
+        imageUrl = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/pacific-chorus-frog.png",
+        factionCode = "WEI",
+        factionName = "Nguỵ",
+        hp = 2,
+        epithet = "Chu Á Chi Phong",
+        quote = "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+        hasTradeoff = false,
+        skills = listOf(
+            HeroSkill(
+                skillId = "WEI015_1",
+                skillTags = emptyList(),
+                skillName = "Đoạn Lương",
+                skillDescription = "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+            )
+        )
+    ),
+    Hero(
+        id = "WEI015",
+        name = "Từ Hoaang",
+        imageUrl = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/pacific-chorus-frog.png",
+        factionCode = "WEI",
+        factionName = "Nguỵ",
+        hp = 2,
+        epithet = "Chu Á Chi Phong",
+        quote = "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+        hasTradeoff = false,
+        skills = listOf(
+            HeroSkill(
+                skillId = "WEI015_1",
+                skillTags = emptyList(),
+                skillName = "Đoạn Lương",
+                skillDescription = "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+            ),
+            HeroSkill(
+                skillId = "WEI015_2",
+                skillTags = emptyList(),
+                skillName = "Đoạn Lương",
+                skillDescription = "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+            )
+        )
+    )
 )
 
 @Composable
 fun PopularHeroesSection(
-    onHeroClick: (String) -> Unit,
+    onHeroClick: (Hero) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -41,7 +82,7 @@ fun PopularHeroesSection(
                     heroId = hero.id,
                     heroName = hero.name,
                     imageUrl = hero.imageUrl,
-                    onClick = { onHeroClick(hero.id) },
+                    onClick = { onHeroClick(hero) },
                     modifier = Modifier.weight(1f)
                 )
             }

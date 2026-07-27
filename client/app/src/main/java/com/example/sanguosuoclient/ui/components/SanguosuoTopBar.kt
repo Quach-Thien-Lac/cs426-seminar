@@ -35,7 +35,8 @@ import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 @Composable
 fun SanguosuoTopBar(
     modifier: Modifier = Modifier,
-    onSearchClick: () -> Unit = {}
+    onSearchClick: () -> Unit = {},
+    onBackClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -43,6 +44,15 @@ fun SanguosuoTopBar(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // if (onBackClick != null) {
+        //     IconButton(onClick = onBackClick) {
+        //         Icon(
+        //             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        //             contentDescription = "Back",
+        //             tint = Color.Black
+        //         )
+        //     }
+        // }
         SanguosuoSmallTitle()
 
         Spacer(modifier = Modifier.weight(1f))

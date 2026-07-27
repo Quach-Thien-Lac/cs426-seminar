@@ -18,20 +18,13 @@ data class Hero(
     val factionCode: String,
     val factionName: String,
     val hp: Int,
-    val epithet: String,
-    val quote: String,
+    val epithet: String? = null,
+    val quote: String? = null,
     val hasTradeoff: Boolean = false,
     val skills: List<HeroSkill> = emptyList()
 )
 
-// ── GET hero by id → single hero (hero detail screen) ──
-@Serializable
-data class HeroDetailPayload(
-    val message: String,
-    val data: Hero
-)
-
-// ── GET hero by name → list of heroes (search screen) ──
+// ── GET hero by name/id → list of heroes (search + detail screen) ──
 @Serializable
 data class HeroListPayload(
     val message: String,
