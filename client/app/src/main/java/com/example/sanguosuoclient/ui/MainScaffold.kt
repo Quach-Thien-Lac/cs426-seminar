@@ -8,12 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.sanguosuoclient.ui.components.SanguosuoBottomBar
 import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
+import com.example.sanguosuoclient.ui.navigation.NavRoute
+import com.example.sanguosuoclient.ui.screen.herodetail.HeroDetailScreen
 import com.example.sanguosuoclient.ui.screen.home.HomeScreen
 
 @Composable
@@ -52,7 +56,11 @@ fun MainScaffold(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home_route") {
-                HomeScreen()
+                HomeScreen(
+                    onHeroClick = { heroId ->
+                        navController.navigate(NavRoute.HeroDetail.createRoute(heroId))
+                    }
+                )
             }
             composable("saved_route") {
                 Text("Saved Screen Placeholder")
@@ -63,10 +71,13 @@ fun MainScaffold(
             composable("settings_route") {
                 Text("Settings Screen Placeholder")
             }
-//            composable("hero/{heroId}") { backStackEntry ->
-//                val heroId = backStackEntry.arguments?.getString("heroId").orEmpty()
-//                HeroDetailScreen(heroId)
-//            }
+            composable(
+                route = NavRoute.HeroDetail.route,
+                arguments = listOf(navArgument("heroId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val heroId = backStackEntry.arguments?.getString("heroId").orEmpty()
+                HeroDetailScreen(heroId = heroId)
+            }
         }
     }
 }

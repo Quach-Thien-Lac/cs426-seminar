@@ -5,4 +5,7 @@ sealed class NavRoute(val route: String) {
     data object SignIn : NavRoute("signin")
     data object SignUp : NavRoute("signup")
     data object Main : NavRoute("main")
+    data object HeroDetail : NavRoute("hero/{heroId}") {
+        fun createRoute(heroId: String) = "hero/$heroId"
+    }
 }
