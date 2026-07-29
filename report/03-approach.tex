@@ -1,0 +1,27 @@
+In this section, we delineate our approach to the attacks introduced in the previous section. The controls form layers: reject abusive traffic before it occupies application resources, preserve the distinction between SQL code and data, and avoid retaining recoverable passwords.
+
+\subsection{Resisting Slowloris and related DoS attacks}
+
+Slowloris exploits the time for which an HTTP server is willing to wait for an incomplete request. The most direct defense is therefore to bound both time and resources. A production deployment of Sanguosuo should set short, measured limits for receiving headers and complete requests, close idle sockets, restrict request-body and header sizes, and cap the number of requests accepted on a persistent connection. Node.js exposes controls such as \verb|headersTimeout|, \verb|requestTimeout|, \verb|keepAliveTimeout|, and socket timeouts for this purpose \cite{NodeHTTP}. The values must be derived from normal mobile-network behavior so that slow but legitimate clients are not rejected.
+
+Timeouts should be complemented by rate and connection limits at a reverse proxy or API gateway. Limits can be maintained per authenticated user and, before authentication, per source address. Traffic exceeding the request-rate policy should receive \verb|429 Too Many Requests|, while clients that remain below a minimum ingress rate or exceed a connection-duration limit should be disconnected. A reverse proxy can reject malformed or incomplete traffic before it reaches Express, and an upstream DDoS protection service is required when the attack is large enough to saturate the deployment's network link. OWASP consequently recommends a layered design that includes ingress-rate limits, absolute connection timeouts, load limits, and monitoring rather than a single application control \cite{OWASPDoS}.
+
+Sanguosuo already uses asynchronous request handlers and a MySQL connection pool with a limit of five connections. The pool prevents unbounded database concurrency, but it is not a Slowloris defense because incomplete HTTP requests consume resources before a database query is issued. Explicit HTTP timeouts, throttling, proxy configuration, and alerting are therefore required additions.
+
+\subsection{Preventing SQL injection}
+
+Every value originating outside the server must be treated as data. Instead of constructing a statement such as
+\begin{verbatim}
+"SELECT * FROM User WHERE user_username = '" + username + "'"
+\end{verbatim}
+the application writes a fixed statement containing a placeholder and supplies the value separately. The database driver then encodes the value without allowing it to alter the SQL grammar. OWASP identifies prepared statements with parameterized queries as its primary SQL injection defense \cite{OWASPSQLi}.
+
+The current server follows this pattern. Authentication queries use statements such as \verb|WHERE user_username = ?| with a separate values array, and hero lookup and skill-tag queries use the same convention. Inserts and session updates use \verb|mysql2.execute| with placeholders. Consequently, an input such as \verb|' OR 1=1 --| is compared as a literal username or hero name rather than becoming an operator in the query.
+
+Parameterization should be reinforced at other layers. The server should validate type, length, and format because the client can be bypassed; the schema should retain its uniqueness, foreign-key, and format constraints; database errors should be mapped to generic API messages rather than returned to clients; and the application should connect through a dedicated MySQL account with only the permissions needed by its endpoints. Allow-list validation is necessary if a future feature must select an SQL identifier, such as a column or sort direction, because placeholders represent values rather than identifiers.
+
+\subsection{Protecting passwords}
+
+Sanguosuo hashes a password before inserting a user. The backend calls \verb|bcrypt.hash| with a cost factor of 10; bcrypt generates and embeds a salt in the resulting 60-character string. During login, \verb|bcrypt.compare| evaluates the submitted password against that stored hash, so the original password need not be recovered. The database reinforces the design with a \verb|CHAR(60)| field and a check constraint that accepts the bcrypt hash format. A cost of at least 10 meets OWASP's minimum guidance for bcrypt, although Argon2id is preferred for a new production system \cite{OWASPPassword}.
+
+Hashing protects only stored credentials. Production communication must use HTTPS for the entire session, and the Android release configuration must disallow cleartext traffic; otherwise a network observer can capture both passwords and bearer tokens before hashing provides any benefit \cite{AndroidNetworkSecurity,OWASPTLS}. Password length should be bounded according to the hashing library's supported input, breached and weak passwords should be rejected, and expensive login and registration operations should be rate-limited. Authentication failures should use a generic response to reduce account enumeration \cite{OWASPAuthentication}. Finally, logs and error payloads must never contain passwords, hashes, or session tokens.

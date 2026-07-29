@@ -1,0 +1,29 @@
+\subsection{Application scope}
+
+Sanguosuo is a wiki for Sanguosha, a strategy card and board game in which heroes belong to the Wei, Shu, Wu, or Qun factions. A hero record contains an identifier, name, faction, health points, epithet, quotation, trade-off flag, and up to three skills with optional tags. The seed data in this repository contains 148 heroes, 268 skills, 86 skill--tag relationships, and 132 hero-combination relationships.
+
+The prototype also contains account registration and login. The Android client currently provides welcome, two-page registration, and sign-in screens. The server exposes hero lookup by identifier and by name, but the client-side catalog, guest mode, forgotten-password flow, token persistence, and navigation after login are unfinished in the inspected branch. These limitations matter because the server API, rather than an unimplemented screen, is the appropriate target for the security demonstrations.
+
+\subsection{Architecture and request flow}
+
+The application has three principal components:
+
+\begin{itemize}
+	\item The Android client is written in Kotlin with Jetpack Compose. Screen state is held in \verb|ViewModel| objects and exposed through \verb|StateFlow|. A repository calls the API through Retrofit and Kotlin serialization. During emulator development, \verb|10.0.2.2:8080| refers to port 8080 on the host machine.
+	\item The backend is an Express server written in TypeScript. It exposes \verb|POST /api/auth/register|, \verb|POST /api/auth/login|, \verb|GET /api/heroes/id/:heroId|, and \verb|GET /api/heroes/name/:heroName|. Middleware checks methods, JSON content type, and credentials before controllers call the service layer.
+	\item MySQL stores users, sessions, heroes, skills, factions, revisions, and relationship tables. Docker Compose starts the API and database containers; MySQL listens on TCP port 3306 and is not an HTTP service.
+\end{itemize}
+
+For registration, the client checks the email and Vietnamese phone-number shape, confirms the two password fields, and sends JSON to the server. The controller checks required fields and uniqueness. The service generates an eight-digit user ID, obtains the default status and role, hashes the password with bcrypt, and inserts the account through placeholders. For login, the service performs a parameterized username lookup, compares the password with the stored hash, removes any earlier session for the user, and creates a new token.
+
+Hero lookup also uses parameterized queries. The service joins each hero with its faction and up to three skills, performs additional lookups for skill tags, and returns a common JSON response envelope. At present, image URLs are returned as \verb|null|.
+
+\subsection{Controlled security demonstrations}
+
+All attack exercises should be run against the disposable local Docker environment, never against a public or shared service.
+
+\paragraph{Slowloris.} A test client opens a gradually increasing number of connections and sends partial headers at a low rate. During a baseline run, the team records open connections, memory use, successful health-check rate, and latency for a normal client. The run is repeated after adding proxy connection limits and explicit Node timeouts. A successful defense closes incomplete connections while keeping ordinary requests responsive. The repository currently contains neither the attack harness nor these explicit controls, so this procedure is a proposed reproducible evaluation rather than a claim of measured results.
+
+\paragraph{SQL injection.} The login username and both hero path parameters are tested with ordinary input and with metacharacter-heavy strings such as \verb|' OR 1=1 --|. Because each value is bound to a placeholder, the hostile string should produce no match rather than bypass authentication or change the query. The server source is also inspected to ensure that no request value is concatenated into SQL. Destructive payloads are unnecessary and should not be used.
+
+\paragraph{Password disclosure.} A new account is registered in the disposable database. The corresponding \verb|User.user_password_hash| value should be a salted 60-character bcrypt string, should differ from the submitted password, and should still be accepted by the login comparison. A second account using the same password should receive a different hash because its salt differs. A plaintext-storage variant may be explained or demonstrated only in an isolated throwaway schema; it is intentionally rejected by the current schema's bcrypt-format constraint.

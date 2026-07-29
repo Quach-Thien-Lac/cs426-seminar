@@ -1,0 +1,18 @@
+\subsection{DoS/DDoS attacks}
+Denial-of-service (DoS) and distributed denial-of-service (DDoS) attacks are malicious attempts to make a server, service, or network unavailable. These attacks can be executed in various ways, including sending excessive requests, exploiting weaknesses in network protocols, or using a botnet to generate traffic. A DoS attack typically originates from one source, whereas a DDoS attack coordinates multiple systems against the same target. Their impact ranges from increased response times and temporary outages to financial loss and reputational damage \cite{CisaDDoS,OWASPDoS}.
+
+There exist numerous attack strategies that attackers can  employ to execute DoS/DDoS attacks, including but not limited to:
+\begin{itemize}
+    \item \textbf{Volumetric Attacks:} These attacks aim to consume the bandwidth of the target network or service by flooding it with a high volume of traffic. Examples include UDP floods, ICMP floods, and amplification attacks.
+    \item \textbf{Protocol Attacks:} These attacks exploit weaknesses in network protocols to disrupt the target's ability to process legitimate requests. Examples include SYN floods, Ping of Death, and Smurf attacks.
+    \item \textbf{Application-layer attacks:} These attacks target a particular application or service with requests that may initially appear legitimate but retain or consume server resources. Examples include HTTP floods and low-and-slow attacks such as R.U.D.Y. and Slowloris. A Slowloris client opens many connections and delivers incomplete HTTP requests very slowly, causing the server to retain those connections until its capacity is exhausted \cite{OWASPDoS}. This report focuses on Slowloris because a low traffic rate makes it less conspicuous than a volumetric flood.
+\end{itemize}
+\subsection{SQL injection}
+SQL injection is an attack against applications that construct database commands from untrusted input. If a value from a form, URL parameter, or other request field is concatenated into an SQL statement, an attacker may be able to change the statement's structure. A successful injection can bypass authentication, read or modify data, and, depending on database privileges, perform administrative operations \cite{OWASPSQLi}.
+
+In this project, we examine the boundary between request data and SQL commands. The primary defense is to keep the command structure separate from its values through prepared statements or parameterized queries. Input validation remains useful for enforcing the application's data rules, but it is not a substitute for parameterization \cite{OWASPSQLi}.
+
+\subsection{Password breaches}
+Password disclosure occurs when an attacker obtains users' passwords or password-verification data. Possible causes include plaintext database storage, interception over an unencrypted connection, credential stuffing, brute-force guessing, and weak password policy. Stolen credentials allow account impersonation and may compromise other services when users reuse passwords.
+
+Plaintext storage is especially damaging because a database disclosure immediately reveals every stored password. Passwords should instead be processed with a slow, adaptive password-hashing function and a unique salt. Hashing does not make weak passwords impossible to guess, but it increases the cost of every offline guess and prevents direct recovery of the original value \cite{OWASPPassword}. Secure storage must also be combined with TLS because a database hash cannot protect a password while it is being transmitted \cite{OWASPTLS}.

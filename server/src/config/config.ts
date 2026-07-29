@@ -12,6 +12,9 @@ const config: any = {
 		dbPassword: process.env.LOCAL_DB_PASSWORD,
 		dbName: process.env.LOCAL_DB_NAME,
 		dbPort: process.env.LOCAL_DB_PORT
+	},
+	jwt: {
+		secret: process.env.JWT_SECRET
 	}
 };
 

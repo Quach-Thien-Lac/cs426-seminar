@@ -1,1 +1,5 @@
-\lipsum[1-2]
+Secure coding is made difficult by the many ways in which an implementation can be exploited. Software defects range from benign presentation errors to failures that expose passwords, permit data tampering, or make a service unavailable. Defensive programming and security best practices must therefore be considered throughout development rather than added only after deployment.
+
+To illustrate the importance of mitigating software vulnerabilities, we use Sanguosuo, a wiki for the Sanguosha board game. We focus on three representative risks: denial-of-service attacks (DoS), SQL injection (SQLi), and password disclosure. Although the Android client is the visible part of the system, all three risks cross the boundary between the mobile application, its HTTP API, and its database.
+
+The report is structured as follows. For each threat, Section \ref{background} defines the attack, its execution, and its impact, while Section \ref{approach} presents suitable defensive techniques. Section \ref{demo} describes the prototype and a safe demonstration procedure. Section \ref{evaluation} assesses both the benefits and limitations of the implemented controls and considers alternatives. Section \ref{ai} records the use of generative AI, and Section \ref{conclusion} summarizes the findings.

@@ -15,7 +15,16 @@ class DbConnection {
 			waitForConnections: true,
 			port: config.db.dbPort,
 			enableKeepAlive: true,
-			charset: 'utf8mb4'
+			charset: 'utf8mb4',
+
+			typeCast: (field, useDefaultTypeCasting) => {
+				if (field.type === 'BIT' && field.length === 1) {
+					const bytes = field.buffer();
+					return (bytes ? bytes[0] === 1 : false);
+				}
+
+				return useDefaultTypeCasting();
+			}
 		});
 	}
 }

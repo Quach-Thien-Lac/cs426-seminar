@@ -1,70 +1,35 @@
 // libs
 import express from 'express';
-import prettyMilliseconds from 'pretty-ms';
 import bodyParser from 'body-parser';
-import ServiceResponse from './types/ServiceResponse.ts';
-import type { Request, Response, NextFunction } from 'express';
-
+import morgan from 'morgan';
 
 // modules
 import config from './config/config.ts';
 import DbConnection from './connections/DbConnection.ts';
 
+// routes
+import AuthRoute from './routes/AuthRoute.ts';
+import HeroRoute from './routes/HeroRoute.ts';
 
-// express app
+// callbacks
+import errorHandler from './middleware/errorHandler.ts';
+import { rootCallback } from './middleware/rootCallback.ts';
+import { healthCallback } from './middleware/healthCallback.ts';
+import { nonexistentRouteCallback } from './middleware/nonexistentRouteCallback.ts';
+
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan('dev'));
 
-
-// routes
-import DbRoute from './routes/DbRoute.ts';
-import errorHandler from './middleware/errorHandler.ts';
-
-
-
-// root endpoint
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-	const rootResponse: ServiceResponse = new ServiceResponse;
-	rootResponse.success = true,
-	rootResponse.statusCode = 200,
-	rootResponse.payload = {
-		message: 'Sanguosha Baike API root endpoint',
-		data: null
-	};
-
-	res.send(rootResponse);
-});
-
-// health endpoint
-app.get('/health', async (req: Request, res: Response) => {
-	let dbPing;
-	let connection;
-	try {
-		connection = await DbConnection.pool.getConnection();
-		await connection.ping();
-		dbPing = true;
-	} catch (err) {
-		dbPing = false;
-	} finally {
-		connection?.release();
-	}
-
-	const healthResponse: ServiceResponse = new ServiceResponse;
-	healthResponse.success = true,
-	healthResponse.statusCode = 200,
-	healthResponse.payload = {
-		message: 'OK',
-		data: {
-			uptime: prettyMilliseconds(process.uptime() * 1000),
-			dbActive: dbPing
-		}
-	}
-
-	res.send(healthResponse);
-});
-
-app.use('/api/db', DbRoute);
-
+app.use('/api/auth', AuthRoute);
+app.use('/api/heroes', HeroRoute);
+app.get('/health', healthCallback);
+app.get('/', rootCallback);
+app.use(nonexistentRouteCallback);
 app.use(errorHandler);
 
 

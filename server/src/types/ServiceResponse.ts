@@ -1,17 +1,17 @@
 import http from 'http';
 
-interface ServiceResponsePayload {
+export interface ServiceResponsePayload {
 	message: string,
-	data?: unknown
+	data?: any
 }
 
-interface IServiceResponse {
+export interface IServiceResponse {
 	success: boolean,
 	statusCode: number,
 	payload: ServiceResponsePayload
 }
 
-class ServiceResponse implements IServiceResponse {
+export class ServiceResponse implements IServiceResponse {
 	success: boolean = false;
 	statusCode: number = -1;
 	payload: ServiceResponsePayload = { message: "miku" }
@@ -29,12 +29,10 @@ class ServiceResponse implements IServiceResponse {
 			success: this.success,
 			statusCode: this.statusCode,
 			payload: {
-				message: `${this.payload.message} (${http.STATUS_CODES[this.statusCode]})`,
+				message: `${this.payload.message} (${http.STATUS_CODES[this.statusCode]?.toUpperCase().split(' ').join('_')})`,
 				data: this.payload.data
 			}
 		};
-		return response; 
+		return response;
 	}
 }
-
-export default ServiceResponse;

@@ -1,4 +1,4 @@
-\documentclass{exam}
+\documentclass{article}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[main=english, vietnamese]{babel}
@@ -8,7 +8,6 @@
 \usepackage{tcolorbox}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{mathrsfs}
 \usepackage{centernot}
 \usepackage{multicol}
 \usepackage{cases}
@@ -16,7 +15,9 @@
 \usepackage[shortlabels]{enumitem}
 \usepackage{tasks}
 \usepackage{stix2}
-\usepackage{lipsum}
+\usepackage[backend=bibtex]{biblatex}
+
+\addbibresource{main.bib}
 
 % use in case you need new commands
 % \newcommand{\paren}[1]{\left(#1\right)}
@@ -78,25 +79,33 @@
 \maketitle
 
 \begin{abstract}
-	\lipsum[1]
+	Mobile applications depend not only on the security of the code running on the device, but also on the availability and integrity of their supporting APIs and databases. This report studies three representative risks through Sanguosuo, an Android wiki for the Sanguosha board game: application-layer denial-of-service attacks, SQL injection, and password disclosure. We relate each risk to a defensive design based on bounded HTTP resources, parameterized database access, and adaptive password hashing. Inspection of the prototype confirms that its Express and MySQL backend consistently uses SQL placeholders and stores bcrypt password hashes. It also reveals important limitations: explicit Slowloris defenses are not yet configured, client--server traffic is cleartext during local development, authentication tokens are handled inconsistently, and the automated tests remain placeholders. The resulting evaluation therefore separates implemented protections from proposed hardening and identifies the work required before production deployment.
 \end{abstract}
 
 \tableofcontents
 \newpage
 
-\section{Introduction}
+\section{Introduction} \label{introduction}
 \input{01-introduction.tex}
 
-\section{DoS/DDoS attacks}
-\input{02-ddos.tex}
+\section{Background} \label{background}
+\input{02-background.tex}
 
-\section{SQL injections}
-\input{03-sqli.tex}
+\section{Technical approach} \label{approach}
+\input{03-approach.tex}
 
-\section{Password breaches}
-\input{04-passleaks.tex}
+\section{Demonstration} \label{demo}
+\input{04-demo.tex}
 
-\section{Conclusion}
-\input{05-conclusion.tex}
+\section{Evaluation} \label{evaluation}
+\input{05-evaluation.tex}
+
+\section{AI Usage} \label{ai}
+\input{06-ai.tex}
+
+\section{Conclusion} \label{conclusion}
+\input{07-conclusion.tex}
+
+\printbibliography
 
 \end{document}

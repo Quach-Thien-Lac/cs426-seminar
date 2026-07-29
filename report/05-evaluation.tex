@@ -1,0 +1,31 @@
+\subsection{Security assessment}
+
+Static inspection provides strong evidence for some controls, but it cannot replace dynamic security testing. The findings below therefore distinguish code that is present from expected behavior that still requires measurement.
+
+\paragraph{Denial of service.} The asynchronous Express design and five-connection database pool place some bounds on downstream work. However, there is no rate-limiting middleware, reverse-proxy policy, container resource limit, monitoring rule, or explicit HTTP timeout in the repository. The application is therefore not demonstrably resistant to Slowloris. Node's default request timeout supplies a general upper bound, but a deployment should use deliberately selected values and edge controls rather than depend on defaults \cite{NodeHTTP}. IP-only throttling would also be incomplete: a DDoS attack uses many sources, while carrier-grade NAT may place many legitimate mobile users behind one address.
+
+\paragraph{SQL injection.} All currently reachable database operations pass request-controlled values through \verb|?| placeholders. This is the project's strongest implemented security property and prevents the demonstrated input from changing SQL structure. Database constraints provide defense in depth for malformed identifiers, usernames, email addresses, phone numbers, and password hashes. Residual risks remain: database error helpers expose internal error strings in JSON, the deployment does not document a least-privilege database account, and future dynamic query features could reintroduce concatenation. Automated regression tests should verify every endpoint with a corpus of hostile strings.
+
+\paragraph{Password protection.} Bcrypt with a cost of 10, per-hash salts, comparison through the bcrypt library, and a schema constraint are a sound improvement over plaintext storage. The trade-off is intentional CPU expense, which slows offline guessing but also makes unauthenticated authentication endpoints attractive DoS targets. Argon2id would provide a more modern, memory-hard default for a new production system, while bcrypt remains acceptable here when its input limit and work factor are enforced \cite{OWASPPassword}.
+
+The present end-to-end path is not secure for production. The Retrofit base URL is HTTP and the manifest explicitly permits cleartext traffic, so credentials and tokens can be observed or modified on an untrusted network. This setting is useful for a local emulator but must be limited to a debug build; a release must use HTTPS and reject cleartext traffic. The API also reveals whether a username exists by returning different \verb|404| and \verb|401| responses, which assists enumeration.
+
+\subsection{Functional and implementation limitations}
+
+The inspection found several correctness issues that affect any security claim:
+
+\begin{itemize}
+	\item Registration calls the asynchronous user-insert function without \verb|await|. The endpoint can return \verb|201 Created| before the insert finishes, and a later database rejection can escape the surrounding error handling.
+	\item Login creates a random opaque token and stores it in the \verb|Session| table, but hero-route middleware verifies presented credentials as JWTs and never queries that table. A normal login token therefore cannot authorize hero requests. A hard-coded bypass token is also present and must be removed.
+	\item The Android sign-in flow discards the returned token, and successful sign-in navigation is still a placeholder. The hero API is consequently not reachable through the current user interface.
+	\item Registration sends the literal name \verb|null| because the form has no name field. Content-type validation requires an exact \verb|application/json| string and may reject valid media types that include parameters such as a character set.
+	\item API error responses can include database or exception details. These are useful while developing locally but disclose implementation information to a remote client.
+\end{itemize}
+
+The authentication model should be made consistent by choosing either opaque server-side sessions or signed JWTs. Opaque sessions fit the existing table: generate tokens with a cryptographically secure random-number generator, store only a token digest, validate each bearer token against an unexpired session, and revoke it at logout. Whichever model is selected, the hard-coded bypass must not exist outside an explicitly isolated test fixture.
+
+\subsection{Verification status}
+
+The Android project contains only template tests (integer addition and application-package verification), not tests of validation, repositories, authentication, or UI behavior. The repository also contains no automated API security tests, Slowloris harness, load-test results, or captured before-and-after measurements. The evaluation in this report is therefore based on source inspection and does not claim a successful dynamic security test.
+
+Before release, the team should add unit and integration tests for authentication responses, duplicate registration, token validation, SQLi payloads, password-hash properties, and timeout behavior. A local load test should establish normal latency before Slowloris and request-flood tests are performed. Results should report hardware, configuration, concurrent connections, error rate, and latency percentiles so that the comparison is repeatable rather than anecdotal.
