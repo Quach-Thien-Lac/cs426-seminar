@@ -32,20 +32,13 @@ import com.example.sanguosuoclient.ui.screen.welcome.WelcomeScreen
 import com.example.sanguosuoclient.ui.screen.signin.SignInScreenRoute
 import com.example.sanguosuoclient.ui.screen.signup.SignUpScreenRoute
 import com.example.sanguosuoclient.ui.screen.search.SearchScreen
+import com.example.sanguosuoclient.ui.screen.search.SearchScreenRoute
 import com.example.sanguosuoclient.ui.screen.search.SearchViewModel
 
 @Composable
 fun AppNavHost(
     navController: NavHostController
 ) {
-    val context = LocalContext.current
-    val app = context.applicationContext as SanguosuoApplication
-    val searchViewModel: SearchViewModel = viewModel(
-        factory = SearchViewModel.Factory(app.container.heroRepository)
-    )
-
-    val sessionToken = "Bearer MIKU_MIKU_OO_EE_OO"
-
     NavHost(
         navController = navController,
         startDestination = NavRoute.Welcome.route
@@ -100,11 +93,8 @@ fun AppNavHost(
             )
         }
 
-        // Search screen — full screen, NO top/bottom bars
         composable(NavRoute.Search.route) {
-            SearchScreen(
-                viewModel = searchViewModel,
-                token = sessionToken,
+            SearchScreenRoute(
                 onBack = { navController.popBackStack() },
                 onHeroClick = { hero ->
                     navController.navigate(NavRoute.HeroDetail.createRoute(hero.id))
