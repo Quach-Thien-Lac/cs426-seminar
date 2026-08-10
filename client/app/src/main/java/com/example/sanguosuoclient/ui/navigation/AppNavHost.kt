@@ -13,18 +13,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.compose.ui.platform.LocalContext
 import com.example.sanguosuoclient.SanguosuoApplication
 import com.example.sanguosuoclient.ui.MainScaffold
 import com.example.sanguosuoclient.ui.components.SanguosuoBottomBar
 import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
 import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreen
+import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreenRoute
 import com.example.sanguosuoclient.ui.screen.hero.HeroDetailUiState
 import com.example.sanguosuoclient.ui.screen.hero.HeroDetailViewModel
 import com.example.sanguosuoclient.ui.screen.welcome.WelcomeScreen
@@ -111,62 +112,12 @@ fun AppNavHost(
             )
         }
 
-        // Hero detail screen — with top bar (back + search) and bottom bar
         composable(
             route = NavRoute.HeroDetail.route,
             arguments = listOf(navArgument("heroId") { type = NavType.StringType })
         ) { backStackEntry ->
             val heroId = backStackEntry.arguments?.getString("heroId") ?: return@composable
-            val heroDetailViewModel: HeroDetailViewModel = viewModel(
-                factory = HeroDetailViewModel.Factory
-            )
-            val uiState by heroDetailViewModel.uiState.collectAsState()
-
-            LaunchedEffect(heroId) {
-                heroDetailViewModel.fetchHero(sessionToken, heroId)
-            }
-
-            Scaffold(
-                topBar = {
-                    SanguosuoTopBar(
-                        onSearchClick = { navController.navigate(NavRoute.Search.route) },
-                        onBackClick = { navController.popBackStack() }
-                    )
-                },
-                bottomBar = {
-                    SanguosuoBottomBar(
-                        currentRoute = "",
-                        onNavigate = {
-                            navController.navigate(NavRoute.Main.route) {
-                                popUpTo(NavRoute.Main.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    )
-                }
-            ) { innerPadding ->
-                Box(modifier = Modifier.padding(innerPadding)) {
-                    when (val state = uiState) {
-                        is HeroDetailUiState.Idle -> { /* blank */ }
-                        is HeroDetailUiState.Loading -> {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                        is HeroDetailUiState.Success -> {
-                            HeroDetailScreen(
-                                hero = state.hero,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                        is HeroDetailUiState.Error -> {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text(text = state.message)
-                            }
-                        }
-                    }
-                }
-            }
+            HeroDetailScreenRoute(heroId = heroId)
         }
     }
 }

@@ -75,9 +75,7 @@ fun SignUpScreenRoute(
         onNextPage = viewModel::onNextPage,
         onPreviousPage = viewModel::onPreviousPage,
         onNavigateToSignIn = onNavigateToSignIn,
-        onSubmit = {
-            viewModel.signUp()
-        },
+        onSubmit = viewModel::signUp,
         onBack = onBack,
         modifier = Modifier.fillMaxSize()
     )
