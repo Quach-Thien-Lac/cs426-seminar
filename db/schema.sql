@@ -203,8 +203,26 @@ CREATE TABLE Session (
 
 	CONSTRAINT PK_Session_session_token
 		PRIMARY KEY (session_token),
+
 	CONSTRAINT FK_Session_session_user_id
 		FOREIGN KEY (session_user_id) REFERENCES `User` (user_id)
+);
+
+CREATE TABLE Card (
+	card_id CHAR(4),
+	card_name VARCHAR(70) CHARACTER SET UTF8MB4 NOT NULL,
+	card_description VARCHAR(100) CHARACTER SET UTF8MB4,
+	card_type_id TINYINT NOT NULL,
+
+	CONSTRAINT PK_Card_card_id
+		PRIMARY KEY (card_id),
+
+	CONSTRAINT FK_Card_card_type_id
+		FOREIGN KEY (card_type_id) REFERENCES CardType (card_type_id),
+
+	-- card_id must be in the format XYYY, where X is an uppercase letter, and Y is any number
+	CONSTRAINT CHK_Card_card_id_correct_format
+		CHECK (LENGTH(card_id) = 4 AND card_id REGEXP '^[A-Z][0-9]{3}$')
 );
 
 /******************************************
