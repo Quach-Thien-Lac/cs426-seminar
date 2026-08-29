@@ -287,6 +287,18 @@ CREATE TABLE HorseCard (
 		FOREIGN KEY (horse_card_id) REFERENCES Card (card_id)
 );
 
+CREATE TABLE TreasureCard (
+	treasure_card_id CHAR(4),
+	treasure_card_is_tradable BIT NOT NULL,
+	treasure_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_TreasureCard_treasure_card_id
+		PRIMARY KEY (treasure_card_id),
+	
+	CONSTRAINT FK_TreasureCard_treasure_card_id
+		FOREIGN KEY (treasure_card_id) REFERENCES Card (card_id)
+)
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
