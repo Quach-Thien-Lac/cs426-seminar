@@ -56,6 +56,19 @@ CREATE TABLE HeroFaction (
         CHECK (CAST(hero_faction_code AS BINARY) = UPPER(hero_faction_code))
 );
 
+CREATE TABLE CardType (
+	card_type_id TINYINT AUTO_INCREMENT,
+	card_type_code VARCHAR(20),
+	card_type_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_CardType_card_type_id
+		PRIMARY KEY (card_type_id),
+	CONSTRAINT UK_CardType_card_type_code
+		UNIQUE (card_type_code),
+    CONSTRAINT CHK_CardType_card_type_code_uppercase
+        CHECK (CAST(card_type_code AS BINARY) = UPPER(card_type_code))
+);
+
 /******************************************
 *************** BASED ENTITY **************
 ******************************************/
