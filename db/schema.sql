@@ -261,6 +261,18 @@ CREATE TABLE WeaponCard (
 		FOREIGN KEY (weapon_card_id) REFERENCES Card (card_id)
 );
 
+CREATE TABLE ArmorCard (
+	armor_card_id CHAR(4),
+	armor_card_is_tradable BIT NOT NULL,
+	armor_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_ArmorCard_armor_card_id
+		PRIMARY KEY (armor_card_id),
+	
+	CONSTRAINT FK_ArmorCard_armor_card_id
+		FOREIGN KEY (armor_card_id) REFERENCES Card (card_id)
+);
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
