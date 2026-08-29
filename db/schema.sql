@@ -69,6 +69,19 @@ CREATE TABLE CardType (
         CHECK (CAST(card_type_code AS BINARY) = UPPER(card_type_code))
 );
 
+CREATE TABLE CardSuit (
+	card_suit_id TINYINT AUTO_INCREMENT,
+	card_suit_code VARCHAR(20),
+	card_suit_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_CardSuit_card_suit_id
+		PRIMARY KEY (card_suit_id),
+	CONSTRAINT UK_CardSuit_card_suit_code
+		UNIQUE (card_suit_code),
+    CONSTRAINT CHK_CardSuit_card_suit_code_uppercase
+        CHECK (CAST(card_suit_code AS BINARY) = UPPER(card_suit_code))
+);
+
 /******************************************
 *************** BASED ENTITY **************
 ******************************************/
