@@ -235,6 +235,19 @@ CREATE TABLE BasicCard (
 		FOREIGN KEY (basic_card_id) REFERENCES Card (card_id)
 );
 
+CREATE TABLE ToolCard (
+	tool_card_id CHAR(4),
+	tool_card_is_time BIT NOT NULL,
+	tool_card_is_reroll BIT NOT NULL,
+	tool_card_is_tradable BIT NOT NULL,
+
+	CONSTRAINT PK_ToolCard_tool_card_id
+		PRIMARY KEY (tool_card_id),
+
+	CONSTRAINT FK_ToolCard_tool_card_id
+		FOREIGN KEY (tool_card_id) REFERENCES Card (card_id)
+);
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
