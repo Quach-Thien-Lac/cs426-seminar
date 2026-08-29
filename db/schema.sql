@@ -225,6 +225,16 @@ CREATE TABLE Card (
 		CHECK (LENGTH(card_id) = 4 AND card_id REGEXP '^[A-Z][0-9]{3}$')
 );
 
+CREATE TABLE BasicCard (
+	basic_card_id CHAR(4),
+
+	CONSTRAINT PK_BasicCard_basic_card_id
+		PRIMARY KEY (basic_card_id),
+	
+	CONSTRAINT FK_BasicCard_basic_card_id
+		FOREIGN KEY (basic_card_id) REFERENCES Card (card_id)
+);
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
