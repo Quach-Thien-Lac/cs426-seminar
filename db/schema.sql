@@ -353,3 +353,18 @@ CREATE TABLE HeroFaction (
 	CONSTRAINT FK_HeroFaction_hero_faction_id
 		FOREIGN KEY (hero_faction_id) REFERENCES HeroFaction (hero_faction_id)
 );
+
+CREATE TABLE CardSuitAndRank (
+	card_id CHAR(4),
+	card_suit_id TINYINT,
+	card_rank TINYINT,
+
+	CONSTRAINT PK_CardSuitAndRank_cid_csid_cr
+		PRIMARY KEY (card_id, card_suit_id, card_rank),
+	
+	CONSTRAINT FK_CardSuitAndRank_card_suit_id
+		FOREIGN KEY (card_suit_id) REFERENCES CardSuit (card_suit_id),
+	
+	CONSTRAINT CHK_CardSuitAndRank_valid_rank
+		CHECK (card_rank <= 13 AND card_rank >= 1)
+);
