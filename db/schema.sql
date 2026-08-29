@@ -235,3 +235,16 @@ CREATE TABLE HeroCombo (
 	CONSTRAINT FK_HeroCombo_hero_2_id
 		FOREIGN KEY (hero_2_id) REFERENCES Hero (hero_id)
 );
+
+CREATE TABLE HeroFaction (
+	hero_id VARCHAR(10),
+	hero_faction_id TINYINT,
+
+	CONSTRAINT PK_HeroFaction_hid_hfid
+		PRIMARY KEY (hero_id, hero_faction_id),
+
+	CONSTRAINT FK_HeroFaction_hero_id
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),
+	CONSTRAINT FK_HeroFaction_hero_faction_id
+		FOREIGN KEY (hero_faction_id) REFERENCES HeroFaction (hero_faction_id)
+);
