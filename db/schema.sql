@@ -209,8 +209,6 @@ CREATE TABLE Hero (
 
 	CONSTRAINT FK_Hero_hero_image_id
 		FOREIGN KEY (hero_image_id) REFERENCES Image (image_id),
-	CONSTRAINT FK_Hero_hero_faction_id
-		FOREIGN KEY (hero_faction_id) REFERENCES HeroFaction (hero_faction_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_1_id
 		FOREIGN KEY (hero_skill_1_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_2_id
@@ -278,7 +276,7 @@ CREATE TABLE WeaponCard (
 	weapon_card_id CHAR(4),
 	weapon_card_range TINYINT NOT NULL,
 	weapon_card_is_tradable BIT NOT NULL,
-	weapon_card_is_giftable BIT NOT NULL
+	weapon_card_is_giftable BIT NOT NULL,
 
 	CONSTRAINT PK_WeaponCard_weapon_card_id
 		PRIMARY KEY (weapon_card_id),
@@ -323,7 +321,7 @@ CREATE TABLE TreasureCard (
 	
 	CONSTRAINT FK_TreasureCard_treasure_card_id
 		FOREIGN KEY (treasure_card_id) REFERENCES Card (card_id)
-)
+);
 
 /******************************************
 ************** BRIDGE ENTITIES ************
@@ -354,7 +352,7 @@ CREATE TABLE HeroCombo (
 		FOREIGN KEY (hero_2_id) REFERENCES Hero (hero_id)
 );
 
-CREATE TABLE HeroFaction (
+CREATE TABLE HeroBelongsFaction (
 	hero_id VARCHAR(10),
 	hero_faction_id TINYINT,
 
