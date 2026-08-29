@@ -273,6 +273,20 @@ CREATE TABLE ArmorCard (
 		FOREIGN KEY (armor_card_id) REFERENCES Card (card_id)
 );
 
+CREATE TABLE HorseCard (
+	horse_card_id CHAR(4),
+	horse_card_is_plus BIT NOT NULL,
+	Horse_card_is_minus BIT NOT NULL,
+	horse_card_is_tradable BIT NOT NULL,
+	horse_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_HorseCard_horse_card_id
+		PRIMARY KEY (horse_card_id),
+	
+	CONSTRAINT FK_HorseCard_horse_card_id
+		FOREIGN KEY (horse_card_id) REFERENCES Card (card_id)
+);
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
