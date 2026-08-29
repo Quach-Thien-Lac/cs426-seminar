@@ -248,6 +248,19 @@ CREATE TABLE ToolCard (
 		FOREIGN KEY (tool_card_id) REFERENCES Card (card_id)
 );
 
+CREATE TABLE WeaponCard (
+	weapon_card_id CHAR(4),
+	weapon_card_range TINYINT NOT NULL,
+	weapon_card_is_tradable BIT NOT NULL,
+	weapon_card_is_giftable BIT NOT NULL
+
+	CONSTRAINT PK_WeaponCard_weapon_card_id
+		PRIMARY KEY (weapon_card_id),
+	
+	CONSTRAINT FK_WeaponCard_weapon_card_id
+		FOREIGN KEY (weapon_card_id) REFERENCES Card (card_id)
+);
+
 /******************************************
 ************** BRIDGE ENTITIES ************
 ******************************************/
