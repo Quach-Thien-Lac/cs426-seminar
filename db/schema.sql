@@ -82,6 +82,19 @@ CREATE TABLE CardSuit (
         CHECK (CAST(card_suit_code AS BINARY) = UPPER(card_suit_code))
 );
 
+CREATE TABLE HeroGender (
+	hero_gender_id TINYINT AUTO_INCREMENT,
+	hero_gender_code VARCHAR(20),
+	hero_gender_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_HeroGender_hero_gender_id
+		PRIMARY KEY (hero_gender_id),
+	CONSTRAINT UK_HeroGender_hero_gender_code
+		UNIQUE (hero_gender_code),
+    CONSTRAINT CHK_HeroGender_hero_gender_code_uppercase
+        CHECK (CAST(hero_gender_code AS BINARY) = UPPER(hero_gender_code))
+);
+
 /******************************************
 *************** BASED ENTITY **************
 ******************************************/
