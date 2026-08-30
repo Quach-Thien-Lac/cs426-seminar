@@ -95,6 +95,19 @@ CREATE TABLE HeroGender (
         CHECK (CAST(hero_gender_code AS BINARY) = UPPER(hero_gender_code))
 );
 
+CREATE TABLE HeroRole (
+	hero_role_id TINYINT AUTO_INCREMENT,
+	hero_role_code VARCHAR(20),
+	hero_role_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_HeroRole_hero_role_id
+		PRIMARY KEY (hero_role_id),
+	CONSTRAINT UK_HeroRole_hero_role_code
+		UNIQUE (hero_role_code),
+    CONSTRAINT CHK_HeroRole_hero_role_code_uppercase
+        CHECK (CAST(hero_role_code AS BINARY) = UPPER(hero_role_code))
+);
+
 /******************************************
 *************** BASED ENTITY **************
 ******************************************/
