@@ -37,6 +37,13 @@ INSERT INTO CardSuit (card_suit_code, card_suit_name) VALUES
 	('DIAMOND', '♦️'),
 	('HEART', '♥️');
 
+INSERT INTO HeroRole (hero_role_code, hero_role_name) VALUES
+	('BRUISER', 'Tướng Tấn Công'),
+	('GUARD', 'Tướng Phòng Thủ'),
+	('SUPPORT', 'Tướng Hỗ Trợ'),
+	('CONTROL', 'Tướng Khống Chế'),
+	('STOCKPILER', 'Tướng Tích Trữ');
+
 INSERT INTO HeroSkill (skill_id, skill_name, skill_description) VALUES
 	('WEI001_1','Gian Hùng','Sau khi bạn nhận sát thương, bạn có thể thu lấy thẻ bài gây sát thương cho bạn lên tay hoặc chọn rút 1 lá bài.')
 	,('WEI002_1','Hành Thương','Khi có 1 người chơi khác trận vong, bạn có thể thu lấy tất cả thẻ bài mà người chơi đó sở hữu.')
