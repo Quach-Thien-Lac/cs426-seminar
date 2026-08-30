@@ -394,3 +394,16 @@ CREATE TABLE CardSuitAndRank (
 	CONSTRAINT CHK_CardSuitAndRank_valid_rank
 		CHECK (card_rank <= 13 AND card_rank >= 1)
 );
+
+CREATE TABLE HeroBelongsRole (
+	hero_id VARCHAR(10),
+	hero_role_id TINYINT,
+
+	CONSTRAINT PK_HeroBelongsRole_hid_hrid
+		PRIMARY KEY (hero_id, hero_role_id),
+	
+	CONSTRAINT FK_HeroBelongsRole_hero_id
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),
+	CONSTRAINT FK_HeroBelongsRole_hero_role_id
+		FOREIGN KEY (hero_role_id) REFERENCES HeroRole (hero_role_id)
+);
