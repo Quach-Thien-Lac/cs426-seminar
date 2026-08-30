@@ -195,11 +195,13 @@ CREATE TABLE Image (
 CREATE TABLE Hero (
 	hero_id VARCHAR(10),
 	hero_name VARCHAR(80) CHARACTER SET UTF8MB4,
+	hero_gender_id TINYINT NOT NULL,
 	hero_image_id VARCHAR(10),
 	hero_hp FLOAT(1) NOT NULL,
 	hero_epithet VARCHAR(100) CHARACTER SET UTF8MB4,
 	hero_quote VARCHAR(200) CHARACTER SET UTF8MB4,
 	hero_has_tradeoff BIT NOT NULL,
+	hero_complexity TINYINT,
 	hero_skill_1_id VARCHAR(10),
 	hero_skill_2_id VARCHAR(10),
 	hero_skill_3_id VARCHAR(10),
