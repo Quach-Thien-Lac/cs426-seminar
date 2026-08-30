@@ -26,6 +26,11 @@ INSERT INTO HeroFaction (hero_faction_code, hero_faction_name) VALUES
 	('WU', 'Ngô'),
 	('QUN', 'Quần');
 
+INSERT INTO CardType (card_type_code, card_type_name) VALUES
+	('BASIC', 'Cơ Bản'),
+	('TOOL', 'Cẩm Nang'),
+	('GEAR', 'Trang Bị')
+
 INSERT INTO HeroSkill (skill_id, skill_name, skill_description) VALUES
 	('WEI001_1','Gian Hùng','Sau khi bạn nhận sát thương, bạn có thể thu lấy thẻ bài gây sát thương cho bạn lên tay hoặc chọn rút 1 lá bài.')
 	,('WEI002_1','Hành Thương','Khi có 1 người chơi khác trận vong, bạn có thể thu lấy tất cả thẻ bài mà người chơi đó sở hữu.')
