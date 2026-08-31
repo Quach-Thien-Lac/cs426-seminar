@@ -15,12 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +33,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.sanguosuoclient.R
@@ -37,9 +42,52 @@ import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.model.HeroSkill
 import com.example.sanguosuoclient.ui.theme.errorLight
 import com.example.sanguosuoclient.ui.theme.inversePrimaryLightMediumContrast
+import com.example.sanguosuoclient.ui.theme.primaryLight
 
 private val SkillRowHeight = 140.dp
 private val PortraitHeight = SkillRowHeight * 2
+
+@Composable
+fun HeroDetailScreenRoute(
+    heroId: String,
+    viewModel: HeroDetailViewModel = viewModel(factory = HeroDetailViewModel.Factory)
+) {
+    val sessionToken = "Bearer MIKU_MIKU_OO_EE_OO"
+    val uiState by viewModel.heroDetailUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(heroId) {
+        viewModel.fetchHero(sessionToken, heroId)
+    }
+
+    when(val state = uiState) {
+        is HeroDetailUiState.Idle -> {}
+
+        is HeroDetailUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = primaryLight)
+            }
+        }
+
+        is HeroDetailUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(text = state.message)
+            }
+        }
+
+        is HeroDetailUiState.Success -> {
+            HeroDetailScreen(
+                hero = state.hero,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
 
 @Composable
 fun HeroDetailScreen(

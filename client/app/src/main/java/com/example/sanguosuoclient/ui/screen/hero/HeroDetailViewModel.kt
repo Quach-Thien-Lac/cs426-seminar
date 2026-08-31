@@ -24,26 +24,19 @@ class HeroDetailViewModel(
     private val heroRepository: HeroRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<HeroDetailUiState>(HeroDetailUiState.Idle)
-    val uiState: StateFlow<HeroDetailUiState> = _uiState
+    private val _heroDetailUiState = MutableStateFlow<HeroDetailUiState>(HeroDetailUiState.Idle)
+    val heroDetailUiState: StateFlow<HeroDetailUiState> = _heroDetailUiState
 
     fun fetchHero(token: String, heroId: String) {
         viewModelScope.launch {
-            _uiState.value = HeroDetailUiState.Loading
+            _heroDetailUiState.value = HeroDetailUiState.Loading
             val result = heroRepository.getHeroById(token, heroId)
-            _uiState.value = result.fold(
+            _heroDetailUiState.value = result.fold(
                 onSuccess = { HeroDetailUiState.Success(it) },
                 onFailure = { HeroDetailUiState.Error(it.message ?: "Unknown error") }
             )
         }
     }
-
-//    class Factory(private val heroRepository: HeroRepository) : ViewModelProvider.Factory {
-//        @Suppress("UNCHECKED_CAST")
-//        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//            return HeroDetailViewModel(heroRepository) as T
-//        }
-//    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
