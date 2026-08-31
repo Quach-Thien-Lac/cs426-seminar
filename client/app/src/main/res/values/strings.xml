@@ -28,4 +28,6 @@
     <string name="username_place_holder">abcxyz123</string>
 
     <string name="registration_successful">Registration Successful</string>
+
+    <string name="initial_text_in_search_screen">Search for generals, skills, cards, and game information.</string>
 </resources>

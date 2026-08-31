@@ -37,9 +37,11 @@ fun MainScaffold(
 
     Scaffold(
         topBar = {
-            SanguosuoTopBar(
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (currentGraphRoute != MainGraph.SearchGraph.route) {
+                SanguosuoTopBar(
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         },
         bottomBar = {
             SanguosuoBottomBar(
