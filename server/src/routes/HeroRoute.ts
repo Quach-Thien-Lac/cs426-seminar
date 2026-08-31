@@ -17,4 +17,10 @@ router.all('/name/:heroName',
 	HeroController.getHeroByName
 );
 
+router.all('/all',
+	ValidatorMiddleware.validateMethod([HTTPMethod.GET]),
+	ValidatorMiddleware.validateAccessToken,
+	HeroController.getHeroAll
+)
+
 export default router;
