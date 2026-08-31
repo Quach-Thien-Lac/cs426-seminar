@@ -41,7 +41,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavRoute.Welcome.route
+        startDestination = NavRoute.Main.route
     ) {
         composable(NavRoute.Welcome.route) {
             WelcomeScreen(
@@ -83,31 +83,7 @@ fun AppNavHost(
         }
 
         composable(NavRoute.Main.route) {
-            MainScaffold(
-                onSearchClick = {
-                    navController.navigate(NavRoute.Search.route)
-                },
-                onHeroClick = { hero ->
-                    navController.navigate(NavRoute.HeroDetail.createRoute(hero.id))
-                }
-            )
-        }
-
-        composable(NavRoute.Search.route) {
-            SearchScreenRoute(
-                onBack = { navController.popBackStack() },
-                onHeroClick = { hero ->
-                    navController.navigate(NavRoute.HeroDetail.createRoute(hero.id))
-                }
-            )
-        }
-
-        composable(
-            route = NavRoute.HeroDetail.route,
-            arguments = listOf(navArgument("heroId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val heroId = backStackEntry.arguments?.getString("heroId") ?: return@composable
-            HeroDetailScreenRoute(heroId = heroId)
+            MainScaffold()
         }
     }
 }

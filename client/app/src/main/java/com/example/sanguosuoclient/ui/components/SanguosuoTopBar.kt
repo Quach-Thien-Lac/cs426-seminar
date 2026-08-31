@@ -35,7 +35,6 @@ import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 @Composable
 fun SanguosuoTopBar(
     modifier: Modifier = Modifier,
-    onSearchClick: () -> Unit = {},
     onBackClick: (() -> Unit)? = null
 ) {
     Row(
@@ -56,23 +55,6 @@ fun SanguosuoTopBar(
         SanguosuoSmallTitle()
 
         Spacer(modifier = Modifier.weight(1f))
-
-        Box(modifier = Modifier.width(160.dp)) {
-            SanguosuoSearchBar(
-                query = "",
-                onQueryChange = {},
-                enabled = false,
-                modifier = Modifier.width(160.dp)
-            )
-            // Transparent overlay to intercept taps
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .clickable(onClick = onSearchClick)
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
 
         Icon(
             painter = painterResource(R.drawable.ic_account),

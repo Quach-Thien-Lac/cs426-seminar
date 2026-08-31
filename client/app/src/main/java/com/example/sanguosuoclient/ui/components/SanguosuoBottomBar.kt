@@ -16,8 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.sanguosuoclient.R
+import com.example.sanguosuoclient.ui.navigation.MainGraph
+import com.example.sanguosuoclient.ui.navigation.MainRoute
 import com.example.sanguosuoclient.ui.theme.SanguosuoClientTheme
 
 data class BottomNavItem(
@@ -27,15 +28,15 @@ data class BottomNavItem(
 )
 
 val bottomNavItems = listOf(
-    BottomNavItem("Home", R.drawable.ic_home, "home_route"),
-    BottomNavItem("Saved", R.drawable.ic_bookmark, "saved_route"),
-    BottomNavItem("Progress", R.drawable.ic_check_circle, "progress_route"),
-    BottomNavItem("Settings", R.drawable.ic_settings, "settings_route")
+    BottomNavItem("Home", R.drawable.ic_home, MainGraph.HomeGraph.route),
+    BottomNavItem("Search", R.drawable.ic_search, MainGraph.SearchGraph.route),
+    BottomNavItem("Saved", R.drawable.ic_bookmark, MainGraph.SavedGraph.route),
+    BottomNavItem("Settings", R.drawable.ic_settings, MainGraph.SettingsGraph.route)
 )
 
 @Composable
 fun SanguosuoBottomBar(
-    currentRoute: String,
+    currentGraphRoute: String,
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -49,7 +50,7 @@ fun SanguosuoBottomBar(
             tonalElevation = 0.dp,
         ) {
             bottomNavItems.forEach { item ->
-                val selected = currentRoute == item.route
+                val selected = currentGraphRoute == item.route
 
                 NavigationBarItem(
                     selected = selected,
@@ -78,9 +79,9 @@ fun SanguosuoBottomBar(
 fun BottomBarPreview() {
     SanguosuoClientTheme() {
         SanguosuoBottomBar(
-            currentRoute = "home_route",
+            currentGraphRoute = MainRoute.Home.route,
             onNavigate = {},
-            modifier = Modifier.width(200.dp).height(50.dp)
+            modifier = Modifier.width(300.dp).height(75.dp)
         )
     }
 }

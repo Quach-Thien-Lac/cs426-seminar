@@ -7,42 +7,59 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.sanguosuoclient.data.model.Hero
+import androidx.navigation.navArgument
 import com.example.sanguosuoclient.ui.components.SanguosuoBottomBar
 import com.example.sanguosuoclient.ui.components.SanguosuoTopBar
+import com.example.sanguosuoclient.ui.navigation.MainGraph
+import com.example.sanguosuoclient.ui.navigation.MainRoute
+import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreenRoute
 import com.example.sanguosuoclient.ui.screen.home.HomeScreen
+import com.example.sanguosuoclient.ui.screen.search.SearchScreenRoute
 
 @Composable
 fun MainScaffold(
-    onSearchClick: () -> Unit = {},
-    onHeroClick: (Hero) -> Unit = {},
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
+    val currentGraphRoute = backStackEntry?.destination?.hierarchy
+        ?.firstOrNull {it.route in MainGraph.all}
+        ?.route
+        ?: MainGraph.HomeGraph.route
 
     Scaffold(
         topBar = {
             SanguosuoTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                onSearchClick = onSearchClick
             )
         },
         bottomBar = {
             SanguosuoBottomBar(
-                currentRoute = currentRoute ?: "undefined",
-                onNavigate = { route ->
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                currentGraphRoute = currentGraphRoute,
+                onNavigate = { graphRoute ->
+                    if (currentGraphRoute == graphRoute) {
+                        navController.navigate(graphRoute) {
+                            popUpTo(graphRoute) {
+                                inclusive = true
+                            }
                         }
-                        restoreState = true
+                    }
+                    else {
+                        navController.navigate(graphRoute) {
+                            launchSingleTop = true
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            restoreState = true
+                        }
                     }
                 }
             )
@@ -50,20 +67,72 @@ fun MainScaffold(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "home_route",
+            startDestination = MainGraph.HomeGraph.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("home_route") {
-                HomeScreen(onHeroClick = onHeroClick)
+            navigation(
+                startDestination = MainRoute.Home.route,
+                route = MainGraph.HomeGraph.route,
+            ) {
+                composable(MainRoute.Home.route) {
+                    HomeScreen(
+                        onHeroClick = { hero ->
+                            navController.navigate("home/${MainRoute.HeroDetail.createRoute(hero.id)}")
+                        }
+                    )
+                }
+
+                composable(
+                    route = "home/${MainRoute.HeroDetail.route}",
+                    arguments = listOf(navArgument("heroId") {type = NavType.StringType})
+                ) { backStackEntry ->
+                    val heroId = backStackEntry.arguments?.getString("heroId") ?: return@composable
+                    HeroDetailScreenRoute(heroId = heroId)
+                }
             }
-            composable("saved_route") {
-                Text("Saved Screen Placeholder")
+
+            navigation(
+                startDestination = MainRoute.Search.route,
+                route = MainGraph.SearchGraph.route,
+            ) {
+                composable(MainRoute.Search.route) {
+                    SearchScreenRoute(
+                        onBack = { navController.popBackStack() },
+                        onHeroClick = { hero ->
+                            navController.navigate("search/${MainRoute.HeroDetail.createRoute(hero.id)}")
+                        }
+                    )
+                }
+
+                composable(
+                    route = "search/${MainRoute.HeroDetail.route}",
+                    arguments = listOf(navArgument("heroId") {type = NavType.StringType})
+                ) { backStackEntry ->
+                    val heroId = backStackEntry.arguments?.getString("heroId") ?: return@composable
+                    HeroDetailScreenRoute(heroId = heroId)
+                }
             }
-            composable("progress_route") {
-                Text("Progress Screen Placeholder")
+
+            navigation(
+                startDestination = MainRoute.Saved.route,
+                route = MainGraph.SavedGraph.route
+            ) {
+                composable(MainRoute.Saved.route) {
+                    Text("Saved Screen Placeholder")
+                }
             }
-            composable("settings_route") {
-                Text("Settings Screen Placeholder")
+
+            navigation(
+                startDestination = MainRoute.Settings.route,
+                route = MainGraph.SettingsGraph.route,
+            ) {
+                composable(MainRoute.Settings.route) {
+                    Text("Settings Screen Placeholder")
+                }
+            }
+
+            composable(MainRoute.Profile.route) {
+                Text("Profile Screen Placeholder")
             }
         }
     }
