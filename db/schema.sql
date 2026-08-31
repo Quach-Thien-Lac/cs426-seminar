@@ -237,6 +237,8 @@ CREATE TABLE Hero (
 
 	CONSTRAINT FK_Hero_hero_image_id
 		FOREIGN KEY (hero_image_id) REFERENCES Image (image_id),
+	CONSTRAINT FK_Hero_hero_gender_id
+		FOREIGN KEY (hero_gender_id) REFERENCES HeroGender (hero_gender_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_1_id
 		FOREIGN KEY (hero_skill_1_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_2_id
