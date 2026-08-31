@@ -176,7 +176,7 @@ export class HeroService {
 	 * 
 	 * @example <caption>Response</caption>
 	 * {
-	 *   "success": true,
+	 * 	 "success": true,
 	 *   "statusCode": 200,
 	 *   "payload": {
 	 *     "message": "OK (OK)",
@@ -185,8 +185,12 @@ export class HeroService {
 	 *         "id": "WEI015",
 	 *         "name": "Từ Hoảng",
 	 *         "imageUrl": null,
-	 *         "factionCode": "WEI",
-	 *         "factionName": "Nguỵ",
+	 *         "factions": [
+	 *           {
+	 *             "factionCode": "WEI",
+	 *             "factionName": "Nguỵ"
+	 *           }
+	 *         ],
 	 *         "hp": 2,
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
@@ -201,7 +205,7 @@ export class HeroService {
 	 *         ]
 	 *       }
 	 *     ]
-	 *   }
+	 * 	 }
 	 * }
 	 * 
 	 * @response
@@ -236,7 +240,7 @@ export class HeroService {
 	 * 
 	 * @example <caption>Response</caption>
 	 * {
-	 *   "success": true,
+	 * 	 "success": true,
 	 *   "statusCode": 200,
 	 *   "payload": {
 	 *     "message": "OK (OK)",
@@ -245,8 +249,12 @@ export class HeroService {
 	 *         "id": "WEI015",
 	 *         "name": "Từ Hoảng",
 	 *         "imageUrl": null,
-	 *         "factionCode": "WEI",
-	 *         "factionName": "Nguỵ",
+	 *         "factions": [
+	 *           {
+	 *             "factionCode": "WEI",
+	 *             "factionName": "Nguỵ"
+	 *           }
+	 *         ],
 	 *         "hp": 2,
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
@@ -261,7 +269,7 @@ export class HeroService {
 	 *         ]
 	 *       }
 	 *     ]
-	 *   }
+	 * 	 }
 	 * }
 	 * 
 	 * @response
