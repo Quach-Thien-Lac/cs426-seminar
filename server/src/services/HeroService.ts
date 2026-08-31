@@ -16,12 +16,16 @@ interface HeroSkill {
 	skillDescription: string
 }
 
+interface HeroFaction {
+	factionCode: string,
+	factionName: string
+}
+
 interface HeroData {
 	id: string,
 	name: string,
 	imageUrl: string | null,
-	factionCode: string,
-	factionName: string,
+	factions: HeroFaction[],
 	hp: number,
 	epithet: string,
 	quote: string,
@@ -35,8 +39,6 @@ async function queryHeroById(heroId: string) {
 			h.hero_id,
 			h.hero_name,
 			h.hero_image_id,
-			hf.hero_faction_code,
-			hf.hero_faction_name,
 			h.hero_hp,
 			h.hero_epithet,
 			h.hero_quote,
@@ -51,8 +53,6 @@ async function queryHeroById(heroId: string) {
 			hs3.skill_name AS hero_skill_3_name,
 			hs3.skill_description AS hero_skill_3_description
 		FROM Hero h
-			INNER JOIN HeroFaction hf ON hf.hero_faction_id = h.hero_faction_id
-			
 			LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
 			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
@@ -66,8 +66,6 @@ async function queryHeroByName(heroName: string) {
 			h.hero_id,
 			h.hero_name,
 			h.hero_image_id,
-			hf.hero_faction_code,
-			hf.hero_faction_name,
 			h.hero_hp,
 			h.hero_epithet,
 			h.hero_quote,
@@ -82,13 +80,22 @@ async function queryHeroByName(heroName: string) {
 			hs3.skill_name AS hero_skill_3_name,
 			hs3.skill_description AS hero_skill_3_description
 		FROM Hero h
-			INNER JOIN HeroFaction hf ON hf.hero_faction_id = h.hero_faction_id
-			
 			LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
 			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
 		WHERE hero_name = ?;
 		`, [heroName]);
+}
+
+async function queryFactions(heroId: string) {
+	return await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT
+			hf.hero_faction_code,
+			hf.hero_faction_name
+		FROM HeroBelongsFaction hbf
+			INNER JOIN HeroFaction hf ON hf.hero_faction_id = hbf.hero_faction_id
+		WHERE hbf.hero_id = ?
+	`, [heroId]);
 }
 
 async function querySkillTag(skillId: string) {
@@ -108,15 +115,24 @@ async function parseDatabaseDataToReturnable(results: RowDataPacket[]) {
 			id: result.hero_id,
 			name: result.hero_name,
 			imageUrl: null, // TODO: fix later
-			factionCode: result.hero_faction_code,
-			factionName: result.hero_faction_name,
+			factions: [],
 			hp: result.hero_hp,
 			epithet: result.hero_epithet,
 			quote: result.hero_quote,
 			hasTradeoff: result.hero_has_tradeoff,
 			skills: []
 		}
+		
+		// gets the factions list
+		const [heroFactionsResults] = await queryFactions(parsedResult.id);
+		for (const faction of heroFactionsResults) {
+			parsedResult.factions.push({
+				factionCode: faction.hero_faction_code,
+				factionName: faction.hero_faction_name
+			});
+		}
 
+		// gets the skill list
 		for (let i = 1; i <= 3; i++) {
 			if (!result[`hero_skill_${i}_id`]) continue;
 			let skillTags: HeroSkillTag[] = [];
