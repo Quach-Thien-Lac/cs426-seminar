@@ -29,6 +29,18 @@ interface HeroData {
 	skills: HeroSkill[]
 }
 
+interface HeroDataFilters {
+	heroId?: string,
+	heroName?: string,
+	heroImageId?: string,
+	factionCode?: string,
+	heroHp?: number,
+	heroEpither?: string, 
+	heroQuote?: string,
+	heroHasTradeoff?: boolean,
+	heroComplexity?: number,
+}
+
 async function queryHeroById(heroId: string) {
 	return await DbConnection.pool.query<RowDataPacket[]>(`
 		SELECT
@@ -89,6 +101,58 @@ async function queryHeroByName(heroName: string) {
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
 		WHERE hero_name = ?;
 		`, [heroName]);
+}
+
+async function queryHeroAll(filters: HeroDataFilters = {}) {
+	let sql  = `
+			SELECT 
+				h.hero_id,
+				h.hero_name,
+				h.hero_image_id,
+				hf.hero_faction_code,
+				hf.hero_faction_name,
+				h.hero_hp,
+				h.hero_epithet,
+				h.hero_quote,
+				h.hero_has_tradeoff,
+				hs1.skill_id AS hero_skill_1_id,
+				hs1.skill_name AS hero_skill_1_name,
+				hs1.skill_description AS hero_skill_1_description,
+				hs2.skill_id AS hero_skill_2_id,
+				hs2.skill_name AS hero_skill_2_name,
+				hs2.skill_description AS hero_skill_2_description,			
+				hs3.skill_id AS hero_skill_3_id,
+				hs3.skill_name AS hero_skill_3_name,
+				hs3.skill_description AS hero_skill_3_description
+			FROM Hero h
+				INNER JOIN HeroFaction hf ON hf.hero_faction_id = h.hero_faction_id
+				
+				LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
+				LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
+				LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
+			WHERE 1=1
+		`;
+		const params: any[] = [];
+		const allowedFilters: Record<keyof HeroDataFilters, string> = {
+			heroId: "h.hero_id",
+			heroName: "h.hero_name",
+			heroImageId: "h.hero_image_id",
+			factionCode: "hf.hero_faction_code",
+			heroHp: "h.hero_hp",
+			heroEpither: "h.hero_epithet",
+			heroQuote: "h.hero_quote",
+			heroHasTradeoff: "h.hero_has_tradeoff",
+			heroComplexity: "h.hero_complexity"
+		};
+		for (const [key, val] of Object.entries(filters)) {
+			const col = allowedFilters[key as keyof HeroDataFilters];
+			if (val !== undefined && val !== null && col) {
+				sql += ` AND ${col} = ?`;
+				params.push(val);
+			}
+		}
+
+	return await DbConnection.pool.query<RowDataPacket[]>(sql, params);
 }
 
 async function querySkillTag(skillId: string) {
@@ -259,6 +323,65 @@ export class HeroService {
 		let results: RowDataPacket[];
 		try {
 			[results] = await queryHeroByName(heroName);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
+		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
+		return generate200Response(data);
+	}
+
+	/**
+	 * Service function for <code>/api/heroes/all></code>. Get all data for a hero based on custom filters. Supports <code>GET</code> requests.
+	 * @param {HeroDataFilters} filters - The filters for the query
+	 * @returns {Promise<ServiceResponse>}
+	 * 
+	 * @example <caption>cURL</caption>
+	 * curl -X GET \
+	 * -H 'Authorization: your_session_token_goes_here' \
+	 * http://localhost:8080/api/heroes/all
+	 * 
+	 * @example <caption>Response</caption>
+	 * {
+	 *   "success": true,
+	 *   "statusCode": 200,
+	 *   "payload": {
+	 *     "message": "OK (OK)",
+	 *     "data": [
+	 *       {
+	 *         "id": "WEI015",
+	 *         "name": "Từ Hoảng",
+	 *         "imageUrl": null,
+	 *         "factionCode": "WEI",
+	 *         "factionName": "Nguỵ",
+	 *         "hp": 2,
+	 *         "epithet": "Chu Á Chi Phong",
+	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
+	 *         "hasTradeoff": false,
+	 *         "skills": [
+	 *           {
+	 *             "skillId": "WEI015_1",
+	 *             "skillTags": [],
+	 *             "skillName": "Đoạn Lương",
+	 *             "skillDescription": "Giai đoạn hành động, bạn có thể sử dụng thẻ bài Phi Cẩm Nang sắc Đen xem như 1 thẻ [Binh Lương Thốn Đoạn] không hạn chế khoảng cách. Nếu bạn vừa sử dụng thẻ [Binh Lương Thốn Đoạn] đối với 1 người chới trong khoảng cách vượt quá 2, bạn không thể tái phát động kỹ năng cho đến hết lượt."
+	 *           }
+	 *         ]
+	 *       }
+	 *     ]
+	 *   }
+	 * }
+	 * 
+	 * @response
+	 * - `200 OK` - Successful request
+	 * - `400 BAD_REQUEST` - Missing any of the required parameters
+	 * - `401 UNAUTHORIZED` - No session token is provided
+	 * - `405 METHOD_NOT_ALLOWED` - The endpoint does not support the HTTP method specified
+	 * - `500 INTERNAL_SERVER_ERROR` - Internal server error (cooked)
+	 */
+	public async getHeroAll(filters: HeroDataFilters = {}): Promise<ServiceResponse> {
+		let results: RowDataPacket[];
+		try {
+			[results] = await queryHeroAll(filters);
 		} catch (err) {
 			return generateDatabaseErrorResponse(err);
 		}
