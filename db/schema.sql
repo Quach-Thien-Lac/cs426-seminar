@@ -56,6 +56,58 @@ CREATE TABLE HeroFaction (
         CHECK (CAST(hero_faction_code AS BINARY) = UPPER(hero_faction_code))
 );
 
+CREATE TABLE CardType (
+	card_type_id TINYINT AUTO_INCREMENT,
+	card_type_code VARCHAR(20),
+	card_type_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_CardType_card_type_id
+		PRIMARY KEY (card_type_id),
+	CONSTRAINT UK_CardType_card_type_code
+		UNIQUE (card_type_code),
+    CONSTRAINT CHK_CardType_card_type_code_uppercase
+        CHECK (CAST(card_type_code AS BINARY) = UPPER(card_type_code))
+);
+
+CREATE TABLE CardSuit (
+	card_suit_id TINYINT AUTO_INCREMENT,
+	card_suit_code VARCHAR(20),
+	card_suit_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_CardSuit_card_suit_id
+		PRIMARY KEY (card_suit_id),
+	CONSTRAINT UK_CardSuit_card_suit_code
+		UNIQUE (card_suit_code),
+    CONSTRAINT CHK_CardSuit_card_suit_code_uppercase
+        CHECK (CAST(card_suit_code AS BINARY) = UPPER(card_suit_code))
+);
+
+CREATE TABLE HeroGender (
+	hero_gender_id TINYINT AUTO_INCREMENT,
+	hero_gender_code VARCHAR(20),
+	hero_gender_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_HeroGender_hero_gender_id
+		PRIMARY KEY (hero_gender_id),
+	CONSTRAINT UK_HeroGender_hero_gender_code
+		UNIQUE (hero_gender_code),
+    CONSTRAINT CHK_HeroGender_hero_gender_code_uppercase
+        CHECK (CAST(hero_gender_code AS BINARY) = UPPER(hero_gender_code))
+);
+
+CREATE TABLE HeroRole (
+	hero_role_id TINYINT AUTO_INCREMENT,
+	hero_role_code VARCHAR(20),
+	hero_role_name VARCHAR(50) CHARACTER SET UTF8MB4,
+
+	CONSTRAINT PK_HeroRole_hero_role_id
+		PRIMARY KEY (hero_role_id),
+	CONSTRAINT UK_HeroRole_hero_role_code
+		UNIQUE (hero_role_code),
+    CONSTRAINT CHK_HeroRole_hero_role_code_uppercase
+        CHECK (CAST(hero_role_code AS BINARY) = UPPER(hero_role_code))
+);
+
 /******************************************
 *************** BASED ENTITY **************
 ******************************************/
@@ -169,12 +221,13 @@ CREATE TABLE Image (
 CREATE TABLE Hero (
 	hero_id VARCHAR(10),
 	hero_name VARCHAR(80) CHARACTER SET UTF8MB4,
+	hero_gender_id TINYINT NOT NULL,
 	hero_image_id VARCHAR(10),
-	hero_faction_id TINYINT NOT NULL,
 	hero_hp FLOAT(1) NOT NULL,
 	hero_epithet VARCHAR(100) CHARACTER SET UTF8MB4,
 	hero_quote VARCHAR(200) CHARACTER SET UTF8MB4,
 	hero_has_tradeoff BIT NOT NULL,
+	hero_complexity TINYINT,
 	hero_skill_1_id VARCHAR(10),
 	hero_skill_2_id VARCHAR(10),
 	hero_skill_3_id VARCHAR(10),
@@ -184,8 +237,6 @@ CREATE TABLE Hero (
 
 	CONSTRAINT FK_Hero_hero_image_id
 		FOREIGN KEY (hero_image_id) REFERENCES Image (image_id),
-	CONSTRAINT FK_Hero_hero_faction_id
-		FOREIGN KEY (hero_faction_id) REFERENCES HeroFaction (hero_faction_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_1_id
 		FOREIGN KEY (hero_skill_1_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_2_id
@@ -204,8 +255,100 @@ CREATE TABLE Session (
 
 	CONSTRAINT PK_Session_session_token
 		PRIMARY KEY (session_token),
+
 	CONSTRAINT FK_Session_session_user_id
 		FOREIGN KEY (session_user_id) REFERENCES `User` (user_id)
+);
+
+CREATE TABLE Card (
+	card_id CHAR(4),
+	card_name VARCHAR(70) CHARACTER SET UTF8MB4 NOT NULL,
+	card_description VARCHAR(100) CHARACTER SET UTF8MB4,
+	card_type_id TINYINT NOT NULL,
+
+	CONSTRAINT PK_Card_card_id
+		PRIMARY KEY (card_id),
+
+	CONSTRAINT FK_Card_card_type_id
+		FOREIGN KEY (card_type_id) REFERENCES CardType (card_type_id),
+
+	-- card_id must be in the format XYYY, where X is an uppercase letter, and Y is any number
+	CONSTRAINT CHK_Card_card_id_correct_format
+		CHECK (LENGTH(card_id) = 4 AND card_id REGEXP '^[A-Z][0-9]{3}$')
+);
+
+CREATE TABLE BasicCard (
+	basic_card_id CHAR(4),
+
+	CONSTRAINT PK_BasicCard_basic_card_id
+		PRIMARY KEY (basic_card_id),
+	
+	CONSTRAINT FK_BasicCard_basic_card_id
+		FOREIGN KEY (basic_card_id) REFERENCES Card (card_id)
+);
+
+CREATE TABLE ToolCard (
+	tool_card_id CHAR(4),
+	tool_card_is_time BIT NOT NULL,
+	tool_card_is_reroll BIT NOT NULL,
+	tool_card_is_tradable BIT NOT NULL,
+
+	CONSTRAINT PK_ToolCard_tool_card_id
+		PRIMARY KEY (tool_card_id),
+
+	CONSTRAINT FK_ToolCard_tool_card_id
+		FOREIGN KEY (tool_card_id) REFERENCES Card (card_id)
+);
+
+CREATE TABLE WeaponCard (
+	weapon_card_id CHAR(4),
+	weapon_card_range TINYINT NOT NULL,
+	weapon_card_is_tradable BIT NOT NULL,
+	weapon_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_WeaponCard_weapon_card_id
+		PRIMARY KEY (weapon_card_id),
+	
+	CONSTRAINT FK_WeaponCard_weapon_card_id
+		FOREIGN KEY (weapon_card_id) REFERENCES Card (card_id)
+);
+
+CREATE TABLE ArmorCard (
+	armor_card_id CHAR(4),
+	armor_card_is_tradable BIT NOT NULL,
+	armor_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_ArmorCard_armor_card_id
+		PRIMARY KEY (armor_card_id),
+	
+	CONSTRAINT FK_ArmorCard_armor_card_id
+		FOREIGN KEY (armor_card_id) REFERENCES Card (card_id)
+);
+
+CREATE TABLE HorseCard (
+	horse_card_id CHAR(4),
+	horse_card_is_plus BIT NOT NULL,
+	Horse_card_is_minus BIT NOT NULL,
+	horse_card_is_tradable BIT NOT NULL,
+	horse_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_HorseCard_horse_card_id
+		PRIMARY KEY (horse_card_id),
+	
+	CONSTRAINT FK_HorseCard_horse_card_id
+		FOREIGN KEY (horse_card_id) REFERENCES Card (card_id)
+);
+
+CREATE TABLE TreasureCard (
+	treasure_card_id CHAR(4),
+	treasure_card_is_tradable BIT NOT NULL,
+	treasure_card_is_giftable BIT NOT NULL,
+
+	CONSTRAINT PK_TreasureCard_treasure_card_id
+		PRIMARY KEY (treasure_card_id),
+	
+	CONSTRAINT FK_TreasureCard_treasure_card_id
+		FOREIGN KEY (treasure_card_id) REFERENCES Card (card_id)
 );
 
 /******************************************
@@ -235,4 +378,45 @@ CREATE TABLE HeroCombo (
 		FOREIGN KEY (hero_1_id) REFERENCES Hero (hero_id),
 	CONSTRAINT FK_HeroCombo_hero_2_id
 		FOREIGN KEY (hero_2_id) REFERENCES Hero (hero_id)
+);
+
+CREATE TABLE HeroBelongsFaction (
+	hero_id VARCHAR(10),
+	hero_faction_id TINYINT,
+
+	CONSTRAINT PK_HeroFaction_hid_hfid
+		PRIMARY KEY (hero_id, hero_faction_id),
+
+	CONSTRAINT FK_HeroFaction_hero_id
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),
+	CONSTRAINT FK_HeroFaction_hero_faction_id
+		FOREIGN KEY (hero_faction_id) REFERENCES HeroFaction (hero_faction_id)
+);
+
+CREATE TABLE CardSuitAndRank (
+	card_id CHAR(4),
+	card_suit_id TINYINT,
+	card_rank TINYINT,
+
+	CONSTRAINT PK_CardSuitAndRank_cid_csid_cr
+		PRIMARY KEY (card_id, card_suit_id, card_rank),
+	
+	CONSTRAINT FK_CardSuitAndRank_card_suit_id
+		FOREIGN KEY (card_suit_id) REFERENCES CardSuit (card_suit_id),
+	
+	CONSTRAINT CHK_CardSuitAndRank_valid_rank
+		CHECK (card_rank <= 13 AND card_rank >= 1)
+);
+
+CREATE TABLE HeroBelongsRole (
+	hero_id VARCHAR(10),
+	hero_role_id TINYINT,
+
+	CONSTRAINT PK_HeroBelongsRole_hid_hrid
+		PRIMARY KEY (hero_id, hero_role_id),
+	
+	CONSTRAINT FK_HeroBelongsRole_hero_id
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),
+	CONSTRAINT FK_HeroBelongsRole_hero_role_id
+		FOREIGN KEY (hero_role_id) REFERENCES HeroRole (hero_role_id)
 );
