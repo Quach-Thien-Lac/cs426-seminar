@@ -288,15 +288,13 @@ export class HeroService {
 	}
 
 	/**
-	 * Service function for <code>/api/heroes/name/:heroName</code>. Get all data for a hero given hero name. Supports <code>QUERY</code> requests.
+	 * Service function for <code>/api/heroes/name/:heroName</code>. Get all data for a hero given hero name. Supports <code>GET</code> requests.
 	 * @param {string} heroName - The hero's name
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
-	 * curl -X QUERY \
+	 * curl -X GET \
 	 * -H 'Authorization: your_session_token_goes_here' \
-	 * -H 'Content-Type: application/json' \
-	 * -d '{"heroName": "Từ Hoảng"}' \
 	 * http://localhost:8080/api/heroes/name/T%E1%BB%AB%20Ho%E1%BA%A3ng
 	 * 
 	 * @example <caption>Response</caption>
@@ -349,13 +347,24 @@ export class HeroService {
 	}
 
 	/**
-	 * Service function for <code>/api/heroes/all></code>. Get all data for a hero based on custom filters. Supports <code>GET</code> requests.
-	 * @param {HeroDataFilters} filters - The filters for the query
+	 * Service function for <code>/api/heroes/all></code>. Get all data for a hero based on custom filters. Supports <code>QUERY</code> requests.
+	 * @param {HeroDataFilters} filters - the filters to apply to the query. All filters are optional. If no filters are provided, all heroes will be returned. The filters are as follows:
+	 * - heroId: string[] - filter by hero ID
+	 * - heroName: string[] - filter by hero name
+	 * - heroImageId: string[] - filter by hero image ID
+	 * - factionCode: string[] - filter by hero faction code
+	 * - heroHp: number[] - filter by hero HP
+	 * - heroEpithet: string[] - filter by hero epithet
+	 * - heroQuote: string[] - filter by hero quote
+	 * - heroHasTradeoff: boolean[] - filter by whether the hero has a tradeoff or not
+	 * - heroComplexity: number[] - filter by hero complexity (1-3)
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
-	 * curl -X GET \
+	 * curl -X QUERY \
 	 * -H 'Authorization: your_session_token_goes_here' \
+	 * -H 'Content-Type: application/json' \
+	 * -d '{"heroName": ["Từ Hoảng"], "factionCode": ["WEI", "QUN"], "heroHp": [2, 3]}' \
 	 * http://localhost:8080/api/heroes/all
 	 * 
 	 * @example <caption>Response</caption>
