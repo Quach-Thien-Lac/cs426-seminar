@@ -30,15 +30,15 @@ interface HeroData {
 }
 
 interface HeroDataFilters {
-	heroId?: string,
-	heroName?: string,
-	heroImageId?: string,
-	factionCode?: string,
-	heroHp?: number,
-	heroEpither?: string, 
-	heroQuote?: string,
-	heroHasTradeoff?: boolean,
-	heroComplexity?: number,
+	heroId?: string[],
+	heroName?: string[],
+	heroImageId?: string[],
+	factionCode?: string[],
+	heroHp?: number[],
+	heroEpithet?: string[], 
+	heroQuote?: string[],
+	heroHasTradeoff?: boolean[],
+	heroComplexity?: number[],
 }
 
 async function queryHeroById(heroId: string) {
@@ -139,7 +139,7 @@ async function queryHeroAll(filters: HeroDataFilters = {}) {
 			heroImageId: "h.hero_image_id",
 			factionCode: "hf.hero_faction_code",
 			heroHp: "h.hero_hp",
-			heroEpither: "h.hero_epithet",
+			heroEpithet: "h.hero_epithet",
 			heroQuote: "h.hero_quote",
 			heroHasTradeoff: "h.hero_has_tradeoff",
 			heroComplexity: "h.hero_complexity"
@@ -147,8 +147,16 @@ async function queryHeroAll(filters: HeroDataFilters = {}) {
 		for (const [key, val] of Object.entries(filters)) {
 			const col = allowedFilters[key as keyof HeroDataFilters];
 			if (val !== undefined && val !== null && col) {
-				sql += ` AND ${col} = ?`;
-				params.push(val);
+				if (Array.isArray(val)) {
+					if (val.length === 0) continue;
+					else {
+					sql += ` AND ${col} IN (${val.map(() => '?').join(',')})`;
+					params.push(...val);
+					}
+				} else {
+					sql += ` AND ${col} = ?`;
+					params.push(val);
+				}
 			}
 		}
 
@@ -273,13 +281,15 @@ export class HeroService {
 	}
 
 	/**
-	 * Service function for <code>/api/heroes/name/:heroName</code>. Get all data for a hero given hero name. Supports <code>GET</code> requests.
+	 * Service function for <code>/api/heroes/name/:heroName</code>. Get all data for a hero given hero name. Supports <code>QUERY</code> requests.
 	 * @param {string} heroName - The hero's name
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
-	 * curl -X GET \
+	 * curl -X QUERY \
 	 * -H 'Authorization: your_session_token_goes_here' \
+	 * -H 'Content-Type: application/json' \
+	 * -d '{"heroName": "Từ Hoảng"}' \
 	 * http://localhost:8080/api/heroes/name/T%E1%BB%AB%20Ho%E1%BA%A3ng
 	 * 
 	 * @example <caption>Response</caption>

@@ -64,7 +64,7 @@ class HeroController {
 	}
 
 	async getHeroAll(req: Request, res: Response, next: NextFunction) : Promise<void> {
-		const filters = req.query as Record<string, string>;
+		const filters = req.body;
 		const response: ServiceResponse = await HeroService.getHeroAll(filters);
 		return void res.status(response.statusCode).json(response.get());
 	}

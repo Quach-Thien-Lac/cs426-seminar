@@ -18,7 +18,7 @@ router.all('/name/:heroName',
 );
 
 router.all('/all',
-	ValidatorMiddleware.validateMethod([HTTPMethod.GET]),
+	ValidatorMiddleware.validateMethod([HTTPMethod.QUERY]),
 	ValidatorMiddleware.validateAccessToken,
 	HeroController.getHeroAll
 )
