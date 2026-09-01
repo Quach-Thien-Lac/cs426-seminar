@@ -364,7 +364,7 @@ export class HeroService {
 	 * curl -X QUERY \
 	 * -H 'Authorization: your_session_token_goes_here' \
 	 * -H 'Content-Type: application/json' \
-	 * -d '{"heroName": ["Từ Hoảng"], "factionCode": ["WEI", "QUN"], "heroHp": [2, 3]}' \
+	 * -d '{"heroName": ["Từ Hoảng"], "factionCode": ["WEI", "QUN"], "heroHp": [2, 2.5]}' \
 	 * http://localhost:8080/api/heroes/all
 	 * 
 	 * @example <caption>Response</caption>
