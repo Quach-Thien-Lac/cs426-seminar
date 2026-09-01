@@ -133,6 +133,7 @@ async function queryHeroAll(filters: HeroDataFilters = {}) {
 			WHERE 1=1
 		`;
 		const params: any[] = [];
+		// define allowed filters and match them with the actual database column names
 		const allowedFilters: Record<keyof HeroDataFilters, string> = {
 			heroId: "h.hero_id",
 			heroName: "h.hero_name",
@@ -144,15 +145,21 @@ async function queryHeroAll(filters: HeroDataFilters = {}) {
 			heroHasTradeoff: "h.hero_has_tradeoff",
 			heroComplexity: "h.hero_complexity"
 		};
+		// check each filter and add it to the query if it is allowed
 		for (const [key, val] of Object.entries(filters)) {
 			const col = allowedFilters[key as keyof HeroDataFilters];
+			// check val and col exist
 			if (val !== undefined && val !== null && col) {
+				// if val is array
 				if (Array.isArray(val)) {
+					// check if it's empty, if it is, skip it
 					if (val.length === 0) continue;
+					// else check using IN clause
 					else {
 					sql += ` AND ${col} IN (${val.map(() => '?').join(',')})`;
 					params.push(...val);
 					}
+				// if val is not array (although it should be, but just in case)
 				} else {
 					sql += ` AND ${col} = ?`;
 					params.push(val);
