@@ -37,11 +37,12 @@ import com.example.sanguosuoclient.ui.screen.search.SearchViewModel
 
 @Composable
 fun AppNavHost(
-    navController: NavHostController
+    navController: NavHostController,
+    isLoggedIn: Boolean
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavRoute.Main.route
+        startDestination = if (isLoggedIn) NavRoute.Main.route else NavRoute.Welcome.route
     ) {
         composable(NavRoute.Welcome.route) {
             WelcomeScreen(

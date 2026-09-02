@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.data.model.Hero
+import com.example.sanguosuoclient.data.session.SessionManager
 import com.example.sanguosuoclient.ui.components.SanguosuoSearchBar
 
 @Composable
@@ -39,8 +40,6 @@ fun SearchScreenRoute(
     onHeroClick: (Hero) -> Unit,
     viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
 ) {
-    val sessionToken = "Bearer MIKU_MIKU_OO_EE_OO"
-
     val query by viewModel.query.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -50,7 +49,7 @@ fun SearchScreenRoute(
         onBack = onBack,
         onHeroClick = onHeroClick,
         onQueryChange = viewModel::onQueryChange,
-        onSearch = { viewModel.onSearch(sessionToken) },
+        onSearch = viewModel::onSearch,
         modifier = Modifier.fillMaxSize()
     )
 }

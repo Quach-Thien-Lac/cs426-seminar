@@ -5,6 +5,8 @@ import com.example.sanguosuoclient.data.model.SignInRequest
 import com.example.sanguosuoclient.data.model.SignUpRequest
 import com.example.sanguosuoclient.data.model.User
 import com.example.sanguosuoclient.data.remote.ApiService
+import com.example.sanguosuoclient.data.session.SessionManager
+import com.example.sanguosuoclient.data.session.UserSession
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -15,10 +17,12 @@ interface AuthRepository {
     suspend fun signIn(request: SignInRequest): Result<SignInData>
 
     suspend fun signUp(request: SignUpRequest): Result<User>
+    suspend fun signOut(): Unit
 }
 
 class NetworkAuthRepository(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val sessionManager: SessionManager
 ) : AuthRepository {
     override suspend fun signIn(request: SignInRequest): Result<SignInData> {
         return try {
@@ -27,6 +31,14 @@ class NetworkAuthRepository(
                 throw Exception(getSignInErrorMessage(response.statusCode))
             }
             val data = response.payload?.data ?: throw IllegalStateException("Empty response payload")
+
+            sessionManager.login(
+                UserSession(
+                    userId = data.userID,
+                    token = data.sessionToken
+                )
+            )
+
             Result.success(data)
         }
         catch (e: CancellationException) {
@@ -34,6 +46,10 @@ class NetworkAuthRepository(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun signOut() {
+        sessionManager.logout()
     }
 
     private fun getSignInErrorMessage(code: Int): String {

@@ -61,9 +61,10 @@ dependencies {
 	implementation(libs.coil.compose)
 	implementation(libs.kotlinx.serialization.json)
 	implementation("androidx.compose.ui:ui-text-google-fonts:1.11.3")
+	implementation(libs.androidx.datastore.preferences)
+
 	testImplementation(libs.junit)
 
-	androidTestImplementation(platform(libs.androidx.compose.bom))
 	androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 	androidTestImplementation(libs.androidx.espresso.core)
 	androidTestImplementation(libs.androidx.junit)
