@@ -100,13 +100,13 @@ fun HeroDetailScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        HeroHeader(hero)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        HeroInformationCard(hero,)
-
-        Spacer(modifier = Modifier.height(20.dp))
+        HeroBanner(hero = hero)
+        Spacer(modifier = Modifier.height(16.dp))
+        HeroOverviewRow(hero = hero)
+        Spacer(modifier = Modifier.height(16.dp))
+        HeroSkillRow(hero = hero)
+        Spacer(modifier = Modifier.height(16.dp))
+        HeroBackstory(hero = hero)
     }
 
 }
@@ -353,186 +353,6 @@ private fun HeroBackstory(
         color = Color.Black
     )
 }
-@Composable
-private fun HeroHeader(
-    hero: Hero,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = hero.name,
-            style = MaterialTheme.typography.titleSmall,
-        )
-
-        hero.epithet?.let { epithet ->
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = epithet,
-                style = MaterialTheme.typography.titleSmall,
-                color = errorLight,
-                fontSize = 20.sp
-            )
-        }
-
-        hero.quote?.let { quote ->
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "\"$quote\"",
-                style = MaterialTheme.typography.titleSmall,
-                color = inversePrimaryLightMediumContrast,
-                fontSize = 12.sp,
-                textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-@Composable
-private fun HeroInformationCard(
-    hero: Hero,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(BorderStroke(1.dp, color = Color.Red), shape = RoundedCornerShape(4.dp))
-    ) {
-        // "Information" banner
-        Surface(
-            color = inversePrimaryLightMediumContrast,
-            shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Information",
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-            )
-        }
-
-        // Fixed-size table: left column height = PortraitHeight + 1 row (faction).
-        // Right column height = SKILL_SLOT_COUNT rows. Both totals are equal by
-        // construction (PortraitHeight = 2 rows), so nothing needs to flex.
-        Row {
-            Column(modifier = Modifier.weight(1f)) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(hero.imageUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = hero.name,
-                    contentScale = ContentScale.Fit,
-                    error = painterResource(R.drawable.ic_broken_image),
-                    placeholder = painterResource(R.drawable.loading_img),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(PortraitHeight)
-                )
-
-                HorizontalDividerLine()
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(SkillRowHeight)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = hero.factionCode,
-                        style = MaterialTheme.typography.displayMedium,
-                        fontSize = 20.sp
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = hero.factionName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontSize = 32.sp
-                    )
-                }
-            }
-
-            VerticalDividerLine()
-
-            Column(modifier = Modifier.weight(1f)) {
-                repeat(3) { slot ->
-                    SkillCell(
-                        skill = hero.skills.getOrNull(slot),
-                        index = slot + 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(SkillRowHeight)
-                    )
-                    if (slot != 3 - 1) {
-                        HorizontalDividerLine()
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SkillCell(
-    skill: HeroSkill?,
-    index: Int,
-    modifier: Modifier = Modifier
-) {
-    if (skill == null) {
-        Box(
-            modifier = modifier.padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "This hero has no Skill $index",
-                style = MaterialTheme.typography.displayMedium,
-                color = Color.Gray
-            )
-        }
-        return
-    }
-
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()) // in case description overflows the fixed row
-    ) {
-        Text(
-            text = "Skill $index - ${skill.skillName}",
-            style = MaterialTheme.typography.labelSmall,
-            fontSize = 16.sp
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = skill.skillDescription,
-            style = MaterialTheme.typography.displayMedium,
-            fontSize = 10.sp
-        )
-    }
-}
-
-
-@Composable
-private fun VerticalDividerLine() {
-    VerticalDivider(
-        color = Color.Red,
-        thickness = 1.dp
-    )
-}
-
-@Composable
-private fun HorizontalDividerLine() {
-    HorizontalDivider(
-        color = Color.Red,
-        thickness = 1.dp
-    )
-}
-
 
 //val mockHeroTuHoang = Hero(
 //    id = "WEI015",
