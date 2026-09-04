@@ -3,6 +3,7 @@ package com.example.sanguosuoclient.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,31 +39,26 @@ fun SanguosuoTopBar(
     modifier: Modifier = Modifier,
     onBackClick: (() -> Unit)? = null
 ) {
-    Row(
-        modifier = modifier
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // if (onBackClick != null) {
-        //     IconButton(onClick = onBackClick) {
-        //         Icon(
-        //             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-        //             contentDescription = "Back",
-        //             tint = Color.Black
-        //         )
-        //     }
-        // }
-        SanguosuoSmallTitle()
+    Column{
+        Row(
+            modifier = modifier
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SanguosuoSmallTitle()
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        Icon(
-            painter = painterResource(R.drawable.ic_account),
-            contentDescription = "Profile",
-            tint = Color.Black,
-            modifier = Modifier.size(36.dp)
-        )
+            Icon(
+                painter = painterResource(R.drawable.ic_account),
+                contentDescription = "Profile",
+                tint = Color.Black,
+                modifier = Modifier.size(36.dp)
+            )
+        }
+
+        HorizontalDivider(thickness = 1.dp, color = Color.Black)
     }
 }
 
