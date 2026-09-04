@@ -84,7 +84,13 @@ fun AppNavHost(
         }
 
         composable(NavRoute.Main.route) {
-            MainScaffold()
+            MainScaffold(
+                onLoggedOut = {
+                    navController.navigate(NavRoute.Welcome.route) {
+                        popUpTo(NavRoute.Main.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

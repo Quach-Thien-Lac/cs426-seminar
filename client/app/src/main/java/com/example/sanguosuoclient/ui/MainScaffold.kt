@@ -23,10 +23,12 @@ import com.example.sanguosuoclient.ui.navigation.MainGraph
 import com.example.sanguosuoclient.ui.navigation.MainRoute
 import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreenRoute
 import com.example.sanguosuoclient.ui.screen.home.HomeScreen
+import com.example.sanguosuoclient.ui.screen.profile.ProfileScreenRoute
 import com.example.sanguosuoclient.ui.screen.search.SearchScreenRoute
 
 @Composable
 fun MainScaffold(
+    onLoggedOut: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -130,7 +132,9 @@ fun MainScaffold(
                 route = MainGraph.ProfileGraph.route,
             ) {
                 composable(MainRoute.Profile.route) {
-                    Text("Profile Screen Placeholder")
+                    ProfileScreenRoute(
+                        onLoggedOut = onLoggedOut
+                    )
                 }
             }
         }

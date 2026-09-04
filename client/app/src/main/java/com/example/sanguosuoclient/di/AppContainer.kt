@@ -8,6 +8,8 @@ import com.example.sanguosuoclient.data.repository.AuthRepository
 import com.example.sanguosuoclient.data.repository.HeroRepository
 import com.example.sanguosuoclient.data.repository.NetworkAuthRepository
 import com.example.sanguosuoclient.data.repository.NetworkHeroRepository
+import com.example.sanguosuoclient.data.repository.NetworkUserRepository
+import com.example.sanguosuoclient.data.repository.UserRepository
 import com.example.sanguosuoclient.data.session.SessionManager
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -18,6 +20,7 @@ interface AppContainer {
     val authRepository: AuthRepository
     val heroRepository: HeroRepository
     val sessionManager: SessionManager
+    val userRepository: UserRepository
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
@@ -26,7 +29,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
     private val json = Json { ignoreUnknownKeys = true }
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
         .build()
 
@@ -44,5 +47,9 @@ class DefaultAppContainer(context: Context) : AppContainer {
 
     override val heroRepository: HeroRepository by lazy {
         NetworkHeroRepository(retrofitService)
+    }
+
+    override val userRepository: UserRepository by lazy {
+        NetworkUserRepository(retrofitService)
     }
 }
