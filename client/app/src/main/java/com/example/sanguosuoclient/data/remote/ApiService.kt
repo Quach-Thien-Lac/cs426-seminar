@@ -7,6 +7,7 @@ import com.example.sanguosuoclient.data.model.SignInRequest
 import com.example.sanguosuoclient.data.model.SignUpPayload
 import com.example.sanguosuoclient.data.model.SignUpRequest
 import com.example.sanguosuoclient.data.model.User
+import com.example.sanguosuoclient.data.model.UserInfoPayload
 import com.example.sanguosuoclient.data.remote.dto.ServiceResponse
 import com.example.sanguosuoclient.ui.navigation.NavRoute
 import retrofit2.http.Body
@@ -37,5 +38,9 @@ interface ApiService {
         @Path("heroId") heroId: String
     ): ServiceResponse<HeroListPayload>
 
-    
+    @GET("api/user/{id}")
+    suspend fun getUserById(
+        @Header("Authorization") token: String,
+        @Path("id") userId: String
+    ): ServiceResponse<UserInfoPayload>
 }
