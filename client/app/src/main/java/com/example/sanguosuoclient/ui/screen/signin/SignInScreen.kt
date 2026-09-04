@@ -70,7 +70,6 @@ fun SignInScreenRoute (
         onNavigateToSignUp = onNavigateToSignUp
     )
 
-    // Placehodler
     LaunchedEffect(uiState) {
         if (uiState is SignInUiState.Success) {
             onSubmit()

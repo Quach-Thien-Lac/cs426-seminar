@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sanguosuoclient.SanguosuoApplication
 import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.repository.HeroRepository
+import com.example.sanguosuoclient.data.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,13 +22,20 @@ sealed class HeroDetailUiState {
 }
 
 class HeroDetailViewModel(
-    private val heroRepository: HeroRepository
+    private val heroRepository: HeroRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _heroDetailUiState = MutableStateFlow<HeroDetailUiState>(HeroDetailUiState.Idle)
     val heroDetailUiState: StateFlow<HeroDetailUiState> = _heroDetailUiState
 
-    fun fetchHero(token: String, heroId: String) {
+    fun fetchHero(heroId: String) {
+        val token = sessionManager.getToken()
+        if (token == null) {
+            _heroDetailUiState.value = HeroDetailUiState.Error("Not signed in")
+            return
+        }
+
         viewModelScope.launch {
             _heroDetailUiState.value = HeroDetailUiState.Loading
             val result = heroRepository.getHeroById(token, heroId)
@@ -43,7 +51,8 @@ class HeroDetailViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as SanguosuoApplication)
                 val heroRepository = application.container.heroRepository
-                HeroDetailViewModel(heroRepository = heroRepository)
+                val sessionManager = application.container.sessionManager
+                HeroDetailViewModel(heroRepository = heroRepository, sessionManager = sessionManager)
             }
         }
     }

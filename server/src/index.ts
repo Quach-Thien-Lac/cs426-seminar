@@ -10,6 +10,7 @@ import DbConnection from './connections/DbConnection.ts';
 // routes
 import AuthRoute from './routes/AuthRoute.ts';
 import HeroRoute from './routes/HeroRoute.ts';
+import UserRoute from './routes/UserRoute.ts';
 
 // callbacks
 import errorHandler from './middleware/errorHandler.ts';
@@ -27,6 +28,7 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', AuthRoute);
 app.use('/api/heroes', HeroRoute);
+app.use('/api', UserRoute);
 app.get('/health', healthCallback);
 app.get('/', rootCallback);
 app.use(nonexistentRouteCallback);
