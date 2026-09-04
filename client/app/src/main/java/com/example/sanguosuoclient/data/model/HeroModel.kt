@@ -27,6 +27,7 @@ data class Hero(
     val epithet: String? = null,
     val quote: String? = null,
     val hasTradeoff: Boolean = false,
+    val heroComplexity: Int = 3,
     val skills: List<HeroSkill> = emptyList()
 )
 
