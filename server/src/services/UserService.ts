@@ -50,7 +50,7 @@ export class UserService {
     async getUser(id: string): Promise<ServiceResponse> {
         let results: RowDataPacket[];
         try {
-            [results] = await DbConnection.pool.query<RowDataPacket[]>('SELECT user_id, user_name, user_username, user_email, user_phone FROM users WHERE user_id = ?', [id]);
+            [results] = await DbConnection.pool.query<RowDataPacket[]>('SELECT user_id, user_name, user_username, user_email, user_phone FROM `User` WHERE user_id = ?', [id]);
         } catch (error) {
             if (error instanceof Error) {
                 const response: ServiceResponse = new ServiceResponse;
