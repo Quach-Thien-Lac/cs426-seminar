@@ -115,6 +115,7 @@ async function queryHeroAll(filters: HeroDataFilters = {}) {
 				h.hero_epithet,
 				h.hero_quote,
 				h.hero_has_tradeoff,
+				h.hero_complexity,
 				hs1.skill_id AS hero_skill_1_id,
 				hs1.skill_name AS hero_skill_1_name,
 				hs1.skill_description AS hero_skill_1_description,
@@ -384,6 +385,7 @@ export class HeroService {
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
 	 *         "hasTradeoff": false,
+	 * 		   "heroComplexity": 2,
 	 *         "skills": [
 	 *           {
 	 *             "skillId": "WEI015_1",
