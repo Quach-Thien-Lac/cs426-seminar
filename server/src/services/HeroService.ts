@@ -26,6 +26,7 @@ interface HeroData {
 	epithet: string,
 	quote: string,
 	hasTradeoff: boolean,
+	heroComplexity: number,
 	skills: HeroSkill[]
 }
 
@@ -53,6 +54,7 @@ async function queryHeroById(heroId: string) {
 			h.hero_epithet,
 			h.hero_quote,
 			h.hero_has_tradeoff,
+			h.hero_complexity,
 			hs1.skill_id AS hero_skill_1_id,
 			hs1.skill_name AS hero_skill_1_name,
 			hs1.skill_description AS hero_skill_1_description,
@@ -84,6 +86,7 @@ async function queryHeroByName(heroName: string) {
 			h.hero_epithet,
 			h.hero_quote,
 			h.hero_has_tradeoff,
+			h.hero_complexity,
 			hs1.skill_id AS hero_skill_1_id,
 			hs1.skill_name AS hero_skill_1_name,
 			hs1.skill_description AS hero_skill_1_description,
@@ -194,6 +197,7 @@ async function parseDatabaseDataToReturnable(results: RowDataPacket[]) {
 			epithet: result.hero_epithet,
 			quote: result.hero_quote,
 			hasTradeoff: result.hero_has_tradeoff,
+			heroComplexity: result.hero_complexity,
 			skills: []
 		}
 
@@ -255,6 +259,7 @@ export class HeroService {
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
 	 *         "hasTradeoff": false,
+	 * 		   "heroComplexity": 2,
 	 *         "skills": [
 	 *           {
 	 *             "skillId": "WEI015_1",
@@ -315,6 +320,7 @@ export class HeroService {
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
 	 *         "hasTradeoff": false,
+	 * 			"heroComplexity": 2,
 	 *         "skills": [
 	 *           {
 	 *             "skillId": "WEI015_1",
@@ -358,7 +364,7 @@ export class HeroService {
 	 * - heroEpithet: string[] - filter by hero epithet
 	 * - heroQuote: string[] - filter by hero quote
 	 * - heroHasTradeoff: boolean[] - filter by whether the hero has a tradeoff or not
-	 * - heroComplexity: number[] - filter by hero complexity (1-3)
+	 * - heroComplexity: number[] - filter by hero complexity (1-5)
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
