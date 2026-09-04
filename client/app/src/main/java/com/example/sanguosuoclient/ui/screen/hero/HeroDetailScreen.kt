@@ -111,6 +111,91 @@ fun HeroDetailScreen(
 
 }
 
+// hero banner with hero image, name, epithet and quote
+@Composable
+private fun HeroBanner(
+    hero: hero,
+    modifier: Modifier = Modifier
+) {
+    //  changed layout from Column to Box to allow the hero name and epithet to be on top of the image
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(450.dp)
+    ) {
+        AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(hero.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = hero.name,
+                    contentScale = ContentScale.Fit,
+                    error = painterResource(R.drawable.ic_broken_image),
+                    placeholder = painterResource(R.drawable.loading_img),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(PortraitHeight)
+                )
+        // this box is to add a black gradient overlay on the image 
+        Box(
+            modifier  = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color.Black),
+                    startY = 350f,
+                    endY = 450f
+                )
+            )
+        )
+        
+        // this column is to add the hero name and epithet on top of the image
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .align(Alignment.BottomStart),
+                    
+        ) {
+            Text(
+            text = hero.name,
+            style = MaterialTheme.typography.titleSmall,
+        )
+
+        hero.epithet?.let { epithet ->
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = epithet,
+                style = MaterialTheme.typography.titleSmall,
+                color = errorLight,
+                fontSize = 20.sp
+            )
+        }
+
+        hero.quote?.let { quote ->
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "\"$quote\"",
+                style = MaterialTheme.typography.titleSmall,
+                color = inversePrimaryLightMediumContrast,
+                fontSize = 12.sp,
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        }
+    }
+}
+
+// hero faction and difficulty in a horizontal row, grid-style
+@Composable
+private fun HeroOverviewRow(
+    hero: Hero,
+    modifier: Modifier = Modifier
+) {
+    
+}
+
 @Composable
 private fun HeroHeader(
     hero: Hero,
@@ -319,3 +404,4 @@ private fun HorizontalDividerLine() {
 //        HeroDetailScreen(mockHeroTuHoang)
 //    }
 //}
+
