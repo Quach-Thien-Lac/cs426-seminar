@@ -30,6 +30,7 @@ fun MainScaffold(
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
     val currentGraphRoute = backStackEntry?.destination?.hierarchy
         ?.firstOrNull {it.route in MainGraph.all}
         ?.route
@@ -37,7 +38,7 @@ fun MainScaffold(
 
     Scaffold(
         topBar = {
-            if (currentGraphRoute != MainGraph.SearchGraph.route) {
+            if (currentRoute != MainRoute.Search.route) {
                 SanguosuoTopBar(
                     modifier = Modifier.fillMaxWidth(),
                 )

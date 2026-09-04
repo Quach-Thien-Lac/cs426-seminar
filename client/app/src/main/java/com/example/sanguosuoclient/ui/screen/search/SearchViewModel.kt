@@ -47,6 +47,7 @@ class SearchViewModel(
             return
         }
 
+        print("Using token: $token")
         android.util.Log.d("SearchViewModel", "Using token: $token")
 
         viewModelScope.launch {

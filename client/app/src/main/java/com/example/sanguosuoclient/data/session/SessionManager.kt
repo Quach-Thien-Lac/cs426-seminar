@@ -32,10 +32,12 @@ class SessionManager(
     }
 
     suspend fun login(session: UserSession) {
-        _session.value = session
+        //_session.value = session
+        _session.value = UserSession(userId=session.userId, token="MIKU_MIKU_OO_EE_OO")
 
         context.dataStore.edit{ prefs ->
-            prefs[TOKEN_KEY] = session.token
+            //prefs[TOKEN_KEY] = session.token
+            prefs[TOKEN_KEY] = "MIKU_MIKU_OO_EE_OO"
             prefs[USER_ID] = session.userId
         }
     }
