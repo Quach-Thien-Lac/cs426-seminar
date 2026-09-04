@@ -208,7 +208,7 @@ private fun HeroOverviewRow(
         ) {
             Text(
                 text = "Phe phái",
-                size = 16.sp,
+                size = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFDFA437)
             )
@@ -263,7 +263,7 @@ private fun HeroSkillRow(
         Text(
             text = "Kỹ năng",
             style = MaterialTheme.typography.labelSmall,
-            fontSize = 16.sp,
+            fontSize = 24.sp,
             color = Color(0xFFDFA437)
         )
         //row of skill icons, selectable
@@ -325,15 +325,34 @@ private fun HeroSkillRow(
                 color = Color.Gray
             )
             Text(
-                text = "Does nothing",
+                text = "This skill does nothing",
                 style = MaterialTheme.typography.displayMedium,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color.Gray
             )
         }
     }
 }
 
+// hero story,  just a title with plain text
+@Composable
+private fun HeroBackstory(
+    hero: Hero,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "Tiểu sử",
+        style = MaterialTheme.typography.labelSmall,
+        fontSize = 24.sp,
+        color = Color(0xFFDFA437),
+    )
+    Text(
+        text = hero.backstory ?: "No backstory available",
+        style = MaterialTheme.typography.displayMedium,
+        fontSize = 16.sp,
+        color = Color.Black
+    )
+}
 @Composable
 private fun HeroHeader(
     hero: Hero,
