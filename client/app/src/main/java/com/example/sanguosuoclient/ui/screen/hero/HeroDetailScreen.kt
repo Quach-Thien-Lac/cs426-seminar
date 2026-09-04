@@ -193,7 +193,57 @@ private fun HeroOverviewRow(
     hero: Hero,
     modifier: Modifier = Modifier
 ) {
-    
+    Row(
+        modifier = modifier
+        .fillMaxWidth()
+        .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Surface(
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            color = Color.White
+                    
+        ) {
+            Text(
+                text = "Phe phái",
+                size = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFDFA437)
+            )
+            Text(
+                text = hero.factionName,
+                size = 14.sp,
+                color = Color.Black
+            )
+        }
+        Surface(
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            color = Color.White
+        ) {
+            Text(
+                text = "Độ khó",
+                size = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFDFA437)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    repeat(5) { index ->
+                        Box(
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(if (hero.heroComplexity >= index) GoldAccent else GoldAccent.copy(alpha = 0.3f))
+                        )
+                    }
+            }
+                
+        }
+    }
 }
 
 @Composable
