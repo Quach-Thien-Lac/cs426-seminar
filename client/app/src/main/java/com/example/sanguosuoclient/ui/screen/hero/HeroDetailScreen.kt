@@ -246,6 +246,94 @@ private fun HeroOverviewRow(
     }
 }
 
+// hero skill description and skill name, selectable from a horizontal row with skill icons, like in league's wiki
+@Composable
+private fun HeroSkillRow(
+    hero: Hero,
+    modifier: Modifier = Modifier
+) {
+    var selectedSkillIndex by remember { mutableStateOf(0)}
+    var selectedSkill = hero.skills.getOrNull(selectedSkillIndex)
+    var romanNumerals = listOf("I", "II", "III")
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Kỹ năng",
+            style = MaterialTheme.typography.labelSmall,
+            fontSize = 16.sp,
+            color = Color(0xFFDFA437)
+        )
+        //row of skill icons, selectable
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            hero.skills.forEachIndexed {
+                index, _ ->
+                val isSelected = index == selectedSkillIndex
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .border(
+                            BorderStroke(1.dp, if (isSelected) Color(0xFFDFA437) else Color(0xFFB0B0B0))
+                        )
+                        .background(if (isSelected) Color(0xFFDFA437) else Color.White)
+                        .clickable {
+                            selectedSkillIndex = index
+                        },
+                    contentAlignment = Alignment.Center,
+                    
+                ) {
+                    Text(
+                        text = romanNumerals.getOrNull(index) {index + 1}.toString(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isSelected) Color.White else Color.Black
+                    )
+                }
+            
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // skill name and desc
+        if(selectedSkill != null) {
+            Text(
+                text = selectedSkill.skillName ?: "No skill name",
+                style = MaterialTheme.typography.titleSmall,
+                fontSize = 24.sp,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = selectedSkill.skillDescription ?: "No skill description",
+                style = MaterialTheme.typography.displayMedium,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+        } else {
+            Text(
+                text = "Default Skill",
+                style = MaterialTheme.typography.displayMedium,
+                fontSize = 24.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = "Does nothing",
+                style = MaterialTheme.typography.displayMedium,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
 @Composable
 private fun HeroHeader(
     hero: Hero,
