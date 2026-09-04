@@ -126,16 +126,12 @@ fun MainScaffold(
             }
 
             navigation(
-                startDestination = MainRoute.Settings.route,
-                route = MainGraph.SettingsGraph.route,
+                startDestination = MainRoute.Profile.route,
+                route = MainGraph.ProfileGraph.route,
             ) {
-                composable(MainRoute.Settings.route) {
-                    Text("Settings Screen Placeholder")
+                composable(MainRoute.Profile.route) {
+                    Text("Profile Screen Placeholder")
                 }
-            }
-
-            composable(MainRoute.Profile.route) {
-                Text("Profile Screen Placeholder")
             }
         }
     }
