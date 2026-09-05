@@ -226,7 +226,8 @@ private fun HeroOverviewRow(
                     color = Color(0xFFDFA437)
                 )
                 Text(
-                    text = hero.factionName,
+                    //text = hero.factionName,
+                    text = hero.factions[0].factionName,
                     fontSize = 14.sp,
                     color = Color.Black
                 )

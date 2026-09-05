@@ -23,7 +23,7 @@ router.all('/all',
 	HeroController.getHeroAll
 )
 
-export default router;
+//export default router;
 router.all('/save/:userId/:heroId',
 	ValidatorMiddleware.validateMethod([HTTPMethod.POST]),
 	ValidatorMiddleware.validateAccessToken,

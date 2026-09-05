@@ -17,12 +17,17 @@ data class HeroSkill(
 )
 
 @Serializable
+data class Faction(
+    val factionCode: String,
+    val factionName: String,
+)
+
+@Serializable
 data class Hero(
     val id: String,
     val name: String,
     val imageUrl: String? = null,
-    val factionCode: String,
-    val factionName: String,
+    val factions: List<Faction>,
     val hp: Float,
     val epithet: String? = null,
     val quote: String? = null,
