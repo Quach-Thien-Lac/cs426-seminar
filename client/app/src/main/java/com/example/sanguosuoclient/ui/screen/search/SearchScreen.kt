@@ -1,5 +1,6 @@
 package com.example.sanguosuoclient.ui.screen.search
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,18 +22,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.session.SessionManager
@@ -186,13 +188,21 @@ private fun SearchResultRow(hero: Hero, onClick: () -> Unit) {
                 .padding(horizontal = 12.dp)
         )
 
-        // Ảnh hero bên phải
-        AsyncImage(
-            model = hero.imageUrl,
+        // Ảnh hero bên phải — map hero.id (VD: "WEI001") → drawable "wei_001"
+        val context = LocalContext.current
+        val drawableName = remember(hero.id) {
+            val prefix = hero.id.dropLast(3).lowercase()
+            val number = hero.id.takeLast(3)
+            "${prefix}_${number}"
+        }
+        val drawableId = remember(drawableName) {
+            context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+        }
+        Image(
+            painter = if (drawableId != 0) painterResource(drawableId)
+                      else painterResource(R.drawable.welcome_screen_background),
             contentDescription = hero.name,
             contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.welcome_screen_background),
-            error = painterResource(R.drawable.welcome_screen_background),
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp))
