@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,10 +40,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.sanguosuoclient.ui.theme.Roboto
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -125,72 +129,202 @@ private fun HeroBanner(
     hero: Hero,
     modifier: Modifier = Modifier
 ) {
-    //  changed layout from Column to Box to allow the hero name and epithet to be on top of the image
+    val context = LocalContext.current
+
+    // Map hero.id (VD: "QUN008") -> drawable "qun_008"
+    val localDrawableId = remember(hero.id) {
+        val prefix = hero.id.dropLast(3).lowercase()
+        val number = hero.id.takeLast(3)
+        val resName = "${prefix}_${number}"
+        val id = context.resources.getIdentifier(resName, "drawable", context.packageName)
+        if (id != 0) id else null
+    }
+
+    // Loại bỏ dấu ngoặc kép thừa nếu trong database đã có
+    val cleanQuote = remember(hero.quote) {
+        hero.quote?.trim()?.removeSurrounding("\"")?.removeSurrounding("“", "”")
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(450.dp)
+            .height(420.dp)
+            .clip(RoundedCornerShape(16.dp))
     ) {
+        // Ảnh tướng: ưu tiên imageUrl từ server, fallback về ảnh local drawable
         AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(hero.imageUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = hero.name,
-                    contentScale = ContentScale.Fit,
-                    error = painterResource(R.drawable.ic_broken_image),
-                    placeholder = painterResource(R.drawable.loading_img),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(PortraitHeight)
-                )
-        // this box is to add a black gradient overlay on the image 
-        Box(
-            modifier  = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, Color.Black),
-                    startY = 350f,
-                    endY = 450f
-                )
-            )
+            model = ImageRequest.Builder(context)
+                .data(if (!hero.imageUrl.isNullOrBlank()) hero.imageUrl else (localDrawableId ?: R.drawable.welcome_screen_background))
+                .crossfade(true)
+                .build(),
+            contentDescription = hero.name,
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.TopCenter,
+            placeholder = painterResource(R.drawable.loading_img),
+            error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
+            modifier = Modifier.fillMaxSize()
         )
-        
-        // this column is to add the hero name and epithet on top of the image
+
+        // Gradient overlay chuyển mượt mà ở nửa dưới của banner
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(240.dp)
+                .align(Alignment.BottomCenter)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.5f),
+                            Color.Black.copy(alpha = 0.85f),
+                            Color.Black.copy(alpha = 0.95f)
+                        )
+                    )
+                )
+        )
+
+        // Badge HP ở góc trên bên phải (Ý tưởng Ngọc Bội Âm Dương Glassmorphism)
+        HeroHpBadge(
+            hp = hero.hp,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(14.dp)
+        )
+
+        // Khối hiển thị Danh hiệu, Tên tướng và Quote căn ở đáy
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .align(Alignment.BottomStart)
                 .padding(16.dp)
-                .align(Alignment.BottomStart),
-                    
         ) {
-            Text(
-            text = hero.name,
-            style = MaterialTheme.typography.titleSmall,
-        )
+            hero.epithet?.let { epithet ->
+                Text(
+                    text = epithet.uppercase(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = GoldAccent,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+            }
 
-        hero.epithet?.let { epithet ->
-            Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = epithet,
+                text = hero.name,
                 style = MaterialTheme.typography.titleSmall,
-                color = errorLight,
-                fontSize = 20.sp
+                color = Color.White,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold
             )
-        }
 
-        hero.quote?.let { quote ->
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "\"$quote\"",
-                style = MaterialTheme.typography.titleSmall,
-                color = inversePrimaryLightMediumContrast,
-                fontSize = 12.sp,
-                textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (!cleanQuote.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color.White.copy(alpha = 0.12f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(3.dp)
+                            .height(26.dp)
+                            .background(GoldAccent, shape = RoundedCornerShape(2.dp))
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "“$cleanQuote”",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontStyle = FontStyle.Italic,
+                            fontFamily = Roboto
+                        ),
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp
+                    )
+                }
+            }
         }
+    }
+}
+
+// Huy hiệu hiển thị Sinh lực (HP) theo phong cách Ngọc Bội Âm Dương (Glassmorphism)
+@Composable
+private fun HeroHpBadge(
+    hp: Float,
+    modifier: Modifier = Modifier
+) {
+    val fullOrbs = hp.toInt()
+    val hasHalfOrb = (hp - fullOrbs) > 0f
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        color = Color.Black.copy(alpha = 0.55f),
+        border = BorderStroke(1.dp, GoldAccent.copy(alpha = 0.8f)),
+        shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            // Dãy biểu tượng Ngọc Sinh Mệnh (Crimson Gem Orbs)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Các viên ngọc đầy
+                repeat(fullOrbs) {
+                    Box(
+                        modifier = Modifier
+                            .size(13.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(Color(0xFFFF5252), Color(0xFFC62828))
+                                )
+                            )
+                            .border(0.8.dp, Color(0xFFFFCDD2).copy(alpha = 0.8f), CircleShape)
+                    )
+                }
+
+                // Nửa viên ngọc nếu là 1.5 hoặc 2.5
+                if (hasHalfOrb) {
+                    Box(
+                        modifier = Modifier
+                            .size(13.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.15f))
+                            .border(0.8.dp, Color(0xFFFFCDD2).copy(alpha = 0.8f), CircleShape)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(0.5f)
+                                .background(
+                                    Brush.horizontalGradient(
+                                        colors = listOf(Color(0xFFFF5252), Color(0xFFC62828))
+                                    )
+                                )
+                        )
+                    }
+                }
+            }
+
+            // Hiển thị chỉ số HP (VD: 1.5 HP, 2 HP, 2.5 HP)
+            Text(
+                text = "${if (hp % 1f == 0f) hp.toInt().toString() else hp.toString()} HP",
+                color = Color.White,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Roboto
+            )
         }
     }
 }
@@ -203,62 +337,91 @@ private fun HeroOverviewRow(
 ) {
     Row(
         modifier = modifier
-        .fillMaxWidth()
-        .padding(16.dp),
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        // Khung Phe phái
         Surface(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .height(86.dp),
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            border = BorderStroke(1.dp, color = GoldAccent),
             color = Color.White
-                    
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Phe phái",
-                    fontSize = 24.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFDFA437)
+                    color = GoldAccent
                 )
-                Text(
-                    text = hero.factionName,
-                    fontSize = 14.sp,
-                    color = Color.Black
-                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = hero.factions.firstOrNull()?.factionName ?: "Chưa rõ",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
             }
         }
+
+        // Khung Độ khó
         Surface(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .height(86.dp),
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            border = BorderStroke(1.dp, color = GoldAccent),
             color = Color.White
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Độ khó",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFDFA437)
+                    color = GoldAccent
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    repeat(5) { index ->
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(8.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(if (hero.heroComplexity >= index) GoldAccent else GoldAccent.copy(alpha = 0.3f))
-                        )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val complexity = hero.heroComplexity.coerceIn(1, 5)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(5) { index ->
+                            Box(
+                                modifier = Modifier
+                                    .width(18.dp)
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(
+                                        if (index < complexity) GoldAccent
+                                        else GoldAccent.copy(alpha = 0.25f)
+                                    )
+                            )
+                        }
                     }
                 }
             }

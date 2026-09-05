@@ -169,6 +169,8 @@ async function queryHeroAll(filters: HeroDataFilters = {}) {
 		}
 
 	return await DbConnection.pool.query<RowDataPacket[]>(sql, params);
+	}
+
 async function querySavedHeroesByUserId(userId: string) {
 	return await DbConnection.pool.query<RowDataPacket[]>(`
 		SELECT
@@ -465,6 +467,14 @@ export class HeroService {
 		let results: RowDataPacket[];
 		try {
 			[results] = await queryHeroAll(filters);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
+		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
+		return generate200Response(data);
+	}
+	
 	public async saveHero(userId: string, heroId: string): Promise<ServiceResponse> {
 		let userResults: RowDataPacket[];
 		let heroResults: RowDataPacket[];

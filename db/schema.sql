@@ -433,5 +433,5 @@ CREATE TABLE HeroSaves (
 	CONSTRAINT FK_HeroSaves_user_id
 		FOREIGN KEY (user_id) REFERENCES `User` (user_id),
 	CONSTRAINT FK_HeroSaves_hero_id
-		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),	
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id)
 );
