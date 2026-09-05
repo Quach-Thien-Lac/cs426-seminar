@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.sanguosuoclient.data.model.Hero
+import com.example.sanguosuoclient.data.model.HeroFaction
 import com.example.sanguosuoclient.data.model.HeroSkill
 import com.example.sanguosuoclient.data.model.SkillTag
 
@@ -20,8 +21,7 @@ private val popularHeroes = listOf(
         id = "WEI015",
         name = "Từ Hoảng",
         imageUrl = "https://static.wikia.nocookie.net/tam-quoc-sat/images/e/e8/Thm.jpg/revision/latest?cb=20220511095938&path-prefix=vi",
-        factionCode = "WEI",
-        factionName = "Nguỵ",
+        factions = listOf(HeroFaction("WEI", "Nguỵ")),
         hp = 2.0f,
         epithet = "Chu Á Chi Phong",
         quote = "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
@@ -39,8 +39,7 @@ private val popularHeroes = listOf(
         id = "QUN003",
         name = "Giả Hủ",
         imageUrl = "https://static.wikia.nocookie.net/tam-quoc-sat/images/f/fa/M%C6%B0u_gi%E1%BA%A3_h%E1%BB%A7_m.jpg/revision/latest?cb=20240913100604&path-prefix=vi",
-        factionCode = "QUN",
-        factionName = "Quần",
+        factions = listOf(HeroFaction("QUN", "Quần")),
         hp = 1.5f,
         epithet = "Lãnh Khốc Độc Sĩ",
         quote = "Với tất cả kế pháp của tại hạ, há sợ thiên hạ không loạn!",
@@ -70,8 +69,7 @@ private val popularHeroes = listOf(
         id = "WEI001",
         name = "Tào Tháo",
         imageUrl = "https://static.wikia.nocookie.net/tam-quoc-sat/images/4/49/T%C3%A0o_th%C3%A1o.jpg/revision/latest?cb=20230320111754&path-prefix=vi",
-        factionCode = "WEI",
-        factionName = "Nguỵ",
+        factions = listOf(HeroFaction("WEI", "Nguỵ")),
         hp = 2.0f,
         epithet = "Tuyệt Thế Đích Gian Hùng",
         quote = "Thà ta phụ người trong thiên hạ chứ không để người trong thiên hạ phụ ta",
