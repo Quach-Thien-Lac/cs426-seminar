@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -144,6 +145,16 @@ private fun SavedHeroCard(
     onClick: () -> Unit,
     onUnsaveClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    val localDrawableId = remember(hero.id) {
+        val prefix = hero.id.dropLast(3).lowercase()
+        val number = hero.id.takeLast(3)
+        val resName = "${prefix}_${number}"
+        val id = context.resources.getIdentifier(resName, "drawable", context.packageName)
+        if (id != 0) id else null
+    }
+
     Box(
         modifier = Modifier
             .aspectRatio(0.72f)
@@ -160,14 +171,15 @@ private fun SavedHeroCard(
                 .clickable(onClick = onClick)
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(hero.imageUrl)
+                model = ImageRequest.Builder(context)
+                    .data(if (!hero.imageUrl.isNullOrBlank()) hero.imageUrl else (localDrawableId ?: R.drawable.welcome_screen_background))
                     .crossfade(true)
                     .build(),
                 contentDescription = hero.name,
-                contentScale = ContentScale.Fit,
-                error = painterResource(R.drawable.ic_broken_image),
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.TopCenter,
                 placeholder = painterResource(R.drawable.loading_img),
+                error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -185,7 +197,7 @@ private fun SavedHeroCard(
 
             Text(
                 text = hero.name,
-                color = Color.Black,
+                color = Color.White,
                 style = MaterialTheme.typography.titleSmall,
                 fontSize = 21.sp,
                 maxLines = 1,
