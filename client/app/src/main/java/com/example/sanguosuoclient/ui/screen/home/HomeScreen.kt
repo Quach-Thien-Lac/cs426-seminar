@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sanguosuoclient.data.model.Hero
-import com.example.sanguosuoclient.ui.components.PopularHeroesSection
+import com.example.sanguosuoclient.ui.components.FactionGridSection
 import com.example.sanguosuoclient.ui.components.TopNewsSection
 
 @Composable
@@ -25,7 +25,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        PopularHeroesSection(onHeroClick = onHeroClick)
+        FactionGridSection(onHeroClick = onHeroClick)
 
         Spacer(modifier = Modifier.height(24.dp))
 
