@@ -17,4 +17,22 @@ router.all('/name/:heroName',
 	HeroController.getHeroByName
 );
 
+router.all('/save/:userId/:heroId',
+	ValidatorMiddleware.validateMethod([HTTPMethod.POST]),
+	ValidatorMiddleware.validateAccessToken,
+	HeroController.saveHero
+);
+
+router.all('/saved/:userId',
+	ValidatorMiddleware.validateMethod([HTTPMethod.GET]),
+	ValidatorMiddleware.validateAccessToken,
+	HeroController.getSavedHeroes
+);
+
+router.all('/unsave/:userId/:heroId',
+	ValidatorMiddleware.validateMethod([HTTPMethod.DELETE]),
+	ValidatorMiddleware.validateAccessToken,
+	HeroController.unsaveHero
+);
+
 export default router;

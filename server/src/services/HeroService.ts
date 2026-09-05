@@ -1,8 +1,9 @@
 import { ServiceResponse } from "../types/ServiceResponse.ts";
-import type { RowDataPacket } from "mysql2";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import DbConnection from "../connections/DbConnection.ts";
 import { generateDatabaseErrorResponse } from "../helper/generateDatabaseErrorResponse.ts";
 import { generate200Response } from "../helper/generate200Response.ts";
+import { generate201Response } from "../helper/generate201Response.ts";
 
 interface HeroSkillTag {
 	skillTagCode: string,
@@ -85,6 +86,35 @@ async function queryHeroByName(heroName: string) {
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
 		WHERE hero_name = ?;
 		`, [heroName]);
+}
+
+async function querySavedHeroesByUserId(userId: string) {
+	return await DbConnection.pool.query<RowDataPacket[]>(`
+		SELECT
+			h.hero_id,
+			h.hero_name,
+			h.hero_image_id,
+			h.hero_hp,
+			h.hero_epithet,
+			h.hero_quote,
+			h.hero_has_tradeoff,
+			hs1.skill_id AS hero_skill_1_id,
+			hs1.skill_name AS hero_skill_1_name,
+			hs1.skill_description AS hero_skill_1_description,
+			hs2.skill_id AS hero_skill_2_id,
+			hs2.skill_name AS hero_skill_2_name,
+			hs2.skill_description AS hero_skill_2_description,
+			hs3.skill_id AS hero_skill_3_id,
+			hs3.skill_name AS hero_skill_3_name,
+			hs3.skill_description AS hero_skill_3_description
+		FROM HeroSaves hs
+			INNER JOIN Hero h ON h.hero_id = hs.hero_id
+			LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
+			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
+			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
+		WHERE hs.user_id = ?
+		ORDER BY h.hero_id;
+	`, [userId]);
 }
 
 async function queryFactions(heroId: string) {
@@ -289,6 +319,103 @@ export class HeroService {
 
 		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
 		return generate200Response(data);
+	}
+
+	public async saveHero(userId: string, heroId: string): Promise<ServiceResponse> {
+		let userResults: RowDataPacket[];
+		let heroResults: RowDataPacket[];
+		let savedResults: RowDataPacket[];
+
+		try {
+			[userResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+				SELECT user_id FROM User WHERE user_id = ?;
+			`, [userId]);
+			[heroResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+				SELECT hero_id FROM Hero WHERE hero_id = ?;
+			`, [heroId]);
+			[savedResults] = await DbConnection.pool.query<RowDataPacket[]>(`
+				SELECT user_id, hero_id FROM HeroSaves WHERE user_id = ? AND hero_id = ?;
+			`, [userId, heroId]);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
+		if (!userResults.length) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 404;
+			response.payload = {
+				message: 'User not found'
+			};
+			return response;
+		}
+
+		if (!heroResults.length) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 404;
+			response.payload = {
+				message: 'Hero not found'
+			};
+			return response;
+		}
+
+		if (savedResults.length) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 409;
+			response.payload = {
+				message: 'Hero already saved'
+			};
+			return response;
+		}
+
+		try {
+			await DbConnection.pool.execute<ResultSetHeader>(`
+				INSERT INTO HeroSaves (user_id, hero_id) VALUES (?, ?);
+			`, [userId, heroId]);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
+		return generate201Response({ userId, heroId });
+	}
+
+	public async getSavedHeroes(userId: string): Promise<ServiceResponse> {
+		let results: RowDataPacket[];
+
+		try {
+			[results] = await querySavedHeroesByUserId(userId);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
+		const data: HeroData[] = await parseDatabaseDataToReturnable(results);
+		return generate200Response(data);
+	}
+
+	public async unsaveHero(userId: string, heroId: string): Promise<ServiceResponse> {
+		let result: ResultSetHeader;
+
+		try {
+			[result] = await DbConnection.pool.execute<ResultSetHeader>(`
+				DELETE FROM HeroSaves WHERE user_id = ? AND hero_id = ?;
+			`, [userId, heroId]);
+		} catch (err) {
+			return generateDatabaseErrorResponse(err);
+		}
+
+		if (result.affectedRows === 0) {
+			const response: ServiceResponse = new ServiceResponse;
+			response.success = false;
+			response.statusCode = 404;
+			response.payload = {
+				message: 'Saved hero entry not found'
+			};
+			return response;
+		}
+
+		return generate200Response({ userId, heroId });
 	}
 }
 
