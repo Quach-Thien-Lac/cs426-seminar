@@ -307,6 +307,7 @@ export class HeroService {
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
 	 *         "hasTradeoff": false,
+	 * 		   "heroComplexity": 2,
 	 *         "skills": [
 	 *           {
 	 *             "skillId": "WEI015_1",
@@ -371,6 +372,7 @@ export class HeroService {
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
 	 *         "hasTradeoff": false,
+	 * 			"heroComplexity": 2,
 	 *         "skills": [
 	 *           {
 	 *             "skillId": "WEI015_1",
@@ -414,7 +416,7 @@ export class HeroService {
 	 * - heroEpithet: string[] - filter by hero epithet
 	 * - heroQuote: string[] - filter by hero quote
 	 * - heroHasTradeoff: boolean[] - filter by whether the hero has a tradeoff or not
-	 * - heroComplexity: number[] - filter by hero complexity (1-3)
+	 * - heroComplexity: number[] - filter by hero complexity (1-5)
 	 * @returns {Promise<ServiceResponse>}
 	 * 
 	 * @example <caption>cURL</caption>
@@ -441,6 +443,7 @@ export class HeroService {
 	 *         "epithet": "Chu Á Chi Phong",
 	 *         "quote": "Thanh Đông kích Tây, thiêu kỳ lương thảo!",
 	 *         "hasTradeoff": false,
+	 * 		   "heroComplexity": 2,
 	 *         "skills": [
 	 *           {
 	 *             "skillId": "WEI015_1",
