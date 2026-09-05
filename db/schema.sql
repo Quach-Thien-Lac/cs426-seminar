@@ -422,3 +422,16 @@ CREATE TABLE HeroBelongsRole (
 	CONSTRAINT FK_HeroBelongsRole_hero_role_id
 		FOREIGN KEY (hero_role_id) REFERENCES HeroRole (hero_role_id)
 );
+
+CREATE TABLE HeroSaves (
+	user_id CHAR(8),
+	hero_id VARCHAR(10),
+
+	CONSTRAINT PK_HeroSaves_uid_hid
+		PRIMARY KEY (user_id, hero_id),
+	
+	CONSTRAINT FK_HeroSaves_user_id
+		FOREIGN KEY (user_id) REFERENCES `User` (user_id),
+	CONSTRAINT FK_HeroSaves_hero_id
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),	
+);
