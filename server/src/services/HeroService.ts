@@ -84,7 +84,7 @@ async function queryHeroByName(heroName: string) {
 			LEFT JOIN HeroSkill hs1 ON hs1.skill_id = h.hero_skill_1_id
 			LEFT JOIN HeroSkill hs2 ON hs2.skill_id = h.hero_skill_2_id
 			LEFT JOIN HeroSkill hs3 ON hs3.skill_id = h.hero_skill_3_id
-		WHERE hero_name = ?;
+		WHERE hero_name LIKE CONCAT('%', ?, '%');
 		`, [heroName]);
 }
 

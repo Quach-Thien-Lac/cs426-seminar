@@ -10,8 +10,15 @@ import com.example.sanguosuoclient.SanguosuoApplication
 import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.repository.HeroRepository
 import com.example.sanguosuoclient.data.session.SessionManager
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 sealed class SearchUiState {
@@ -21,6 +28,7 @@ sealed class SearchUiState {
     data class Error(val message: String) : SearchUiState()
 }
 
+@OptIn(FlowPreview::class)
 class SearchViewModel(
     private val heroRepository: HeroRepository,
     private val sessionManager: SessionManager
@@ -32,25 +40,43 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
     val uiState: StateFlow<SearchUiState> = _uiState
 
-    fun onQueryChange(newQuery: String) {
-        _query.value = newQuery
+    // Track the latest search job so we can cancel it if a newer one comes in
+    private var searchJob: Job? = null
+
+    init {
+        // Auto-search with 400ms debounce whenever the query changes
+        _query
+            .debounce(400L)
+            .distinctUntilChanged()
+            .filter { it.isNotBlank() }
+            .onEach { q -> performSearch(q) }
+            .launchIn(viewModelScope)
     }
 
+    fun onQueryChange(newQuery: String) {
+        _query.value = newQuery
+        // If user clears the field, go back to Idle immediately
+        if (newQuery.isBlank()) {
+            _uiState.value = SearchUiState.Idle
+        }
+    }
+
+    /** Called when user explicitly presses the keyboard Search action — bypasses debounce. */
     fun onSearch() {
         val q = _query.value.trim()
-
         if (q.isBlank()) return
+        performSearch(q)
+    }
 
+    private fun performSearch(q: String) {
         val token = sessionManager.getToken()
         if (token == null) {
             _uiState.value = SearchUiState.Error("Not signed in")
             return
         }
 
-        print("Using token: $token")
-        android.util.Log.d("SearchViewModel", "Using token: $token")
-
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             _uiState.value = SearchUiState.Loading
             val result = heroRepository.searchHeroesByName(token, q)
             _uiState.value = result.fold(

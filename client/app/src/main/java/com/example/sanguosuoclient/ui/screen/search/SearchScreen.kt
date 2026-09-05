@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,8 +87,9 @@ fun SearchScreen(
         when (val state = uiState) {
             is SearchUiState.Idle -> {
                 Text(
-                    text = stringResource(R.string.initial_text_in_search_screen),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Nhập tên tướng để tìm kiếm...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -100,7 +100,11 @@ fun SearchScreen(
             }
 
             is SearchUiState.Success -> {
-                SearchResults(heroes = state.heroes, onHeroClick = onHeroClick)
+                SearchResults(
+                    heroes = state.heroes,
+                    resultCount = state.heroes.size,
+                    onHeroClick = onHeroClick
+                )
             }
 
             is SearchUiState.Error -> {
@@ -115,12 +119,12 @@ fun SearchScreen(
 }
 
 @Composable
-private fun SearchResults(heroes: List<Hero>, onHeroClick: (Hero) -> Unit) {
+private fun SearchResults(heroes: List<Hero>, resultCount: Int, onHeroClick: (Hero) -> Unit) {
     LazyColumn {
-        // Heroes section
+        // Heroes section header with result count
         item {
             Text(
-                text = "Heroes",
+                text = if (resultCount > 0) "Tướng ($resultCount kết quả)" else "Tướng",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -129,7 +133,7 @@ private fun SearchResults(heroes: List<Hero>, onHeroClick: (Hero) -> Unit) {
         if (heroes.isEmpty()) {
             item {
                 Text(
-                    text = "No heroes found",
+                    text = "Không tìm thấy tướng nào",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
