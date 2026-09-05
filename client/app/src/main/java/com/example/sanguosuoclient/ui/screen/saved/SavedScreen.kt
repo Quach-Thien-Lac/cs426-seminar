@@ -146,6 +146,7 @@ private fun SavedHeroCard(
     onUnsaveClick: () -> Unit
 ) {
     val context = LocalContext.current
+
     val localDrawableId = remember(hero.id) {
         val prefix = hero.id.dropLast(3).lowercase()
         val number = hero.id.takeLast(3)
@@ -178,6 +179,7 @@ private fun SavedHeroCard(
                 contentScale = ContentScale.Fit,
                 error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
+                error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -195,7 +197,7 @@ private fun SavedHeroCard(
 
             Text(
                 text = hero.name,
-                color = Color.Black,
+                color = Color.White,
                 style = MaterialTheme.typography.titleSmall,
                 fontSize = 21.sp,
                 maxLines = 1,

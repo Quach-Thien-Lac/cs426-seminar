@@ -79,12 +79,12 @@ fun SignUpScreenRoute(
         onBack = onBack,
         modifier = Modifier.fillMaxSize()
     )
-    LaunchedEffect(uiState) {
-        if (uiState is SignUpUiState.Success) {
-            onSubmit()
-            viewModel.clearError()
-        }
-    }
+//    LaunchedEffect(uiState) {
+//        if (uiState is SignUpUiState.Success) {
+//            onSubmit()
+//            viewModel.clearError()
+//        }
+//    }
 }
 
 @Composable
@@ -120,8 +120,8 @@ fun SignUpScreen(
                         horizontal = 5.dp,
                         vertical = 20.dp
                     )
-                    .verticalScroll(rememberScrollState())
-                    .imePadding(),
+                    .imePadding()
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
             ) {

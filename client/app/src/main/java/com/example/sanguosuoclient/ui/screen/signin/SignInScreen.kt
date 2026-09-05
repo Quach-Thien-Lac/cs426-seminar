@@ -101,8 +101,8 @@ fun SignInScreen(
                     horizontal = 5.dp,
                     vertical = 20.dp
                 )
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+                .imePadding()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
