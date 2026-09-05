@@ -20,8 +20,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -68,6 +71,7 @@ fun HeroDetailScreenRoute(
     viewModel: HeroDetailViewModel = viewModel(factory = HeroDetailViewModel.Factory)
 ) {
     val uiState by viewModel.heroDetailUiState.collectAsStateWithLifecycle()
+    val isSaved by viewModel.isSaved.collectAsStateWithLifecycle()
 
     LaunchedEffect(heroId) {
         viewModel.fetchHero(heroId)
@@ -97,6 +101,8 @@ fun HeroDetailScreenRoute(
         is HeroDetailUiState.Success -> {
             HeroDetailScreen(
                 hero = state.hero,
+                isSaved = isSaved,
+                onToggleSave = viewModel::toggleSave,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -106,6 +112,8 @@ fun HeroDetailScreenRoute(
 @Composable
 fun HeroDetailScreen(
     hero: Hero,
+    isSaved: Boolean = false,
+    onToggleSave: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -114,7 +122,11 @@ fun HeroDetailScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        HeroBanner(hero = hero)
+        HeroBanner(
+            hero = hero,
+            isSaved = isSaved,
+            onToggleSave = onToggleSave
+        )
         Spacer(modifier = Modifier.height(16.dp))
         HeroOverviewRow(hero = hero)
         Spacer(modifier = Modifier.height(16.dp))
@@ -127,6 +139,8 @@ fun HeroDetailScreen(
 @Composable
 private fun HeroBanner(
     hero: Hero,
+    isSaved: Boolean,
+    onToggleSave: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -181,6 +195,15 @@ private fun HeroBanner(
                         )
                     )
                 )
+        )
+
+        // Nút Lưu tướng ở góc trên bên trái (Phong cách Glassmorphism đối xứng với HeroHpBadge)
+        HeroSaveButton(
+            isSaved = isSaved,
+            onToggleSave = onToggleSave,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(14.dp)
         )
 
         // Badge HP ở góc trên bên phải (Ý tưởng Ngọc Bội Âm Dương Glassmorphism)
@@ -249,6 +272,35 @@ private fun HeroBanner(
                     )
                 }
             }
+        }
+    }
+}
+
+// Nút Lưu tướng theo phong cách Glassmorphism đồng bộ với HeroHpBadge
+@Composable
+private fun HeroSaveButton(
+    isSaved: Boolean,
+    onToggleSave: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        onClick = onToggleSave,
+        modifier = modifier.size(36.dp),
+        shape = CircleShape,
+        color = Color.Black.copy(alpha = 0.55f),
+        border = BorderStroke(1.dp, GoldAccent.copy(alpha = 0.8f)),
+        shadowElevation = 4.dp
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = if (isSaved) "Bỏ lưu tướng" else "Lưu tướng",
+                tint = if (isSaved) GoldAccent else Color.White.copy(alpha = 0.6f),
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

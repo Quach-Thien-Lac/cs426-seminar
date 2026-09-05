@@ -13,7 +13,7 @@ import com.example.sanguosuoclient.data.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -32,14 +32,15 @@ class HeroDetailViewModel(
     private val _heroDetailUiState = MutableStateFlow<HeroDetailUiState>(HeroDetailUiState.Idle)
     val heroDetailUiState: StateFlow<HeroDetailUiState> = _heroDetailUiState
 
-    private var currentHeroId: String? = null
+    private val _currentHeroId = MutableStateFlow<String?>(null)
 
-    val isSaved: StateFlow<Boolean> = heroRepository.savedHeroes
-        .map { list -> currentHeroId != null && list.any { it.id == currentHeroId } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    val isSaved: StateFlow<Boolean> = combine(_currentHeroId, heroRepository.savedHeroes) { id, savedList ->
+        id != null && savedList.any { it.id == id }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
 
     fun fetchHero(heroId: String) {
+        _currentHeroId.value = heroId
         val token = sessionManager.getToken()
         if (token == null) {
             _heroDetailUiState.value = HeroDetailUiState.Error("Not signed in")
@@ -53,6 +54,13 @@ class HeroDetailViewModel(
                 onSuccess = { HeroDetailUiState.Success(it) },
                 onFailure = { HeroDetailUiState.Error(it.message ?: "Unknown error") }
             )
+        }
+
+        val session = sessionManager.session.value
+        if (session != null && heroRepository.savedHeroes.value.isEmpty()) {
+            viewModelScope.launch {
+                heroRepository.getSavedHeroes(token, session.userId)
+            }
         }
     }
 

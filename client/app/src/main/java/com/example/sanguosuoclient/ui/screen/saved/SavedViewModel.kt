@@ -29,6 +29,16 @@ class SavedHeroesViewModel(
     private val _savedHeroesUiState = MutableStateFlow<SavedHeroesUiState>(SavedHeroesUiState.Idle)
     val savedHeroesUiState: StateFlow<SavedHeroesUiState> = _savedHeroesUiState
 
+    init {
+        viewModelScope.launch {
+            heroRepository.savedHeroes.collect { heroes ->
+                if (_savedHeroesUiState.value is SavedHeroesUiState.Success) {
+                    _savedHeroesUiState.value = SavedHeroesUiState.Success(heroes)
+                }
+            }
+        }
+    }
+
     fun fetchSavedHeroes() {
         val session = sessionManager.session.value
         if (session == null) {
@@ -36,15 +46,28 @@ class SavedHeroesViewModel(
             return
         }
 
+        // If repository already has saved heroes, display them immediately
+        if (heroRepository.savedHeroes.value.isNotEmpty() && _savedHeroesUiState.value !is SavedHeroesUiState.Success) {
+            _savedHeroesUiState.value = SavedHeroesUiState.Success(heroRepository.savedHeroes.value)
+        }
+
         viewModelScope.launch {
-            _savedHeroesUiState.value = SavedHeroesUiState.Loading
+            if (_savedHeroesUiState.value !is SavedHeroesUiState.Success) {
+                _savedHeroesUiState.value = SavedHeroesUiState.Loading
+            }
             val result = heroRepository.getSavedHeroes(
                 token = sessionManager.getToken() ?: "",
                 userId = session.userId
             )
             _savedHeroesUiState.value = result.fold(
                 onSuccess = { SavedHeroesUiState.Success(it) },
-                onFailure = { SavedHeroesUiState.Error(it.message ?: "Unknown error") }
+                onFailure = { 
+                    if (_savedHeroesUiState.value !is SavedHeroesUiState.Success) {
+                        SavedHeroesUiState.Error(it.message ?: "Unknown error")
+                    } else {
+                        _savedHeroesUiState.value
+                    }
+                }
             )
         }
     }
