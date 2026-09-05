@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,13 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.session.SessionManager
@@ -88,8 +92,9 @@ fun SearchScreen(
         when (val state = uiState) {
             is SearchUiState.Idle -> {
                 Text(
-                    text = stringResource(R.string.initial_text_in_search_screen),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Nhập tên tướng để tìm kiếm...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -100,7 +105,11 @@ fun SearchScreen(
             }
 
             is SearchUiState.Success -> {
-                SearchResults(heroes = state.heroes, onHeroClick = onHeroClick)
+                SearchResults(
+                    heroes = state.heroes,
+                    resultCount = state.heroes.size,
+                    onHeroClick = onHeroClick
+                )
             }
 
             is SearchUiState.Error -> {
@@ -115,12 +124,12 @@ fun SearchScreen(
 }
 
 @Composable
-private fun SearchResults(heroes: List<Hero>, onHeroClick: (Hero) -> Unit) {
+private fun SearchResults(heroes: List<Hero>, resultCount: Int, onHeroClick: (Hero) -> Unit) {
     LazyColumn {
-        // Heroes section
+        // Heroes section header with result count
         item {
             Text(
-                text = "Heroes",
+                text = if (resultCount > 0) "Tướng ($resultCount kết quả)" else "Tướng",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -129,41 +138,60 @@ private fun SearchResults(heroes: List<Hero>, onHeroClick: (Hero) -> Unit) {
         if (heroes.isEmpty()) {
             item {
                 Text(
-                    text = "No heroes found",
+                    text = "Không tìm thấy tướng nào",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
             }
         }
         else {
-            items(heroes) { hero ->
+            items(heroes, key = { it.id }) { hero ->
                 SearchResultRow(
-                    label = hero.name,
+                    hero = hero,
                     onClick = { onHeroClick(hero) }
                 )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             }
         }
     }
 }
 
 @Composable
-private fun SearchResultRow(label: String, onClick: () -> Unit) {
+private fun SearchResultRow(hero: Hero, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
+            .padding(vertical = 10.dp)
     ) {
+        // Search icon bên trái
         Icon(
             painter = painterResource(R.drawable.ic_search),
             contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
+
+        // Tên hero (chiếm phần còn lại)
         Text(
-            text = label,
+            text = hero.name,
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 12.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 12.dp)
+        )
+
+        // Ảnh hero bên phải
+        AsyncImage(
+            model = hero.imageUrl,
+            contentDescription = hero.name,
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(R.drawable.welcome_screen_background),
+            error = painterResource(R.drawable.welcome_screen_background),
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
         )
     }
 }
