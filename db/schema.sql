@@ -209,7 +209,7 @@ CREATE TABLE Article (
 
 CREATE TABLE Image (
 	image_id VARCHAR(10),
-	image_blob BLOB,
+	image_directory VARCHAR(255) NOT NULL,
 
 	CONSTRAINT PK_Image_image_id
 		PRIMARY KEY (image_id),
@@ -237,6 +237,8 @@ CREATE TABLE Hero (
 
 	CONSTRAINT FK_Hero_hero_image_id
 		FOREIGN KEY (hero_image_id) REFERENCES Image (image_id),
+	CONSTRAINT FK_Hero_hero_gender_id
+		FOREIGN KEY (hero_gender_id) REFERENCES HeroGender (hero_gender_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_1_id
 		FOREIGN KEY (hero_skill_1_id) REFERENCES HeroSkill (skill_id),
 	CONSTRAINT FK_HeroSkill_hero_skill_2_id
@@ -419,4 +421,17 @@ CREATE TABLE HeroBelongsRole (
 		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),
 	CONSTRAINT FK_HeroBelongsRole_hero_role_id
 		FOREIGN KEY (hero_role_id) REFERENCES HeroRole (hero_role_id)
+);
+
+CREATE TABLE HeroSaves (
+	user_id CHAR(8),
+	hero_id VARCHAR(10),
+
+	CONSTRAINT PK_HeroSaves_uid_hid
+		PRIMARY KEY (user_id, hero_id),
+	
+	CONSTRAINT FK_HeroSaves_user_id
+		FOREIGN KEY (user_id) REFERENCES `User` (user_id),
+	CONSTRAINT FK_HeroSaves_hero_id
+		FOREIGN KEY (hero_id) REFERENCES Hero (hero_id),	
 );

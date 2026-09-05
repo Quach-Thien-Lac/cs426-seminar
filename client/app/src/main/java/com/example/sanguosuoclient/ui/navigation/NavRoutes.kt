@@ -22,9 +22,9 @@ sealed class MainGraph(val route: String) {
     data object HomeGraph : MainGraph("home_graph")
     data object SearchGraph : MainGraph("search_graph")
     data object SavedGraph : MainGraph("saved_graph")
-    data object SettingsGraph : MainGraph("settings_graph")
+    data object ProfileGraph : MainGraph("profile_graph")
 
     companion object {
-        val all by lazy {setOf(HomeGraph.route, SearchGraph.route, SavedGraph.route, SettingsGraph.route)}
+        val all by lazy {setOf(HomeGraph.route, SearchGraph.route, SavedGraph.route, ProfileGraph.route)}
     }
 }

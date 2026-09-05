@@ -23,13 +23,16 @@ import com.example.sanguosuoclient.ui.navigation.MainGraph
 import com.example.sanguosuoclient.ui.navigation.MainRoute
 import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreenRoute
 import com.example.sanguosuoclient.ui.screen.home.HomeScreen
+import com.example.sanguosuoclient.ui.screen.profile.ProfileScreenRoute
 import com.example.sanguosuoclient.ui.screen.search.SearchScreenRoute
 
 @Composable
 fun MainScaffold(
+    onLoggedOut: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
     val currentGraphRoute = backStackEntry?.destination?.hierarchy
         ?.firstOrNull {it.route in MainGraph.all}
         ?.route
@@ -37,7 +40,7 @@ fun MainScaffold(
 
     Scaffold(
         topBar = {
-            if (currentGraphRoute != MainGraph.SearchGraph.route) {
+            if (currentRoute != MainRoute.Search.route) {
                 SanguosuoTopBar(
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -125,16 +128,14 @@ fun MainScaffold(
             }
 
             navigation(
-                startDestination = MainRoute.Settings.route,
-                route = MainGraph.SettingsGraph.route,
+                startDestination = MainRoute.Profile.route,
+                route = MainGraph.ProfileGraph.route,
             ) {
-                composable(MainRoute.Settings.route) {
-                    Text("Settings Screen Placeholder")
+                composable(MainRoute.Profile.route) {
+                    ProfileScreenRoute(
+                        onLoggedOut = onLoggedOut
+                    )
                 }
-            }
-
-            composable(MainRoute.Profile.route) {
-                Text("Profile Screen Placeholder")
             }
         }
     }

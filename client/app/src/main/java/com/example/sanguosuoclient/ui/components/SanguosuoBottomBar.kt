@@ -31,7 +31,7 @@ val bottomNavItems = listOf(
     BottomNavItem("Home", R.drawable.ic_home, MainGraph.HomeGraph.route),
     BottomNavItem("Search", R.drawable.ic_search, MainGraph.SearchGraph.route),
     BottomNavItem("Saved", R.drawable.ic_bookmark, MainGraph.SavedGraph.route),
-    BottomNavItem("Settings", R.drawable.ic_settings, MainGraph.SettingsGraph.route)
+    BottomNavItem("Profile", R.drawable.ic_account, MainGraph.ProfileGraph.route)
 )
 
 @Composable

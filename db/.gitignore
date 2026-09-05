@@ -3,3 +3,4 @@
 !.gitignore
 !schema.sql
 !seed.sql
+!assets

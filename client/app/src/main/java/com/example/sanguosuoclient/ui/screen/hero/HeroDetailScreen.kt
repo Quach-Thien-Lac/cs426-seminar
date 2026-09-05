@@ -1,6 +1,5 @@
 package com.example.sanguosuoclient.ui.screen.hero
 
-import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,11 +63,10 @@ fun HeroDetailScreenRoute(
     heroId: String,
     viewModel: HeroDetailViewModel = viewModel(factory = HeroDetailViewModel.Factory)
 ) {
-    val sessionToken = "Bearer MIKU_MIKU_OO_EE_OO"
     val uiState by viewModel.heroDetailUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(heroId) {
-        viewModel.fetchHero(sessionToken, heroId)
+        viewModel.fetchHero(heroId)
     }
 
     when(val state = uiState) {
