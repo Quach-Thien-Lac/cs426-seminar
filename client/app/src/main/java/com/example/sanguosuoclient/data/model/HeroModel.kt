@@ -43,3 +43,15 @@ data class HeroListPayload(
     val message: String,
     val data: List<Hero>
 )
+
+@Serializable
+data class SaveHeroData(
+    val userId: String,
+    val heroId: String
+)
+
+@Serializable
+data class SaveHeroPayload(
+    val message: String,
+    val data: SaveHeroData
+)
