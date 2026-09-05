@@ -92,7 +92,7 @@ fun SearchScreen(
         when (val state = uiState) {
             is SearchUiState.Idle -> {
                 Text(
-                    text = "Nhập tên tướng để tìm kiếm...",
+                    text = "Enter a hero name to search...",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -129,7 +129,11 @@ private fun SearchResults(heroes: List<Hero>, resultCount: Int, onHeroClick: (He
         // Heroes section header with result count
         item {
             Text(
-                text = if (resultCount > 0) "Tướng ($resultCount kết quả)" else "Tướng",
+                text = if (resultCount > 0) {
+                    "Heroes ($resultCount ${if (resultCount == 1) "result" else "results"})"
+                } else {
+                    "Heroes"
+                },
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -138,7 +142,7 @@ private fun SearchResults(heroes: List<Hero>, resultCount: Int, onHeroClick: (He
         if (heroes.isEmpty()) {
             item {
                 Text(
-                    text = "Không tìm thấy tướng nào",
+                    text = "No hero found",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )

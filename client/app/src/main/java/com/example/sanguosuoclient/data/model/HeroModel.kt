@@ -35,9 +35,6 @@ data class Hero(
     val heroComplexity: Int = 3,
     val skills: List<HeroSkill> = emptyList()
 ) {
-    // Convenience helpers so existing UI code (HeroDetailScreen, etc.) keeps working
-    val factionCode: String get() = factions.firstOrNull()?.factionCode ?: ""
-    val factionName: String get() = factions.firstOrNull()?.factionName ?: ""
 }
 
 // ── GET hero by name/id → list of heroes (search + detail screen) ──

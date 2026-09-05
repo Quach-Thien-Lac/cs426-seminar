@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.sanguosuoclient.data.model.Faction
 import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.model.HeroFaction
 import com.example.sanguosuoclient.data.model.HeroSkill
