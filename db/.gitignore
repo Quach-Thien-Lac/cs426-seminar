@@ -1,6 +1,2 @@
-*
-
-!.gitignore
-!schema.sql
-!seed.sql
-!assets
+test.sql
+usp.sql
