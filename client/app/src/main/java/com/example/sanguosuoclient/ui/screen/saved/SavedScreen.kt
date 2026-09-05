@@ -171,13 +171,13 @@ private fun SavedHeroCard(
                 .clickable(onClick = onClick)
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(context)
+                model = ImageRequest.Builder(context = context)
                     .data(if (!hero.imageUrl.isNullOrBlank()) hero.imageUrl else (localDrawableId ?: R.drawable.welcome_screen_background))
                     .crossfade(true)
                     .build(),
                 contentDescription = hero.name,
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.TopCenter,
+                contentScale = ContentScale.Fit,
+                error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
                 error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 modifier = Modifier.fillMaxSize()
