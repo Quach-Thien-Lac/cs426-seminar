@@ -23,7 +23,7 @@ fun TopNewsSection(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "TIN TỨC NỔI BẬT",
+            text = "TOP NEWS",
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -40,7 +40,7 @@ fun TopNewsSection(
         )
 
         Text(
-            text = "Giải đấu Tam Quốc Sát - Trí Lược Vô Song",
+            text = "Three Kingdoms Kill – Matchless Strategic Tournament",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 4.dp)
         )

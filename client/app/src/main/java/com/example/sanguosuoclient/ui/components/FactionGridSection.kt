@@ -77,7 +77,7 @@ fun FactionGridSection(
     Column(modifier = modifier) {
         // Section title
         Text(
-            text = "TỨ TRỤ",
+            text = "The four pillars",
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp)
@@ -364,7 +364,7 @@ private fun FactionHeroPanel(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "TƯỚNG NỔI BẬT · ${faction.chineseName.uppercase()}",
+                text = "Featured Heroes · ${faction.chineseName.uppercase()}",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
