@@ -179,7 +179,6 @@ private fun SavedHeroCard(
                 contentScale = ContentScale.Fit,
                 error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 placeholder = painterResource(R.drawable.loading_img),
-                error = localDrawableId?.let { painterResource(it) } ?: painterResource(R.drawable.ic_broken_image),
                 modifier = Modifier.fillMaxSize()
             )
 
