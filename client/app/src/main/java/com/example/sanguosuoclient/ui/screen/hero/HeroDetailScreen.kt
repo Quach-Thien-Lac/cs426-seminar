@@ -1,7 +1,9 @@
 package com.example.sanguosuoclient.ui.screen.hero
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,12 +27,18 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +52,8 @@ import com.example.sanguosuoclient.data.model.HeroSkill
 import com.example.sanguosuoclient.ui.theme.errorLight
 import com.example.sanguosuoclient.ui.theme.inversePrimaryLightMediumContrast
 import com.example.sanguosuoclient.ui.theme.primaryLight
+
+val GoldAccent = Color(0xFFDFA437)
 
 private val SkillRowHeight = 140.dp
 private val PortraitHeight = SkillRowHeight * 2
@@ -98,27 +110,62 @@ fun HeroDetailScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        HeroHeader(hero)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        HeroInformationCard(hero,)
-
-        Spacer(modifier = Modifier.height(20.dp))
+        HeroBanner(hero = hero)
+        Spacer(modifier = Modifier.height(16.dp))
+        HeroOverviewRow(hero = hero)
+        Spacer(modifier = Modifier.height(16.dp))
+        HeroSkillRow(hero = hero)
     }
 
 }
 
+// hero banner with hero image, name, epithet and quote
 @Composable
-private fun HeroHeader(
+private fun HeroBanner(
     hero: Hero,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    //  changed layout from Column to Box to allow the hero name and epithet to be on top of the image
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(450.dp)
     ) {
-        Text(
+        AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(hero.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = hero.name,
+                    contentScale = ContentScale.Fit,
+                    error = painterResource(R.drawable.ic_broken_image),
+                    placeholder = painterResource(R.drawable.loading_img),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(PortraitHeight)
+                )
+        // this box is to add a black gradient overlay on the image 
+        Box(
+            modifier  = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color.Black),
+                    startY = 350f,
+                    endY = 450f
+                )
+            )
+        )
+        
+        // this column is to add the hero name and epithet on top of the image
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .align(Alignment.BottomStart),
+                    
+        ) {
+            Text(
             text = hero.name,
             style = MaterialTheme.typography.titleSmall,
         )
@@ -144,88 +191,74 @@ private fun HeroHeader(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+        }
     }
 }
 
+// hero faction and difficulty in a horizontal row, grid-style
 @Composable
-private fun HeroInformationCard(
+private fun HeroOverviewRow(
     hero: Hero,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(BorderStroke(1.dp, color = Color.Red), shape = RoundedCornerShape(4.dp))
+    Row(
+        modifier = modifier
+        .fillMaxWidth()
+        .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // "Information" banner
         Surface(
-            color = inversePrimaryLightMediumContrast,
-            shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            color = Color.White
+                    
         ) {
-            Text(
-                text = "Information",
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-            )
-        }
-
-        // Fixed-size table: left column height = PortraitHeight + 1 row (faction).
-        // Right column height = SKILL_SLOT_COUNT rows. Both totals are equal by
-        // construction (PortraitHeight = 2 rows), so nothing needs to flex.
-        Row {
-            Column(modifier = Modifier.weight(1f)) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(hero.imageUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = hero.name,
-                    contentScale = ContentScale.Fit,
-                    error = painterResource(R.drawable.ic_broken_image),
-                    placeholder = painterResource(R.drawable.loading_img),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(PortraitHeight)
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Phe phái",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFDFA437)
                 )
-
-                HorizontalDividerLine()
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(SkillRowHeight)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = hero.factionCode,
-                        style = MaterialTheme.typography.displayMedium,
-                        fontSize = 20.sp
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = hero.factionName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontSize = 32.sp
-                    )
-                }
+                Text(
+                    text = hero.factionName,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
             }
-
-            VerticalDividerLine()
-
-            Column(modifier = Modifier.weight(1f)) {
-                repeat(3) { slot ->
-                    SkillCell(
-                        skill = hero.skills.getOrNull(slot),
-                        index = slot + 1,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(SkillRowHeight)
-                    )
-                    if (slot != 3 - 1) {
-                        HorizontalDividerLine()
+        }
+        Surface(
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            color = Color.White
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Độ khó",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFDFA437)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    repeat(5) { index ->
+                        Box(
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(if (hero.heroComplexity >= index) GoldAccent else GoldAccent.copy(alpha = 0.3f))
+                        )
                     }
                 }
             }
@@ -233,62 +266,114 @@ private fun HeroInformationCard(
     }
 }
 
+// hero skill description and skill name, selectable from a horizontal row with skill icons, like in league's wiki
 @Composable
-private fun SkillCell(
-    skill: HeroSkill?,
-    index: Int,
+private fun HeroSkillRow(
+    hero: Hero,
     modifier: Modifier = Modifier
 ) {
-    if (skill == null) {
-        Box(
-            modifier = modifier.padding(16.dp),
-            contentAlignment = Alignment.Center
+    var selectedSkillIndex by remember { mutableStateOf(0)}
+    var selectedSkill = hero.skills.getOrNull(selectedSkillIndex)
+    var romanNumerals = listOf("I", "II", "III")
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Kỹ năng",
+            style = MaterialTheme.typography.labelSmall,
+            fontSize = 24.sp,
+            color = Color(0xFFDFA437)
+        )
+        //row of skill icons, selectable
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            hero.skills.forEachIndexed {
+                index, _ ->
+                val isSelected = index == selectedSkillIndex
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .border(
+                            BorderStroke(1.dp, if (isSelected) Color(0xFFDFA437) else Color(0xFFB0B0B0))
+                        )
+                        .background(if (isSelected) Color(0xFFDFA437) else Color.White)
+                        .clickable {
+                            selectedSkillIndex = index
+                        },
+                    contentAlignment = Alignment.Center,
+                    
+                ) {
+                    Text(
+                        text = romanNumerals.getOrNull(index) ?: (index + 1).toString(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isSelected) Color.White else Color.Black
+                    )
+                }
+            
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // skill name and desc
+        if(selectedSkill != null) {
             Text(
-                text = "This hero has no Skill $index",
+                text = selectedSkill.skillName ?: "No skill name",
+                style = MaterialTheme.typography.titleSmall,
+                fontSize = 24.sp,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = selectedSkill.skillDescription ?: "No skill description",
                 style = MaterialTheme.typography.displayMedium,
+                fontSize = 16.sp,
+                color = Color.Black
+            )
+        } else {
+            Text(
+                text = "Default Skill",
+                style = MaterialTheme.typography.displayMedium,
+                fontSize = 24.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = "This skill does nothing",
+                style = MaterialTheme.typography.displayMedium,
+                fontSize = 16.sp,
                 color = Color.Gray
             )
         }
-        return
-    }
-
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()) // in case description overflows the fixed row
-    ) {
-        Text(
-            text = "Skill $index - ${skill.skillName}",
-            style = MaterialTheme.typography.labelSmall,
-            fontSize = 16.sp
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = skill.skillDescription,
-            style = MaterialTheme.typography.displayMedium,
-            fontSize = 10.sp
-        )
     }
 }
 
-
-@Composable
-private fun VerticalDividerLine() {
-    VerticalDivider(
-        color = Color.Red,
-        thickness = 1.dp
-    )
-}
-
-@Composable
-private fun HorizontalDividerLine() {
-    HorizontalDivider(
-        color = Color.Red,
-        thickness = 1.dp
-    )
-}
-
+// hero story,  just a title with plain text
+//@Composable
+//private fun HeroBackstory(
+//    hero: Hero,
+//    modifier: Modifier = Modifier
+//) {
+//    Text(
+//        text = "Tiểu sử",
+//        style = MaterialTheme.typography.labelSmall,
+//        fontSize = 24.sp,
+//        color = Color(0xFFDFA437),
+//    )
+//    Text(
+//        // hardcode for now; update when the backend has a story field
+//        text =  "No backstory available",
+//        style = MaterialTheme.typography.displayMedium,
+//        fontSize = 16.sp,
+//        color = Color.Black
+//    )
+//}
 
 //val mockHeroTuHoang = Hero(
 //    id = "WEI015",
@@ -317,3 +402,4 @@ private fun HorizontalDividerLine() {
 //        HeroDetailScreen(mockHeroTuHoang)
 //    }
 //}
+

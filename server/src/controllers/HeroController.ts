@@ -63,6 +63,9 @@ class HeroController {
 		return void res.status(response.statusCode).json(response.get());
 	}
 
+	async getHeroAll(req: Request, res: Response, next: NextFunction) : Promise<void> {
+		const filters = req.body;
+		const response: ServiceResponse = await HeroService.getHeroAll(filters);
 	async saveHero(req: Request, res: Response, next: NextFunction): Promise<void> {
 		let userId: string;
 		if (Array.isArray(req.params.userId)) {
