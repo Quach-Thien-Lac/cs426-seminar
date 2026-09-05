@@ -24,6 +24,7 @@ import com.example.sanguosuoclient.ui.navigation.MainRoute
 import com.example.sanguosuoclient.ui.screen.hero.HeroDetailScreenRoute
 import com.example.sanguosuoclient.ui.screen.home.HomeScreen
 import com.example.sanguosuoclient.ui.screen.profile.ProfileScreenRoute
+import com.example.sanguosuoclient.ui.screen.saved.SavedHeroesScreenRoute
 import com.example.sanguosuoclient.ui.screen.search.SearchScreenRoute
 
 @Composable
@@ -123,7 +124,19 @@ fun MainScaffold(
                 route = MainGraph.SavedGraph.route
             ) {
                 composable(MainRoute.Saved.route) {
-                    Text("Saved Screen Placeholder")
+                    SavedHeroesScreenRoute(
+                        onHeroClick = { hero ->
+                            navController.navigate("saved/${MainRoute.HeroDetail.createRoute(hero.id)}")
+                        }
+                    )
+                }
+
+                composable(
+                    route = "saved/${MainRoute.HeroDetail.route}",
+                    arguments = listOf(navArgument("heroId") {type = NavType.StringType})
+                ) { backStackEntry ->
+                    val heroId = backStackEntry.arguments?.getString("heroId") ?: return@composable
+                    HeroDetailScreenRoute(heroId = heroId)
                 }
             }
 
