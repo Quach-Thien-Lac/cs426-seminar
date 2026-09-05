@@ -1,0 +1,174 @@
+This section provides step-by-step instructions for setting up Sanguosuo for local development. The instructions assume a Linux or macOS host; Windows users should substitute paths appropriately.
+
+\subsection{Prerequisites}
+
+Before starting, ensure the following tools are installed:
+
+\begin{itemize}
+  \item \textbf{Docker} and \textbf{Docker Compose} (for the backend and database)
+  \item \textbf{Android Studio} (recommended) or a standalone Android SDK installation
+  \item \textbf{Git} (to clone the repository)
+  \item Optionally, \textbf{MikTeX} and \textbf{Perl} with \texttt{latexmk} for compiling the report
+\end{itemize}
+
+\subsection{Cloning the Repository}
+
+\begin{verbatim}
+git clone https://github.com/Quach-Thien-Lac/cs426-seminar.git
+cd cs426-seminar
+\end{verbatim}
+
+\subsection{Environment Variables}
+
+Copy the example environment file and fill in the required values:
+
+\begin{verbatim}
+cp .env.example .env
+\end{verbatim}
+
+Open \texttt{.env} in a text editor. The file requires the following variables:
+
+\begin{center}
+\adjustbox{max width=\linewidth}{%
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{Variable} & \textbf{Description} \\
+\midrule
+\texttt{LOCAL\_DB\_PASSWORD}   & Root password for the local MySQL container \\
+\texttt{DB\_HOST}              & Database hostname (use \texttt{db} when running inside Docker Compose) \\
+\texttt{DB\_PORT}              & MySQL port (default: \texttt{3306}) \\
+\texttt{DB\_NAME}              & Database name (use \texttt{Sanguosuo}) \\
+\texttt{DB\_USER}              & MySQL username \\
+\texttt{DB\_PASSWORD}          & MySQL password for the application user \\
+\texttt{SERVER\_PORT}          & Port the Express server listens on (default: \texttt{8080}) \\
+\texttt{JWT\_SECRET}           & Secret used to sign JWT tokens \\
+\bottomrule
+\end{tabular}%
+}
+\end{center}
+
+\subsection{Backend and Database}
+
+\subsubsection{Starting the Containers}
+
+From the repository root:
+
+\begin{verbatim}
+docker compose up
+\end{verbatim}
+
+This builds the Express server image from \texttt{server/Dockerfile} and pulls the \texttt{mysql:oraclelinux9} image. The API server will be available at \texttt{http://localhost:8080}. To run the containers in the background (detached mode):
+
+\begin{verbatim}
+docker compose up -d
+\end{verbatim}
+
+\subsubsection{Seeding the Database}
+
+The \texttt{db/} directory contains two SQL files: \texttt{schema.sql} (table definitions) and \texttt{seed.sql} (sample hero, skill, and reference data). After the containers are running, seed the database as follows:
+
+\begin{enumerate}
+  \item Enter the database container shell:
+  \begin{verbatim}
+  docker compose exec db sh
+  \end{verbatim}
+  \item Connect to MySQL:
+  \begin{verbatim}
+  mysql -h 127.0.0.1 -u root -p
+  \end{verbatim}
+  Enter the value you set for \texttt{LOCAL\_DB\_PASSWORD} when prompted.
+  \item Source the schema file (creates all tables):
+  \begin{verbatim}
+  SOURCE /sql/schema.sql;
+  \end{verbatim}
+  \item Source the seed file (inserts 148 heroes, 268 skills, and related data):
+  \begin{verbatim}
+  SOURCE /sql/seed.sql;
+  \end{verbatim}
+  \item Exit MySQL and the container shell:
+  \begin{verbatim}
+  exit
+  exit
+  \end{verbatim}
+\end{enumerate}
+
+\subsubsection{Verifying the Backend}
+
+With the containers running, confirm the API is healthy:
+
+\begin{verbatim}
+curl http://localhost:8080/health
+\end{verbatim}
+
+A successful response returns \texttt{200 OK} with a JSON body indicating the server and database status.
+
+\subsection{Android Client}
+
+\subsubsection{Using Android Studio (Recommended)}
+
+\begin{enumerate}
+  \item Open Android Studio and select \emph{Open an existing project}. Navigate to the \texttt{client/} folder and open it.
+  \item Android Studio will detect the Gradle build file and sync dependencies automatically. Accept any SDK or Gradle plugin update prompts.
+  \item Create or start an Android Virtual Device (AVD) from the \emph{Device Manager} panel. A device with API level 24 or higher is required (\texttt{minSdk = 24}).
+  \item Press \emph{Run} (\texttt{Shift+F10}) to build and install the application on the emulator.
+\end{enumerate}
+
+When testing with the emulator, the application connects to the backend at \texttt{http://10.0.2.2:8080}. The special address \texttt{10.0.2.2} is the Android emulator's alias for the host machine's \texttt{localhost}.
+
+\subsubsection{Building from the Command Line}
+
+If Android Studio is unavailable or you prefer the command line:
+
+\begin{enumerate}
+  \item Locate your Android SDK directory. On Linux it is typically \texttt{\texttildelow/Android/Sdk}.
+  \item Inside \texttt{client/}, create \texttt{local.properties} with one line:
+  \begin{verbatim}
+  sdk.dir=/home/<your-username>/Android/Sdk
+  \end{verbatim}
+  \item Initialize Gradle (first time only):
+  \begin{verbatim}
+  cd client
+  ./gradlew
+  \end{verbatim}
+  \item Build a debug APK:
+  \begin{verbatim}
+  ./gradlew assembleDebug
+  \end{verbatim}
+  The APK is written to \texttt{client/app/build/outputs/apk/debug/}.
+  \item Install on a connected device or running emulator:
+  \begin{verbatim}
+  ./gradlew installDebug
+  \end{verbatim}
+  \item When finished, stop the Gradle daemon to free memory:
+  \begin{verbatim}
+  ./gradlew --stop
+  \end{verbatim}
+\end{enumerate}
+
+\subsection{Compiling the Report}
+
+The report is typeset with \LaTeX{} and compiled via \texttt{latexmk}.
+
+\begin{enumerate}
+  \item Install \textbf{MikTeX} (Windows/macOS/Linux) or \textbf{TeX Live} (Linux/macOS) and \textbf{Perl}.
+  \item Within MikTeX Console, install the \texttt{latexmk} package.
+  \item From the \texttt{report/} directory:
+  \begin{verbatim}
+  latexmk -pvc -pdf main.tex
+  \end{verbatim}
+  The \texttt{-pvc} flag enables continuous preview mode: \texttt{latexmk} recompiles the PDF whenever a \texttt{.tex} file changes. The compiled PDF is written to \texttt{report/main.pdf}.
+\end{enumerate}
+
+\subsection{Stopping the Environment}
+
+To stop the running containers:
+
+\begin{verbatim}
+docker compose down
+\end{verbatim}
+
+To also remove the persistent database volume (destructive---deletes all seeded data):
+
+\begin{verbatim}
+docker compose down -v
+\end{verbatim}

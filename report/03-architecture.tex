@@ -1,0 +1,91 @@
+Sanguosuo follows a three-tier client--server--database architecture. The Android client communicates with a REST API backend over HTTP; the backend reads and writes to a relational MySQL database. During local development, Docker Compose orchestrates the backend and database as isolated containers on the developer's machine.
+
+\subsection{High-Level Architecture}
+
+\begin{center}
+\adjustbox{max width=\linewidth}{%
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{Tier} & \textbf{Technology} & \textbf{Role} \\
+\midrule
+Client (Android) & Kotlin + Jetpack Compose & UI, state management, API calls \\
+Backend (API)    & Node.js + Express (TypeScript) & Business logic, authentication, data access \\
+Database         & MySQL 8                        & Persistent storage of all game and user data \\
+Infrastructure   & Docker Compose                 & Local orchestration of API and DB containers \\
+\bottomrule
+\end{tabular}%
+}
+\end{center}
+
+\subsection{Android Client}
+
+The client is structured around the MVVM (Model--View--ViewModel) pattern encouraged by Jetpack:
+
+\begin{itemize}
+  \item \textbf{UI layer:} Composable screens (Welcome, Sign-Up pages 1 and 2, Sign-In, Home, Hero detail, Profile, Search) written entirely in Jetpack Compose. Navigation between screens is managed by a single \texttt{NavHost} defined in \texttt{ui/navigation/}.
+  \item \textbf{ViewModel layer:} Each screen has a corresponding \texttt{ViewModel} that holds \texttt{StateFlow} objects. The UI collects these flows and re-composes on state changes. Business decisions such as input validation are made here.
+  \item \textbf{Repository layer:} Repositories under \texttt{data/repository/} are the single source of truth for data. They call Retrofit service interfaces to fetch remote data and expose results to ViewModels.
+  \item \textbf{Remote layer:} Retrofit interfaces and their corresponding data-transfer objects (DTOs) under \texttt{data/remote/} map HTTP responses to Kotlin data classes using Kotlinx Serialization.
+  \item \textbf{Session layer:} The \texttt{data/session/} module uses Jetpack DataStore Preferences to persist the authentication token across app restarts.
+  \item \textbf{DI:} A lightweight dependency-injection module under \texttt{di/} manually provides shared instances (Retrofit client, repositories) to avoid tight coupling.
+\end{itemize}
+
+\subsection{Backend API}
+
+The backend is a Node.js Express application written entirely in TypeScript. Its internal layout mirrors a classic layered web-server design:
+
+\begin{itemize}
+  \item \textbf{Routes} (\texttt{routes/}) declare URL paths and attach middleware chains.
+  \item \textbf{Middleware} (\texttt{middleware/}) performs cross-cutting concerns: JSON content-type checking, HTTP method validation (\texttt{ValidatorMiddleware}), centralized error handling (\texttt{errorHandler}), request logging (Morgan), and fixed-path callbacks for the root and health endpoints.
+  \item \textbf{Controllers} (\texttt{controllers/}) parse and validate request parameters before delegating to the service layer.
+  \item \textbf{Services} (\texttt{services/}) contain business logic: user registration, login, and hero lookup. Services call the database connection pool.
+  \item \textbf{Connections} (\texttt{connections/DbConnection.ts}) wraps \texttt{mysql2}'s \texttt{createPool} call, configured for a maximum of five concurrent connections.
+  \item \textbf{Helpers and types} provide shared response-formatting utilities and TypeScript type definitions.
+\end{itemize}
+
+The API exposes the following endpoints:
+
+\begin{center}
+\adjustbox{max width=\linewidth}{%
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\texttt{POST} & \texttt{/api/auth/register} & Create a new user account \\
+\texttt{POST} & \texttt{/api/auth/login}    & Authenticate and receive a session token \\
+\texttt{GET}  & \texttt{/api/heroes/id/:heroId}     & Retrieve a hero by its unique identifier \\
+\texttt{GET}  & \texttt{/api/heroes/name/:heroName} & Retrieve a hero by name (partial match) \\
+\texttt{GET}  & \texttt{/health}            & Health check (returns server and DB status) \\
+\texttt{GET}  & \texttt{/}                  & API root information \\
+\bottomrule
+\end{tabular}%
+}
+\end{center}
+
+\subsection{Database}
+
+The MySQL database is organized into three conceptual groups of tables:
+
+\begin{itemize}
+  \item \textbf{Lookup / enumeration tables:} \texttt{UserStatus}, \texttt{UserRole}, \texttt{HeroFaction}, \texttt{HeroGender}, \texttt{HeroRole}, \texttt{SkillTag}, \texttt{CardType}, \texttt{CardSuit}. These store coded values and human-readable names.
+  \item \textbf{Core entity tables:} \texttt{User}, \texttt{Hero}, \texttt{HeroSkill}, \texttt{Card} (and sub-type tables \texttt{BasicCard}, \texttt{ToolCard}, \texttt{WeaponCard}, \texttt{ArmorCard}, \texttt{HorseCard}, \texttt{TreasureCard}---these will be implemented in a future version), \texttt{Session}, \texttt{RevisionText}, \texttt{Revision}, \texttt{Article}, \texttt{Image}.
+  \item \textbf{Relationship / bridge tables:} \texttt{HeroSkillTag}, \texttt{HeroCombo}, \texttt{HeroBelongsFaction}, \texttt{HeroBelongsRole}, \texttt{CardSuitAndRank}, \texttt{HeroSaves}.
+\end{itemize}
+
+The schema enforces data integrity through primary keys, foreign keys, unique constraints, and \texttt{CHECK} constraints, including a regular-expression constraint that rejects any stored password that does not match the bcrypt hash format, and a SHA-224 content-hash constraint on \texttt{RevisionText}.
+
+\subsection{Request Flow: Registration Example}
+
+\begin{enumerate}
+  \item The Android client validates email format and phone-number shape locally, confirms the two password fields match, and sends a JSON \texttt{POST} to \texttt{/api/auth/register}.
+  \item The \texttt{ValidatorMiddleware} checks the HTTP method and \texttt{Content-Type} header.
+  \item \texttt{AuthController} extracts and checks required fields.
+  \item \texttt{AuthService} generates an eight-digit user ID, looks up the default status and role, hashes the password with \texttt{bcrypt} at cost 10, and inserts the account via a parameterized query through the connection pool.
+  \item The controller returns \texttt{201 Created} with a success envelope.
+\end{enumerate}
+
+Hero lookup follows a similar path through \texttt{HeroController} and \texttt{HeroService}, where the service joins the \texttt{Hero}, \texttt{HeroFaction}, \texttt{HeroSkill}, and \texttt{HeroSkillTag} tables using parameterized queries and assembles the JSON response.
+
+\subsection{Infrastructure}
+
+Docker Compose defines two services: \texttt{sanguosuo-server} (the Express API) and \texttt{sanguosuo-db} (MySQL). The API container is built from the \texttt{server/Dockerfile}, mounts the source directory as a volume so that Nodemon hot-reloads on file changes during development, and exposes port 8080. The database container uses the official \texttt{mysql:oraclelinux9} image, persists data in a named volume, and mounts the \texttt{db/} directory at \texttt{/sql} read-only so that schema and seed files are accessible inside the container.

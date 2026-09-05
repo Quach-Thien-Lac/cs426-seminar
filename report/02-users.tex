@@ -1,0 +1,17 @@
+Sanguosuo targets three overlapping groups of people who interact with the Sanguosha game ecosystem.
+
+\subsection{Casual Players and Newcomers}
+
+Players who are learning Sanguosha for the first time face a steep learning curve: there are hundreds of heroes, each with multiple skills, cross-faction dynamics, and card interactions. These users need quick, accessible look-up without wading through lengthy rulebook pages. The application's hero search and detail view directly address this need by presenting structured information---faction, health points, epithet, skills with descriptions, and skill tags---in a single screen.
+
+\subsection{Experienced Players and Enthusiasts}
+
+Veteran players frequently consult references during or between games to check skill wording, verify card effects, or plan team compositions. For this group, accuracy and completeness of the data are paramount. The wiki format of Sanguosuo, backed by a normalized relational database containing 148 heroes and 268 skills, serves as a reliable single source of truth. The hero-combination table allows enthusiasts to discover and recall synergies between hero pairs.
+
+\subsection{Course Instructors and Security Reviewers}
+
+As a CS426 seminar project, the application is also evaluated by course instructors and peers interested in how it demonstrates software engineering principles on Android. This audience is less concerned with the game content and more focused on the architecture, and the honest assessment of what the system does.
+
+\subsection{Scope Limitations}
+
+The current prototype does not target official game designers who manage wiki content, thus a lack of resources including high-quality hero images and detailed descriptions. The revision and article management system is modeled in the database (tables \texttt{Article}, \texttt{Revision}, and \texttt{RevisionText}), but the corresponding client interface was not built within the project timeline. Guest browsing without an account, a forgotten-password flow, and personalized hero saves are planned but unfinished features.

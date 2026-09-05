@@ -1,0 +1,48 @@
+This section catalogs every significant technology used in the project and explains the rationale for its selection.
+
+\subsection{Android Client}
+
+\begin{description}[leftmargin=2.2cm, style=nextline]
+  \item[Kotlin] The primary programming language for Android development. Kotlin's null-safety guarantees, coroutine support, and concise syntax made it the natural choice over Java.
+  \item[Jetpack Compose] Google's declarative UI toolkit for Android. Compose replaces XML layouts with Kotlin functions annotated with \texttt{@Composable}, enabling strongly-typed state-driven UIs and live previews. Used for all screens in Sanguosuo.
+  \item[Jetpack Navigation Compose] Type-safe navigation graph between composable destinations, replacing the older fragment back-stack approach.
+  \item[Jetpack Lifecycle / ViewModel] \texttt{ViewModel} survives configuration changes (e.g.\ screen rotation) and exposes \texttt{StateFlow} streams to the UI layer.
+  \item[Jetpack DataStore Preferences] An asynchronous key-value store that persists the session token across app restarts. Replaces the deprecated \texttt{SharedPreferences} API.
+  \item[Retrofit 2] Type-safe HTTP client for Android. Retrofit maps Kotlin interface methods to HTTP requests and handles response deserialization.
+  \item[Kotlinx Serialization] Kotlin-first JSON serialization library. Used together with the Retrofit Kotlinx Serialization converter to deserialize API responses into typed Kotlin data classes without reflection overhead.
+  \item[OkHttp] The HTTP engine underlying Retrofit. Provides connection pooling, transparent gzip, and logging interceptors.
+  \item[Coil Compose] Image loading library optimized for Jetpack Compose. Used to load hero images from URLs asynchronously.
+  \item[Material 3] Google's latest Material Design component library. Provides accessible, themeable UI components (buttons, text fields, cards, navigation bars).
+  \item[Gradle (Kotlin DSL)] Build system for the Android project. Uses Kotlin DSL (\texttt{.kts}) for type-safe build scripts and a version catalog (\texttt{libs.versions.toml}) for centralized dependency management.
+\end{description}
+
+\subsection{Backend}
+
+\begin{description}[leftmargin=2.2cm, style=nextline]
+  \item[Node.js] Server-side JavaScript runtime. Its asynchronous, non-blocking I/O model is efficient for API servers that spend most of their time waiting on database queries.
+  \item[TypeScript] A typed superset of JavaScript. TypeScript catches type errors at compile time, improves IDE support, and documents the shape of request and response objects through interfaces and type aliases.
+  \item[Express 5] A minimal, unopinionated web framework for Node.js. Express 5 (the first version with native async/await error propagation) manages routing, middleware, and request/response handling.
+  \item[mysql2] A Promise-based MySQL client for Node.js. Used with \texttt{createPool} to maintain a bounded pool of up to five concurrent database connections. All database calls use the \texttt{execute} method with \texttt{?} placeholders for parameterized queries.
+  \item[bcrypt] Password hashing library. Sanguosuo calls \texttt{bcrypt.hash} with a cost factor of 10 on registration and \texttt{bcrypt.compare} on login. bcrypt embeds a unique random salt in every hash.
+  \item[jsonwebtoken (JWT)] Library for creating and verifying JSON Web Tokens. Currently used in the hero-route middleware for bearer-token validation (though not yet fully integrated with the login flow---see Section~\ref{sec:assessment}).
+  \item[Morgan] HTTP request logger middleware for Express. Logs method, URL, status, response time, and body size to stdout in the \texttt{dev} format.
+  \item[dotenv] Loads environment variables from a \texttt{.env} file into \texttt{process.env}, keeping secrets out of source control.
+  \item[Nodemon] Development utility that restarts the Node.js process automatically whenever a source file changes, enabling fast iteration.
+  \item[TypeDoc] Documentation generator for TypeScript projects. Produces HTML API documentation (published to GitHub Pages via a GitHub Actions workflow).
+\end{description}
+
+\subsection{Database}
+
+\begin{description}[leftmargin=2.2cm, style=nextline]
+  \item[MySQL 8 (\texttt{mysql:oraclelinux9})] Relational database management system. MySQL's support for foreign keys, \texttt{CHECK} constraints with regular expressions, and the \texttt{utf8mb4} character set (required for CJK game text) made it suitable for this project.
+  \item[Schema design] The schema uses surrogate primary keys where natural identifiers are unsuitable, composite primary keys for bridge tables, and \texttt{CHECK} constraints to enforce formats including the bcrypt hash pattern, Vietnamese phone-number format, email format, and an SHA-224 content-hash integrity check on revision text.
+\end{description}
+
+\subsection{Infrastructure and Tooling}
+
+\begin{description}[leftmargin=2.2cm, style=nextline]
+  \item[Docker \& Docker Compose] The backend API and MySQL database each run in their own Docker container, defined in \texttt{compose.yml}. This eliminates ``works on my machine'' problems and lets any team member start the full stack with a single command.
+  \item[GitHub Actions] CI/CD workflows are stored in \texttt{.github/}. One workflow (labeled as AI-generated) deploys the TypeDoc API documentation to GitHub Pages on every push to the main branch.
+  \item[Git / GitHub] Version control and remote repository hosting. The team used feature branches and pull requests for collaboration.
+  \item[\LaTeX{} / latexmk] Report typesetting. The \texttt{report/} directory contains a \texttt{.latexmkrc} configuration; running \texttt{latexmk -pvc -pdf main.tex} compiles the report and watches for changes.
+\end{description}

@@ -1,0 +1,54 @@
+This section honestly records what was completed, what was partially implemented, and what remains to be done before the application would be suitable for a production release.
+
+\subsection{What Was Completed}
+
+\paragraph{Database and seed data.}
+The full relational schema is implemented and enforced by MySQL. All constraints are active, including the bcrypt hash format check and the SHA-224 content-hash integrity constraint on revision text. The seed data covers 148 heroes, 268 skills, 86 skill--tag relationships, and 132 hero-combination pairs.
+
+\paragraph{Backend API with parameterized queries.}
+All four functional API endpoints (\texttt{POST /api/auth/register}, \texttt{POST /api/auth/login}, \texttt{GET /api/heroes/id/:id}, \texttt{GET /api/heroes/name/:name}) are implemented and return structured JSON responses. Every database call uses \texttt{mysql2.execute} with \texttt{?} placeholders, which is the project's strongest security property. Injection payloads such as \texttt{' OR 1=1 --} are handled as literal strings rather than SQL operators.
+
+\paragraph{Password hashing.}
+User passwords are hashed with \texttt{bcrypt} at a cost factor of 10 before storage. Each hash embeds a unique random salt, so two accounts with the same password receive different stored values. Login comparison uses \texttt{bcrypt.compare}, so the plaintext password is never retained. The database schema rejects any value that does not match the bcrypt format.
+
+\paragraph{Android registration and login screens.}
+The welcome screen, two-page sign-up flow, and sign-in screen are implemented in Jetpack Compose with client-side validation (email regex, Vietnamese phone-number format, password confirmation). The screens communicate with the backend via Retrofit.
+
+\paragraph{Docker Compose infrastructure.}
+The full backend stack (API + MySQL) starts with a single \texttt{docker compose up} command, significantly lowering the barrier for team members to run the project locally.
+
+\paragraph{TypeDoc documentation.}
+The server codebase is annotated with TSDoc comments. A GitHub Actions workflow automatically publishes the generated HTML documentation to GitHub Pages on every push.
+
+\paragraph{Security analysis and report.}
+The team conducted a source-code inspection identifying both implemented protections and gaps. The analysis distinguishes measured behavior from design intent---an important distinction given that no automated security tests were run.
+
+\subsection{What Is Partially Implemented}
+
+\paragraph{Android hero browsing.}
+The hero-detail and search screens are present but not fully wired to the backend. After a successful login, the client does not yet navigate to the main catalog or invoke the hero API endpoints from the UI. The API itself functions correctly and can be tested directly with \texttt{curl} or a REST client.
+
+\paragraph{Authentication token model.}
+The login service generates an opaque random token and stores it in the \texttt{Session} table. However, the hero-route middleware validates \emph{JWT} bearer tokens and never queries the \texttt{Session} table. Consequently, a token issued by a successful login cannot authorize hero requests through the current user interface. A hard-coded bypass token exists in the middleware for development and must be removed before any production deployment.
+
+\paragraph{Session persistence on the client.}
+The DataStore session module is scaffolded, but the sign-in screen discards the token returned by a successful login response. Navigation after sign-in is a placeholder screen.
+
+\paragraph{Settings screen and user profile.}
+The settings screen is present but at present the team has not implemented any profile-editing functionality. The user profilescreen is similarly a placeholder and does not yet display user information or allow changes to be made.
+
+\subsection{What Was Not Completed}
+
+\paragraph{Card data}
+Due to time constraints, the team could not include specific cards, which numbers around 100 unique types, as well as their effects, in the database. What we did include is the schema for cards and their subtypes, but the actual data is not present. This means that while the application can handle hero data, it cannot yet provide information on the cards used in gameplay.
+
+\paragraph{HTTPS and network security configuration.}
+The Retrofit base URL is plain HTTP and the Android manifest explicitly permits cleartext traffic (\texttt{usesCleartextTraffic="true"}). This is appropriate for a local emulator during development but makes the application unsuitable for production: credentials and tokens can be observed or modified on any untrusted network. A release build must use HTTPS and the network-security configuration should reject cleartext traffic.
+
+\subsection{Lessons Learned}
+
+Through this project, the team learned that a well-defined architecture and clear separation of concerns are crucial for maintainability and scalability. The use of Jetpack Compose for the UI layer allowed for rapid development and easy state management, while the layered backend architecture facilitated testing and debugging. Additionally, the importance of security best practices, such as parameterized queries and password hashing, was reinforced through hands-on implementation.
+
+We also learned that architecture decisions made early in the project can have long-lasting impacts. Agreeing on a consistent coding style, establishing clear API contracts, and setting up automated documentation and testing workflows helped the team stay aligned and productive. For instance, the decision to use TypeScript for the backend allowed for better type safety and reduced runtime errors, while the use of the Model-View-ViewModel (MVVM) pattern in the Android client promoted a clean separation between UI and business logic, making it easier to manage state and handle user interactions.
+
+Similarly, the use of Docker Compose early on in the project, although time-consuming to set up initially, has substantially reduced integration friction for the team. The ability to run \texttt{docker compose up} and have a reproducible, isolated backend and database was one of the most impactful infrastructure decisions made in the project.
