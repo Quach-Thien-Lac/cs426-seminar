@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,12 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.sanguosuoclient.R
 import com.example.sanguosuoclient.data.model.Hero
 import com.example.sanguosuoclient.data.session.SessionManager
@@ -140,34 +145,53 @@ private fun SearchResults(heroes: List<Hero>, resultCount: Int, onHeroClick: (He
             }
         }
         else {
-            items(heroes) { hero ->
+            items(heroes, key = { it.id }) { hero ->
                 SearchResultRow(
-                    label = hero.name,
+                    hero = hero,
                     onClick = { onHeroClick(hero) }
                 )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             }
         }
     }
 }
 
 @Composable
-private fun SearchResultRow(label: String, onClick: () -> Unit) {
+private fun SearchResultRow(hero: Hero, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp)
+            .padding(vertical = 10.dp)
     ) {
+        // Search icon bên trái
         Icon(
             painter = painterResource(R.drawable.ic_search),
             contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
+
+        // Tên hero (chiếm phần còn lại)
         Text(
-            text = label,
+            text = hero.name,
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 12.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 12.dp)
+        )
+
+        // Ảnh hero bên phải
+        AsyncImage(
+            model = hero.imageUrl,
+            contentDescription = hero.name,
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(R.drawable.welcome_screen_background),
+            error = painterResource(R.drawable.welcome_screen_background),
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
         )
     }
 }
