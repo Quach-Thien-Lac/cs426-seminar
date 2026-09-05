@@ -251,63 +251,91 @@ private fun HeroOverviewRow(
 ) {
     Row(
         modifier = modifier
-        .fillMaxWidth()
-        .padding(16.dp),
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        // Khung Phe phái
         Surface(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .height(86.dp),
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            border = BorderStroke(1.dp, color = GoldAccent),
             color = Color.White
-                    
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Phe phái",
-                    fontSize = 24.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFDFA437)
+                    color = GoldAccent
                 )
-                Text(
-                    //text = hero.factionName,
-                    text = hero.factions.firstOrNull()?.factionName ?: "",
-                    fontSize = 14.sp,
-                    color = Color.Black
-                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = hero.factions.firstOrNull()?.factionName ?: "Chưa rõ",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
             }
         }
+
+        // Khung Độ khó
         Surface(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .height(86.dp),
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, color = Color(0xFFDFA437)),
+            border = BorderStroke(1.dp, color = GoldAccent),
             color = Color.White
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Độ khó",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFDFA437)
+                    color = GoldAccent
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    repeat(5) { index ->
-                        Box(
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(8.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(if (hero.heroComplexity >= index) GoldAccent else GoldAccent.copy(alpha = 0.3f))
-                        )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val complexity = hero.heroComplexity.coerceIn(1, 5)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(5) { index ->
+                            Box(
+                                modifier = Modifier
+                                    .width(18.dp)
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(
+                                        if (index < complexity) GoldAccent
+                                        else GoldAccent.copy(alpha = 0.25f)
+                                    )
+                            )
+                        }
                     }
                 }
             }
